@@ -14,3 +14,4 @@
 
 # Lumora: keep all images & videos tracked (they ARE the deliverable)
 # No binary ignores here on purpose.
+.vercel
