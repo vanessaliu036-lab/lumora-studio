@@ -354,8 +354,8 @@
     }
     .film-stage{
       position:relative;z-index:1;
-      display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:30px;
-      width:min(880px,100%);margin:0 auto;
+      display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;
+      width:min(1180px,100%);margin:0 auto;
     }
     .film-card{
       position:relative;border-radius:32px;overflow:hidden;isolation:isolate;
@@ -420,7 +420,7 @@
       .ed-card,.ed-card:nth-child(4),.ed-card:nth-child(5){grid-column:span 1}
       .ed-card:nth-child(2),.ed-card:nth-child(3),.ed-card:nth-child(5){margin-top:0}
       .ed-card:nth-child(5){grid-column:span 2}
-      .film-stage{width:100%;gap:18px}
+      .film-stage{grid-template-columns:repeat(2,minmax(0,1fr));width:min(720px,100%);gap:18px}
       .film-bottom h3{font-size:24px}
     }
     @media(max-width:650px){
@@ -602,6 +602,70 @@
               <div>
                 <h3>Flower Walk</h3>
                 <p>A slow pass through blossom, shadows drifting over the shoulder.</p>
+              </div>
+              <button class="film-sound" type="button" data-sound aria-label="Toggle sound">♪</button>
+            </div>
+          </article>
+
+          <article class="film-card reveal" style="transition-delay:.15s">
+            <video src="Fashion_boots_coastal_campaign_202607311807.mp4" muted loop playsinline autoplay preload="metadata"></video>
+            <span class="film-veil"></span>
+            <div class="film-top">
+              <span class="film-rec"><i></i> Film 03</span>
+              <span>9:16 · 00:06</span>
+            </div>
+            <div class="film-bottom">
+              <div>
+                <h3>Coastal Boots</h3>
+                <p>Leather boots across coastal stone, slow light over the surf.</p>
+              </div>
+              <button class="film-sound" type="button" data-sound aria-label="Toggle sound">♪</button>
+            </div>
+          </article>
+
+          <article class="film-card reveal" style="transition-delay:.2s">
+            <video src="Fashion_editorial_studio_fashion…_202607311909.mp4" muted loop playsinline autoplay preload="metadata"></video>
+            <span class="film-veil"></span>
+            <div class="film-top">
+              <span class="film-rec"><i></i> Film 04</span>
+              <span>9:16 · 00:05</span>
+            </div>
+            <div class="film-bottom">
+              <div>
+                <h3>Studio Suit</h3>
+                <p>Tailored grey suit, soft studio grey, and a quiet, composed gaze.</p>
+              </div>
+              <button class="film-sound" type="button" data-sound aria-label="Toggle sound">♪</button>
+            </div>
+          </article>
+
+          <article class="film-card reveal" style="transition-delay:.25s">
+            <video src="Fashion_model_in_flower_meadow_202607311955.mp4" muted loop playsinline autoplay preload="metadata"></video>
+            <span class="film-veil"></span>
+            <div class="film-top">
+              <span class="film-rec"><i></i> Film 05</span>
+              <span>9:16 · 00:05</span>
+            </div>
+            <div class="film-bottom">
+              <div>
+                <h3>Daisy Bloom</h3>
+                <p>White lace drifting through a daisy meadow, with butterfly accents.</p>
+              </div>
+              <button class="film-sound" type="button" data-sound aria-label="Toggle sound">♪</button>
+            </div>
+          </article>
+
+          <article class="film-card reveal" style="transition-delay:.3s">
+            <video src="Fast_fashion_editorial_sequence_202607311842.mp4" muted loop playsinline autoplay preload="metadata"></video>
+            <span class="film-veil"></span>
+            <div class="film-top">
+              <span class="film-rec"><i></i> Film 06</span>
+              <span>9:16 · 00:05</span>
+            </div>
+            <div class="film-bottom">
+              <div>
+                <h3>Crimson Pop</h3>
+                <p>Crimson slip, glass bottle, and a small pony accent—playful pop editorial.</p>
               </div>
               <button class="film-sound" type="button" data-sound aria-label="Toggle sound">♪</button>
             </div>
