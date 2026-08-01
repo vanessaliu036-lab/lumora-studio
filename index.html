@@ -556,6 +556,94 @@
       .id-copy{max-width:none}
       .id-visual{aspect-ratio:4/5}
     }
+
+    /* ============================================================
+       ADDED ONLY — Replaceable Editorial Block
+       (sits between Identity Reveal and How it works)
+       ============================================================ */
+    .lumora-editorial-section{
+      position:relative;overflow:hidden;width:100%;padding:110px 28px;
+      background:
+        radial-gradient(circle at 12% 12%,rgba(137,94,255,.28),transparent 29%),
+        radial-gradient(circle at 92% 18%,rgba(255,161,204,.16),transparent 25%),
+        radial-gradient(circle at 48% 96%,rgba(100,226,208,.08),transparent 25%),
+        linear-gradient(145deg,#0a081b,#161231 52%,#0b091d);
+    }
+    .lumora-editorial-section::before{
+      content:"";position:absolute;inset:-32%;z-index:0;pointer-events:none;
+      background:conic-gradient(from 120deg,rgba(154,121,255,.14),rgba(255,177,210,.11),rgba(124,237,216,.07),rgba(154,121,255,.14));
+      filter:blur(105px);animation:aurora 24s linear infinite;
+    }
+    .lumora-editorial-inner{position:relative;z-index:2;width:min(1480px,100%);margin:auto}
+    .lumora-editorial-header{max-width:1160px;margin-bottom:56px}
+    .lumora-editorial-kicker{margin-bottom:18px;color:#dacbff;font-size:13px;letter-spacing:.2em;text-transform:uppercase}
+    .lumora-editorial-title{
+      margin:0 0 25px;font-family:var(--serif);
+      font-size:clamp(58px,7vw,112px);line-height:.92;font-weight:400;letter-spacing:-.055em;
+    }
+    .lumora-editorial-title span{
+      background:linear-gradient(90deg,#fff,#ffd7e9 45%,#b9a1ff 92%);
+      -webkit-background-clip:text;background-clip:text;color:transparent;
+    }
+    .lumora-editorial-intro{max-width:980px;margin:0;color:var(--muted);font-size:clamp(18px,2vw,24px);line-height:1.68}
+    .lumora-image-stack{display:grid;gap:22px}
+    .lumora-image-card{
+      position:relative;overflow:hidden;border:1px solid var(--line);
+      background:rgba(255,255,255,.035);box-shadow:0 30px 100px rgba(0,0,0,.34);isolation:isolate;
+    }
+    .lumora-image-card::before{
+      content:"";position:absolute;inset:-40%;z-index:4;pointer-events:none;
+      background:linear-gradient(112deg,transparent 38%,rgba(255,255,255,.13) 49%,transparent 60%);
+      transform:translateX(-130%) rotate(4deg);animation:lightSweep 8.5s ease-in-out infinite;
+    }
+    @keyframes lightSweep{
+      0%,18%{transform:translateX(-130%) rotate(4deg);opacity:0}
+      35%{opacity:1}
+      55%,100%{transform:translateX(130%) rotate(4deg);opacity:0}
+    }
+    .lumora-image-card::after{
+      content:"";position:absolute;inset:0;z-index:3;pointer-events:none;
+      background:linear-gradient(180deg,transparent 62%,rgba(8,7,23,.55));
+    }
+    .lumora-hero-card{border-radius:34px}
+    .lumora-hero-card img{
+      display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;object-position:center 42%;
+      animation:heroBreath 14s ease-in-out infinite;
+    }
+    @keyframes heroBreath{
+      0%,100%{transform:scale(1.002) translateY(0)}
+      50%{transform:scale(1.03) translateY(-4px)}
+    }
+    .lumora-portrait-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px;align-items:start}
+    .lumora-portrait-card{border-radius:30px}
+    .lumora-portrait-card img{
+      display:block;width:100%;height:auto;object-fit:contain;
+      animation:portraitFloat 12s ease-in-out infinite;
+    }
+    .lumora-portrait-card:nth-child(2) img{animation-delay:1.4s}
+    @keyframes portraitFloat{
+      0%,100%{transform:scale(1) translateY(0)}
+      50%{transform:scale(1.012) translateY(-5px)}
+    }
+    .lumora-label{
+      position:absolute;left:22px;bottom:20px;z-index:6;
+      padding:9px 14px;border-radius:999px;border:1px solid rgba(255,255,255,.16);
+      background:rgba(10,8,28,.55);backdrop-filter:blur(15px);
+      font-size:12px;color:#fff;
+    }
+    .lumora-hero-copy{position:absolute;left:30px;bottom:28px;z-index:6;max-width:620px}
+    .lumora-hero-copy strong{
+      display:block;font-family:var(--serif);
+      font-size:clamp(34px,4vw,60px);font-weight:400;letter-spacing:-.03em;
+    }
+    .lumora-hero-copy span{display:block;margin-top:8px;color:rgba(255,255,255,.7);font-size:14px}
+    .lumora-reveal{opacity:0;transform:translateY(34px);transition:opacity .9s ease,transform .9s ease}
+    .lumora-reveal.is-visible{opacity:1;transform:none}
+    @media(max-width:760px){
+      .lumora-editorial-section{padding:82px 14px}
+      .lumora-portrait-grid{grid-template-columns:1fr}
+      .lumora-editorial-header{margin-bottom:34px}
+    }
   </style>
 </head>
 <body>
@@ -886,6 +974,42 @@
       </div>
     </section>
 
+    <section class="lumora-editorial-section" id="editorial-block">
+      <div class="lumora-editorial-inner">
+        <header class="lumora-editorial-header lumora-reveal">
+          <div class="lumora-editorial-kicker">Lumora Editorial · Identity Series</div>
+          <h2 class="lumora-editorial-title">One face.<br><span>Endless visual worlds.</span></h2>
+          <p class="lumora-editorial-intro">
+            We transform your own reference photos into highly personalized editorial portraits.
+            Your facial identity, natural proportions and recognizable features remain consistent—
+            while the styling, atmosphere and visual world completely change.
+          </p>
+        </header>
+
+        <div class="lumora-image-stack">
+          <article class="lumora-image-card lumora-hero-card lumora-reveal">
+            <img src="hero-horizontal.jpg" alt="Lumora horizontal editorial portrait">
+            <div class="lumora-hero-copy">
+              <strong>Still unmistakably you.</strong>
+              <span>Your identity, carried into a new visual world.</span>
+            </div>
+          </article>
+
+          <div class="lumora-portrait-grid">
+            <article class="lumora-image-card lumora-portrait-card lumora-reveal">
+              <img src="portrait-left.jpg" alt="Golden Morning portrait">
+              <span class="lumora-label">Golden Morning</span>
+            </article>
+
+            <article class="lumora-image-card lumora-portrait-card lumora-reveal">
+              <img src="portrait-right.jpg" alt="Quiet Luxury portrait">
+              <span class="lumora-label">Quiet Luxury</span>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <section class="section" id="process">
       <div class="shell">
         <div class="section-head reveal">
@@ -1021,6 +1145,11 @@
       entries.forEach(entry=>{ if(entry.isIntersecting) entry.target.classList.add('visible') })
     },{threshold:.12});
     document.querySelectorAll('.reveal').forEach(el=>revealObserver.observe(el));
+
+    const lumoraRevealObserver = new IntersectionObserver(entries=>{
+      entries.forEach(entry=>{ if(entry.isIntersecting) entry.target.classList.add('is-visible') })
+    },{threshold:.14});
+    document.querySelectorAll('.lumora-reveal').forEach(el=>lumoraRevealObserver.observe(el));
 
     const heroVisual=document.getElementById('heroVisual');
     window.addEventListener('mousemove',e=>{
