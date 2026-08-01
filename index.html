@@ -1230,8 +1230,8 @@
     .lc-choice strong { display: block; font-family: var(--lc-serif); font-size: 29px; font-weight: 400; line-height: 1; }
     .lc-choice span { display: block; margin-top: 9px; color: rgba(255,255,255,.58); font-size: 12px; }
 
-    .lc-services { display: none; }
-    .lc-services.is-visible { display: block; animation: lcReveal .38s ease both; }
+    .lc-services { display: none !important; }
+    .lc-services.is-visible { display: block !important; animation: lcReveal .38s ease both; }
     @keyframes lcReveal { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 
     .lc-field { display: grid; gap: 8px; }
@@ -2101,7 +2101,7 @@
               </div>
             </section>
 
-            <section class="lc-step lc-services" id="personalServices">
+            <section class="lc-step lc-services" id="personalServices" style="display:none">
               <div class="lc-step-head">
                 <span class="lc-step-num">02</span>
                 <span class="lc-step-title">Choose a personal service</span>
@@ -2122,7 +2122,7 @@
               </div>
             </section>
 
-            <section class="lc-step lc-services" id="brandServices">
+            <section class="lc-step lc-services" id="brandServices" style="display:none">
               <div class="lc-step-head">
                 <span class="lc-step-num">02</span>
                 <span class="lc-step-title">Choose a brand service</span>
@@ -2598,8 +2598,8 @@
           identityInput.value = button.dataset.identity;
           clearServiceSelection();
           const isPersonal = button.dataset.identity === "Personal";
-          personalServices.classList.toggle("is-visible", isPersonal);
-          brandServices.classList.toggle("is-visible", !isPersonal);
+          personalServices.style.display = isPersonal ? "block" : "none";
+          brandServices.style.display = isPersonal ? "none" : "block";
           updateSubmitState();
         });
       });
