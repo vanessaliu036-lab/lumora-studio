@@ -488,9 +488,9 @@
     .id-eyebrow{text-transform:uppercase;letter-spacing:.18em;font-size:12px;color:#d9c9ff;margin-bottom:18px}
     .id-reveal h2{
       font-family:var(--serif);
-      font-size:clamp(58px,6.4vw,104px);
-      line-height:.9;font-weight:400;letter-spacing:-.055em;
-      margin:0 0 26px;
+      font-size:clamp(40px,4.6vw,72px);
+      line-height:.95;font-weight:400;letter-spacing:-.04em;
+      margin:0 0 22px;
     }
     .id-reveal .gradient{background:linear-gradient(90deg,#fff,#ffd6e8 46%,#bda6ff 90%);-webkit-background-clip:text;background-clip:text;color:transparent}
     .id-reveal p{font-size:19px;line-height:1.65;color:var(--muted);margin:0 0 28px}
@@ -938,11 +938,13 @@
     }
 
     .lp-tag {
-      display: inline-flex; min-height: 35px; align-items: center;
-      padding: 0 14px; border: 1px solid rgba(255,255,255,0.16);
-      border-radius: 999px; color: rgba(255,255,255,0.78);
-      background: rgba(15,15,38,0.42);
+      position: absolute; top: 24px; right: 24px;
+      display: inline-flex; min-height: 30px; align-items: center;
+      padding: 0 12px; border: 1px solid rgba(255,255,255,0.16);
+      border-radius: 999px; color: rgba(255,255,255,0.82);
+      background: rgba(15,15,38,0.5);
       font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase;
+      z-index: 2;
     }
 
     .lp-card-content { position: absolute; right: 30px; bottom: 27px; left: 30px; }
@@ -953,7 +955,7 @@
     }
     .lp-value {
       margin-bottom: 18px; font-family: var(--lp-serif);
-      font-size: clamp(58px, 5vw, 80px); line-height: 0.9; letter-spacing: -0.04em;
+      font-size: clamp(48px, 4.2vw, 64px); line-height: 0.9; letter-spacing: -0.04em;
     }
     .lp-description { min-height: 66px; margin: 0; color: var(--lp-muted); font-size: 14px; line-height: 1.55; }
     .lp-link {
@@ -1150,6 +1152,349 @@
       .lumora-pricing::before, .lp-orb { animation: none !important; }
       .lp-group, .lp-card, .lp-modal-panel { transition: none !important; }
     }
+
+    /* ============================================================
+       ADDED ONLY — Lumora Contact / Telegram lead form
+       (replaces id=order, sits between Pricing and FAQ)
+       ============================================================ */
+    .lumora-contact,
+    .lumora-contact * { box-sizing: border-box; }
+
+    .lumora-contact {
+      --lc-text: #f8f5ff;
+      --lc-muted: rgba(245, 241, 255, 0.62);
+      --lc-line: rgba(255,255,255,0.14);
+      --lc-glass: rgba(255,255,255,0.055);
+      --lc-serif: "Italiana", Georgia, serif;
+      --lc-sans: "DM Sans", Arial, sans-serif;
+
+      position: relative; overflow: hidden;
+      padding: 105px 18px;
+      color: var(--lc-text);
+      font-family: var(--lc-sans);
+      background:
+        radial-gradient(circle at 10% 16%, rgba(121, 98, 255, 0.22), transparent 31%),
+        radial-gradient(circle at 90% 20%, rgba(255, 161, 211, 0.17), transparent 28%),
+        radial-gradient(circle at 62% 92%, rgba(101, 213, 220, 0.10), transparent 28%),
+        linear-gradient(145deg, #080918, #12122a 52%, #0b0a1d);
+    }
+
+    .lumora-contact::before {
+      content: ""; position: absolute; inset: -35%; pointer-events: none;
+      background: conic-gradient(from 120deg, rgba(154,121,255,0.12), rgba(255,176,204,0.10), rgba(139,244,220,0.06), rgba(154,121,255,0.12));
+      filter: blur(110px); animation: lcAura 24s linear infinite;
+    }
+    @keyframes lcAura { to { transform: rotate(360deg) scale(1.05); } }
+
+    .lc-inner { position: relative; z-index: 2; width: min(1280px, 100%); margin: auto; }
+
+    .lc-head { width: min(980px, 100%); margin: 0 auto 46px; display: grid; grid-template-columns: 1.05fr .95fr; gap: 46px; align-items: end; }
+    .lc-kicker { margin-bottom: 18px; color: #d6c5ff; font-size: 12px; letter-spacing: .2em; text-transform: uppercase; }
+    .lc-title { margin: 0; font-family: var(--lc-serif); font-size: clamp(58px, 7vw, 104px); font-weight: 400; line-height: .92; letter-spacing: -.045em; }
+    .lc-intro { max-width: 610px; margin: 0 0 7px; color: var(--lc-muted); font-size: clamp(16px, 1.4vw, 20px); line-height: 1.7; }
+
+    .lc-shell { width: min(980px, 100%); margin: 0 auto; }
+
+    .lc-form-card {
+      width: 100%; padding: 38px;
+      border: 1px solid var(--lc-line); border-radius: 34px;
+      backdrop-filter: blur(22px);
+      box-shadow: 0 34px 100px rgba(0,0,0,.30), inset 0 1px rgba(255,255,255,.08);
+      background:
+        radial-gradient(circle at 92% 4%, rgba(255,175,219,.12), transparent 26%),
+        radial-gradient(circle at 8% 96%, rgba(144,111,255,.10), transparent 28%),
+        linear-gradient(145deg, rgba(255,255,255,.072), rgba(255,255,255,.028));
+    }
+
+    .lc-step { margin-bottom: 28px; }
+    .lc-step-head { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+    .lc-step-num { width: 28px; height: 28px; display: grid; place-items: center; border: 1px solid rgba(255,255,255,.16); border-radius: 50%; color: #d8c8ff; background: rgba(255,255,255,.05); font-size: 10px; }
+    .lc-step-title { font-size: 14px; font-weight: 500; }
+
+    .lc-choice-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px; }
+    .lc-choice {
+      position: relative; min-height: 112px; padding: 18px;
+      color: var(--lc-text); text-align: left;
+      border: 1px solid rgba(255,255,255,.14); border-radius: 20px;
+      background: rgba(255,255,255,.045); cursor: pointer; font: inherit;
+      transition: transform .35s ease, border-color .35s ease, background .35s ease, box-shadow .35s ease;
+    }
+    .lc-choice:hover { transform: translateY(-3px); border-color: rgba(211,187,255,.40); background: rgba(255,255,255,.075); }
+    .lc-choice.is-selected {
+      transform: translateY(-3px);
+      border-color: rgba(231,205,255,.64);
+      background: radial-gradient(circle at 90% 10%, rgba(255,190,227,.18), transparent 34%), linear-gradient(145deg, rgba(163,119,255,.18), rgba(255,255,255,.07));
+      box-shadow: 0 18px 50px rgba(154,105,255,.20), 0 0 26px rgba(255,185,227,.12);
+    }
+    .lc-choice small { display: block; margin-bottom: 9px; color: rgba(255,255,255,.48); font-size: 10px; letter-spacing: .15em; text-transform: uppercase; }
+    .lc-choice strong { display: block; font-family: var(--lc-serif); font-size: 29px; font-weight: 400; line-height: 1; }
+    .lc-choice span { display: block; margin-top: 9px; color: rgba(255,255,255,.58); font-size: 12px; }
+
+    .lc-services { display: none; }
+    .lc-services.is-visible { display: block; animation: lcReveal .38s ease both; }
+    @keyframes lcReveal { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+    .lc-field { display: grid; gap: 8px; }
+    .lc-field + .lc-field { margin-top: 14px; }
+    .lc-field label { color: rgba(255,255,255,.64); font-size: 12px; }
+    .lc-field input, .lc-field textarea {
+      width: 100%; color: #fff;
+      border: 1px solid rgba(255,255,255,.14); border-radius: 17px;
+      outline: none; background: rgba(255,255,255,.045); font: inherit;
+      transition: border-color .3s ease, box-shadow .3s ease, background .3s ease;
+    }
+    .lc-field input { min-height: 54px; padding: 0 16px; }
+    .lc-field textarea { min-height: 104px; padding: 15px 16px; resize: vertical; }
+    .lc-field input::placeholder, .lc-field textarea::placeholder { color: rgba(255,255,255,.30); }
+    .lc-field input:focus, .lc-field textarea:focus {
+      border-color: rgba(202,171,255,.62);
+      background: rgba(255,255,255,.065);
+      box-shadow: 0 0 0 4px rgba(160,120,255,.10);
+    }
+
+    .lc-submit {
+      width: 100%; min-height: 58px; margin-top: 22px;
+      display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+      color: #fff; border: 0; border-radius: 999px;
+      background: linear-gradient(110deg, #ffc6b8 0%, #f2a9d1 48%, #a37bff 100%);
+      box-shadow: 0 16px 38px rgba(173,112,255,.32), inset 0 1px rgba(255,255,255,.68);
+      cursor: pointer; font: 600 14px var(--lc-sans);
+      transition: transform .3s ease, box-shadow .3s ease, opacity .3s ease;
+    }
+    .lc-submit:hover:not(:disabled) { transform: translateY(-3px); box-shadow: 0 22px 50px rgba(173,112,255,.48), 0 0 28px rgba(244,174,222,.18); }
+    .lc-submit:disabled { cursor: not-allowed; opacity: .38; filter: grayscale(.15); }
+
+    .lc-submit-note { margin: 11px 0 0; color: rgba(255,255,255,.40); text-align: center; font-size: 10px; line-height: 1.5; }
+
+    .lc-success {
+      display: none; margin-top: 14px; padding: 14px 16px;
+      color: #dffef6; border: 1px solid rgba(139,244,220,.24); border-radius: 15px;
+      background: rgba(139,244,220,.08); font-size: 12px; line-height: 1.55;
+    }
+    .lc-success.is-visible { display: block; }
+
+    @media (max-width: 960px) {
+      .lc-head { grid-template-columns: 1fr; gap: 22px; }
+    }
+    @media (max-width: 640px) {
+      .lumora-contact { padding: 78px 12px; }
+      .lc-form-card { padding: 22px; border-radius: 26px; }
+      .lc-choice-grid { grid-template-columns: 1fr; }
+      .lc-choice { min-height: 92px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .lumora-contact::before, .lc-orb { animation: none !important; }
+    }
+
+    /* ===== Lumora Contact — confirm modal ===== */
+    body.lc-confirm-open { overflow: hidden; }
+
+    .lc-confirm-modal {
+      position: fixed; inset: 0; z-index: 99999;
+      display: grid; place-items: center;
+      padding: 22px;
+      visibility: hidden; opacity: 0;
+      background: rgba(4,5,16,.82);
+      backdrop-filter: blur(20px);
+      transition: opacity .3s ease, visibility .3s ease;
+    }
+    .lc-confirm-modal.is-open { visibility: visible; opacity: 1; }
+
+    .lc-confirm-panel {
+      position: relative;
+      width: min(680px, calc(100vw - 36px));
+      max-height: calc(100dvh - 44px);
+      overflow: hidden;
+      padding: 34px;
+      border: 1px solid rgba(255,255,255,.17);
+      border-radius: 30px;
+      color: #f8f5ff;
+      background:
+        radial-gradient(circle at 90% 8%, rgba(255,173,219,.16), transparent 30%),
+        radial-gradient(circle at 10% 90%, rgba(145,109,255,.18), transparent 32%),
+        linear-gradient(145deg, #121226, #17132f 58%, #0c0b1e);
+      box-shadow: 0 55px 170px rgba(0,0,0,.66);
+      transform: translateY(18px) scale(.98);
+      transition: transform .4s cubic-bezier(.2,.8,.2,1);
+    }
+    .lc-confirm-modal.is-open .lc-confirm-panel { transform: none; }
+
+    .lc-confirm-close {
+      position: absolute; top: 18px; right: 18px;
+      width: 42px; height: 42px;
+      display: grid; place-items: center;
+      color: #fff;
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: 50%;
+      background: rgba(255,255,255,.06);
+      cursor: pointer; font-size: 18px;
+      transition: transform .3s ease, background .3s ease;
+    }
+    .lc-confirm-close:hover { transform: rotate(90deg); background: rgba(255,255,255,.12); }
+
+    .lc-confirm-kicker { margin-bottom: 14px; color: #d7c7ff; font-size: 10px; letter-spacing: .2em; text-transform: uppercase; }
+    .lc-confirm-title { max-width: 520px; margin: 0 0 14px; padding-right: 44px; font-family: var(--lc-serif); font-size: clamp(45px, 6vw, 68px); font-weight: 400; line-height: .94; letter-spacing: -.04em; }
+    .lc-confirm-copy { margin: 0 0 24px; color: rgba(245,241,255,.62); font-size: 13px; line-height: 1.65; }
+
+    .lc-confirm-data { border-top: 1px solid rgba(255,255,255,.13); }
+    .lc-confirm-row { display: grid; grid-template-columns: 130px 1fr; gap: 18px; padding: 15px 0; border-bottom: 1px solid rgba(255,255,255,.13); font-size: 13px; }
+    .lc-confirm-row span { color: rgba(255,255,255,.52); }
+    .lc-confirm-row strong { color: #fff; font-weight: 500; word-break: break-word; }
+    .lc-confirm-row-request { align-items: start; }
+
+    .lc-confirm-actions { display: grid; grid-template-columns: 1.15fr .85fr; gap: 11px; margin-top: 24px; }
+    .lc-confirm-primary, .lc-confirm-secondary {
+      min-height: 52px;
+      display: inline-flex; align-items: center; justify-content: center;
+      padding: 13px 20px;
+      border-radius: 999px; color: #fff; cursor: pointer;
+      font: 600 13px var(--lc-sans);
+      transition: transform .3s ease, box-shadow .3s ease, background .3s ease;
+    }
+    .lc-confirm-primary {
+      border: 0;
+      background: linear-gradient(110deg, #ffc5b8, #f2a9d1 48%, #a37cff);
+      box-shadow: 0 15px 36px rgba(173,112,255,.32), inset 0 1px rgba(255,255,255,.68);
+    }
+    .lc-confirm-primary:hover { transform: translateY(-2px); box-shadow: 0 21px 46px rgba(173,112,255,.46); }
+    .lc-confirm-secondary { border: 1px solid rgba(255,255,255,.17); background: rgba(255,255,255,.045); }
+    .lc-confirm-secondary:hover { transform: translateY(-2px); background: rgba(255,255,255,.085); }
+
+    @media (max-width: 640px) {
+      .lc-confirm-panel { padding: 26px 20px 20px; border-radius: 25px; }
+      .lc-confirm-title { font-size: 43px; }
+      .lc-confirm-row { grid-template-columns: 96px 1fr; gap: 12px; padding: 13px 0; font-size: 12px; }
+      .lc-confirm-actions { grid-template-columns: 1fr; }
+    }
+
+    /* ============================================================
+       ADDED ONLY — Lumora Timeline section (What happens next)
+       (replaces id=process, 6-step glass-orb timeline)
+       ============================================================ */
+    .lumora-next-steps,
+    .lumora-next-steps * { box-sizing: border-box; }
+
+    .lumora-next-steps {
+      --lns-text: #f8f5ff;
+      --lns-muted: rgba(245, 241, 255, 0.58);
+      --lns-line: rgba(255, 255, 255, 0.13);
+      --lns-purple: #b28cff;
+      --lns-pink: #ffc0df;
+      --lns-mint: #91f2df;
+      --lns-serif: "Italiana", Georgia, serif;
+      --lns-sans: "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+
+      position: relative;
+      width: 100%;
+      padding: 120px 18px;
+      color: var(--lns-text);
+      font-family: var(--lns-sans);
+      background:
+        radial-gradient(circle at 12% 14%, rgba(146, 108, 255, 0.18), transparent 30%),
+        radial-gradient(circle at 88% 18%, rgba(255, 165, 210, 0.13), transparent 28%),
+        radial-gradient(circle at 50% 96%, rgba(120, 220, 215, 0.08), transparent 30%),
+        linear-gradient(145deg, #08091a, #14122c 54%, #0a0919);
+    }
+
+    .lns-inner { width: min(1100px, 100%); margin: auto; }
+
+    .lns-header { display: grid; grid-template-columns: 1fr 0.8fr; gap: 34px; align-items: end; margin-bottom: 60px; }
+
+    .lns-kicker { margin-bottom: 14px; color: #d8c7ff; font-family: var(--lns-sans); font-size: 11px; font-weight: 500; letter-spacing: 0.20em; text-transform: uppercase; }
+    .lns-title { margin: 0; color: #f8f5ff; font-family: var(--lns-serif); font-size: clamp(48px, 5.4vw, 72px); font-weight: 400; line-height: 0.92; letter-spacing: -0.045em; }
+    .lns-intro { margin: 0 0 3px; color: rgba(245, 241, 255, 0.72); font-family: var(--lns-sans); font-size: 14px; font-weight: 400; line-height: 1.7; }
+
+    .lns-timeline { position: relative; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px; }
+    .lns-timeline::before {
+      content: "";
+      position: absolute; top: 24px; right: 6%; left: 6%; height: 1px;
+      background: linear-gradient(90deg, rgba(145, 242, 223, 0.20), rgba(178, 140, 255, 0.64), rgba(255, 192, 223, 0.42));
+    }
+
+    .lns-step { position: relative; z-index: 2; min-width: 0; padding: 0 7px; text-align: center; }
+
+    .lns-number {
+      position: relative;
+      overflow: hidden;
+      width: 54px; height: 54px;
+      display: grid; place-items: center;
+      margin: 0 auto 17px;
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.38);
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 24%, rgba(255, 255, 255, 0.98) 0%, rgba(255, 243, 248, 0.94) 9%, rgba(255, 198, 184, 0.96) 27%, rgba(242, 169, 209, 0.96) 52%, rgba(190, 130, 236, 0.97) 76%, rgba(148, 108, 255, 0.98) 100%);
+      box-shadow:
+        inset 7px 7px 15px rgba(255, 255, 255, 0.34),
+        inset -9px -11px 18px rgba(100, 61, 215, 0.23),
+        0 0 18px rgba(255, 178, 214, 0.28),
+        0 0 36px rgba(167, 112, 255, 0.22),
+        0 12px 28px rgba(58, 35, 119, 0.25);
+      font-family: var(--lns-serif);
+      font-size: 18px;
+      font-weight: 400;
+      transition: transform 0.35s ease, box-shadow 0.35s ease, filter 0.35s ease;
+      isolation: isolate;
+    }
+
+    .lns-number::before {
+      content: "";
+      position: absolute;
+      width: 42%; height: 27%;
+      top: 9%; left: 15%;
+      border-radius: 50%;
+      background: radial-gradient(ellipse, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.32) 45%, transparent 72%);
+      filter: blur(2px);
+      transform: rotate(-25deg);
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .lns-number::after {
+      content: "";
+      position: absolute; inset: 0;
+      border-radius: inherit;
+      background:
+        radial-gradient(circle at 72% 82%, rgba(113, 72, 236, 0.25), transparent 43%),
+        linear-gradient(145deg, rgba(255, 255, 255, 0.12), transparent 42%, rgba(114, 75, 229, 0.14));
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .lns-step:hover .lns-number {
+      transform: translateY(-5px) scale(1.07);
+      filter: saturate(1.08) brightness(1.06);
+      box-shadow:
+        inset 7px 7px 15px rgba(255, 255, 255, 0.4),
+        inset -9px -11px 18px rgba(100, 61, 215, 0.28),
+        0 0 24px rgba(255, 178, 214, 0.42),
+        0 0 48px rgba(167, 112, 255, 0.34),
+        0 16px 34px rgba(58, 35, 119, 0.3);
+    }
+
+    .lns-step h3 { min-height: 38px; margin: 0 0 8px; color: #f8f5ff; font-family: var(--lns-sans); font-size: 13px; font-weight: 500; line-height: 1.4; letter-spacing: -0.01em; }
+    .lns-step p { margin: 0; color: rgba(245, 241, 255, 0.66); font-family: var(--lns-sans); font-size: 11px; font-weight: 400; line-height: 1.58; }
+
+    .lns-note { margin-top: 40px; padding: 15px 18px; color: rgba(255, 255, 255, 0.68); font-family: var(--lns-sans); border: 1px solid rgba(255, 255, 255, 0.11); border-radius: 16px; background: rgba(255, 255, 255, 0.035); font-size: 11px; line-height: 1.6; }
+
+    @media (max-width: 860px) {
+      .lns-header { grid-template-columns: 1fr; gap: 16px; }
+      .lns-timeline { grid-template-columns: repeat(3, minmax(0, 1fr)); row-gap: 28px; }
+      .lns-timeline::before { display: none; }
+    }
+    @media (max-width: 560px) {
+      .lumora-next-steps { padding: 80px 12px; }
+      .lns-timeline { grid-template-columns: 1fr; gap: 0; }
+      .lns-step { position: relative; display: grid; grid-template-columns: 48px 1fr; gap: 15px; align-items: start; padding: 0 0 23px; text-align: left; }
+      .lns-step:not(:last-child)::after {
+        content: ""; position: absolute;
+        top: 48px; bottom: 0; left: 23px; width: 1px;
+        background: linear-gradient(180deg, rgba(178, 140, 255, 0.55), rgba(178, 140, 255, 0.08));
+      }
+      .lns-number { margin: 0; }
+      .lns-step-copy { padding-top: 4px; }
+      .lns-step h3 { min-height: 0; margin-bottom: 5px; font-size: 14px; }
+      .lns-note { margin-top: 8px; }
+    }
   </style>
 </head>
 <body>
@@ -1159,10 +1504,10 @@
       <a href="#why">Why Lumora</a>
       <a href="#gallery">Styles</a>
       <a href="#process">How It Works</a>
-      <a href="#order">Order</a>
+      <a href="#contact">Contact</a>
       <a href="#faq">FAQ</a>
     </div>
-    <button class="btn btn-primary" data-open-order>Start Your Portrait ↗</button>
+    <button class="btn btn-primary" data-open-contact>Start Your Portrait ↗</button>
   </nav>
 
   <main id="top">
@@ -1173,7 +1518,7 @@
           <h1>Create your <span class="gradient-word">signature style.</span></h1>
           <p class="lead">Every image begins with your aura. Lumora combines personal consultation, identity refinement and curated visual styles to create portraits that still feel unmistakably like you.</p>
           <div class="hero-actions">
-            <button class="btn btn-primary" data-open-order>Create My Portrait <span>→</span></button>
+            <button class="btn btn-primary" data-open-contact>Create My Portrait <span>→</span></button>
             <a class="btn btn-ghost" href="#gallery">Explore Styles</a>
           </div>
           <div class="trust">
@@ -1217,7 +1562,7 @@
               <div class="id-point"><i></i>Human-guided identity review before creation</div>
               <div class="id-point"><i></i>Luxury editorial styles built around you</div>
             </div>
-            <button class="id-cta" data-open-order>Create Your Signature Style →</button>
+            <button class="id-cta" data-open-contact>Create Your Signature Style →</button>
           </div>
 
           <div class="id-visual">
@@ -1625,26 +1970,82 @@
             <div class="lp-modal-note" id="lpModalNote"></div>
           </div>
           <div class="lp-modal-actions">
-            <button class="lp-modal-primary" type="button" data-open-order>Start This Service →</button>
+            <button class="lp-modal-primary" type="button" data-open-contact>Start This Service →</button>
             <button class="lp-modal-secondary" type="button" data-modal-close>Continue Exploring</button>
           </div>
         </div>
       </div>
     </div>
 
-    <section class="section" id="process">
-      <div class="shell">
-        <div class="section-head reveal">
-          <span class="kicker">A guided portrait journey</span>
-          <h2>From your photos<br>to your signature portrait.</h2>
-          <p class="section-copy">The service is intentionally guided. Before generation begins, a professional reviews your references and confirms the visual direction with you.</p>
+    <section class="lumora-next-steps" id="process" aria-labelledby="lnsTitle">
+      <div class="lns-inner">
+        <header class="lns-header">
+          <div>
+            <div class="lns-kicker">What happens next</div>
+            <h2 class="lns-title" id="lnsTitle">
+              From request<br>to final delivery.
+            </h2>
+          </div>
+
+          <p class="lns-intro">
+            Your request moves through a clear, human-guided process before
+            production begins.
+          </p>
+        </header>
+
+        <div class="lns-timeline">
+          <article class="lns-step">
+            <div class="lns-number">01</div>
+            <div class="lns-step-copy">
+              <h3>Submit Request</h3>
+              <p>Select your identity, service and describe what you need.</p>
+            </div>
+          </article>
+
+          <article class="lns-step">
+            <div class="lns-number">02</div>
+            <div class="lns-step-copy">
+              <h3>Telegram Consultation</h3>
+              <p>Continue the conversation directly with the Lumora concierge.</p>
+            </div>
+          </article>
+
+          <article class="lns-step">
+            <div class="lns-number">03</div>
+            <div class="lns-step-copy">
+              <h3>Photo Review</h3>
+              <p>Send your reference photos for clarity and identity review.</p>
+            </div>
+          </article>
+
+          <article class="lns-step">
+            <div class="lns-number">04</div>
+            <div class="lns-step-copy">
+              <h3>Style Confirmation</h3>
+              <p>Confirm the selected direction, mood and visual references.</p>
+            </div>
+          </article>
+
+          <article class="lns-step">
+            <div class="lns-number">05</div>
+            <div class="lns-step-copy">
+              <h3>Portrait Creation</h3>
+              <p>Production begins after your photos and direction are approved.</p>
+            </div>
+          </article>
+
+          <article class="lns-step">
+            <div class="lns-number">06</div>
+            <div class="lns-step-copy">
+              <h3>Private Delivery</h3>
+              <p>Your completed work is delivered through a private link.</p>
+            </div>
+          </article>
         </div>
-        <div class="process">
-          <article class="glass step reveal"><div class="step-num">01</div><h3>Choose a Style</h3><p>Select a curated portrait template that reflects your desired mood, wardrobe and visual language.</p></article>
-          <article class="glass step reveal"><div class="step-num">02</div><h3>Upload 5 Photos</h3><p>Share clear images from different angles so we can understand your features and natural expressions.</p></article>
-          <article class="glass step reveal"><div class="step-num">03</div><h3>Talk to a Specialist</h3><p>Tell us what must stay true to you, what you want refined and how you want the final portrait to feel.</p></article>
-          <article class="glass step reveal"><div class="step-num">04</div><h3>Identity Refinement</h3><p>We prepare the most consistent visual identity before applying your selected style template.</p></article>
-          <article class="glass step reveal"><div class="step-num">05</div><h3>Receive Your Portraits</h3><p>Your final images are reviewed, refined and delivered as a polished social portrait collection.</p></article>
+
+        <div class="lns-note">
+          A Lumora specialist will review your request and contact you through
+          Telegram before production begins.
         </div>
       </div>
     </section>
@@ -1663,45 +2064,150 @@
       </div>
     </section>
 
-    <section class="section" id="order">
-      <div class="shell">
-        <div class="section-head reveal">
-          <span class="kicker">Begin your portrait</span>
-          <h2>Reserve your Lumora experience.</h2>
-          <p class="section-copy">Choose your style, share your preferences and submit your request. A portrait specialist will contact you before the identity-building stage begins.</p>
-        </div>
-        <div class="order-wrap">
-          <form class="glass order-panel reveal" id="orderForm">
-            <div class="form-grid">
-              <div class="field"><label>First name</label><input required name="firstName" placeholder="Emily"></div>
-              <div class="field"><label>Last name</label><input required name="lastName" placeholder="Morgan"></div>
-              <div class="field"><label>Email</label><input required type="email" name="email" placeholder="you@example.com"></div>
-              <div class="field"><label>Preferred contact</label><select name="contact"><option>Telegram</option><option>WhatsApp</option><option>Email</option></select></div>
-              <div class="field full"><label>Choose your portrait style</label><select name="style"><option>Pearl Bloom</option><option>Rose Light</option><option>Golden Morning</option><option>Quiet Luxury</option><option>Let Lumora recommend</option></select></div>
-              <div class="field full"><label>What should the portrait feel like?</label><textarea name="brief" placeholder="Elegant, natural, soft light, true to my real facial features..."></textarea></div>
-              <div class="field full">
-                <label>Your 5 reference photos</label>
-                <div class="upload-box" id="uploadBox">＋ Select five clear photos<br><small>Front, 45°, side profile and two natural expressions</small></div>
-                <input id="photoInput" type="file" accept="image/*" multiple hidden>
-                <div id="fileCount" style="font-size:12px;color:var(--muted);margin-top:9px"></div>
-              </div>
-            </div>
-            <button class="btn btn-primary" type="submit" style="width:100%;margin-top:22px">Continue to Consultation →</button>
-          </form>
+    <section class="lumora-contact" id="contact">
+      <div class="lc-inner">
+        <header class="lc-head">
+          <div>
+            <div class="lc-kicker">Start your consultation</div>
+            <h2 class="lc-title">Tell us what<br>you want to create.</h2>
+          </div>
 
-          <aside class="glass summary reveal">
-            <span class="kicker">Portrait experience</span>
-            <h3 style="font-family:var(--serif);font-size:40px;font-weight:400;margin:16px 0 20px">Signature Collection</h3>
-            <div class="summary-row"><span>Human consultation</span><strong>Included</strong></div>
-            <div class="summary-row"><span>Identity review</span><strong>5 photos</strong></div>
-            <div class="summary-row"><span>Selected style</span><strong>1 collection</strong></div>
-            <div class="summary-row"><span>Final portraits</span><strong>Curated set</strong></div>
-            <div class="summary-row"><span>Delivery</span><strong>Private link</strong></div>
-            <p style="color:var(--muted);line-height:1.65;margin:24px 0 0">After submitting, a Lumora specialist will review your request and contact you to confirm the visual direction before production.</p>
-          </aside>
+          <p class="lc-intro">
+            Choose your identity and service first. We will carry your selection
+            into Telegram so our team can continue the conversation directly.
+          </p>
+        </header>
+
+        <div class="lc-shell">
+          <form class="lc-form-card" id="lumoraLeadForm">
+            <section class="lc-step">
+              <div class="lc-step-head">
+                <span class="lc-step-num">01</span>
+                <span class="lc-step-title">Choose your identity</span>
+              </div>
+
+              <div class="lc-choice-grid">
+                <button class="lc-choice" type="button" data-identity="Personal">
+                  <small>For yourself</small>
+                  <strong>Personal</strong>
+                  <span>Portraits and personal social content</span>
+                </button>
+
+                <button class="lc-choice" type="button" data-identity="Brand">
+                  <small>For business</small>
+                  <strong>Brand</strong>
+                  <span>Products, campaigns and brand visuals</span>
+                </button>
+              </div>
+            </section>
+
+            <section class="lc-step lc-services" id="personalServices">
+              <div class="lc-step-head">
+                <span class="lc-step-num">02</span>
+                <span class="lc-step-title">Choose a personal service</span>
+              </div>
+
+              <div class="lc-choice-grid">
+                <button class="lc-choice" type="button" data-service="Style Portrait — $5">
+                  <small>Personal</small>
+                  <strong>Style Portrait</strong>
+                  <span>$5 per image</span>
+                </button>
+
+                <button class="lc-choice" type="button" data-service="Style to Motion — $12">
+                  <small>Personal</small>
+                  <strong>Style to Motion</strong>
+                  <span>$12 per video</span>
+                </button>
+              </div>
+            </section>
+
+            <section class="lc-step lc-services" id="brandServices">
+              <div class="lc-step-head">
+                <span class="lc-step-num">02</span>
+                <span class="lc-step-title">Choose a brand service</span>
+              </div>
+
+              <div class="lc-choice-grid">
+                <button class="lc-choice" type="button" data-service="Template Video — $15">
+                  <small>Brand</small>
+                  <strong>Template Video</strong>
+                  <span>$15 per video</span>
+                </button>
+
+                <button class="lc-choice" type="button" data-service="Custom Brand Style">
+                  <small>Brand</small>
+                  <strong>Custom Brand Style</strong>
+                  <span>Custom quotation</span>
+                </button>
+              </div>
+            </section>
+
+            <section class="lc-step">
+              <div class="lc-step-head">
+                <span class="lc-step-num">03</span>
+                <span class="lc-step-title">Your name</span>
+              </div>
+
+              <div class="lc-field">
+                <label for="leadName">How should we address you?</label>
+                <input id="leadName" name="name" type="text" autocomplete="name" placeholder="Vanessa" required>
+              </div>
+            </section>
+
+            <section class="lc-step">
+              <div class="lc-step-head">
+                <span class="lc-step-num">04</span>
+                <span class="lc-step-title">Tell us what you need</span>
+              </div>
+
+              <div class="lc-field">
+                <label for="leadRequest">A short description is enough</label>
+                <textarea id="leadRequest" name="request" placeholder="Example: I want a soft editorial portrait with natural light..." required></textarea>
+              </div>
+            </section>
+
+            <input type="hidden" id="leadIdentity" name="identity">
+            <input type="hidden" id="leadService" name="service">
+
+            <button class="lc-submit" id="telegramSubmit" type="submit" disabled>
+              Send &amp; Continue on Telegram →
+            </button>
+
+            <p class="lc-submit-note">
+              Telegram will open after submission. The live version will connect
+              this request to your Telegram ID.
+            </p>
+          </form>
         </div>
       </div>
     </section>
+
+    <div class="lc-confirm-modal" id="lcConfirmModal" aria-hidden="true">
+      <div class="lc-confirm-panel" role="dialog" aria-modal="true" aria-labelledby="lcConfirmTitle">
+        <button class="lc-confirm-close" type="button" aria-label="Close" data-confirm-close>×</button>
+
+        <div class="lc-confirm-kicker">Request confirmation</div>
+
+        <h3 class="lc-confirm-title" id="lcConfirmTitle">Ready to continue.</h3>
+
+        <p class="lc-confirm-copy">
+          Please confirm the information below. Telegram will open after you continue.
+        </p>
+
+        <div class="lc-confirm-data">
+          <div class="lc-confirm-row"><span>Identity</span><strong id="confirmIdentity">—</strong></div>
+          <div class="lc-confirm-row"><span>Service</span><strong id="confirmService">—</strong></div>
+          <div class="lc-confirm-row"><span>Name</span><strong id="confirmName">—</strong></div>
+          <div class="lc-confirm-row lc-confirm-row-request"><span>Request</span><strong id="confirmRequest">—</strong></div>
+        </div>
+
+        <div class="lc-confirm-actions">
+          <button class="lc-confirm-primary" type="button" id="confirmTelegram">Continue to Telegram →</button>
+          <button class="lc-confirm-secondary" type="button" data-confirm-close>Edit</button>
+        </div>
+      </div>
+    </div>
 
     <section class="section" id="faq">
       <div class="shell">
@@ -1724,7 +2230,7 @@
           <span class="kicker">Every image begins with your aura</span>
           <h2>Ready to create the portrait that finally feels like you?</h2>
           <p>Choose a style. Meet your specialist. Create your signature.</p>
-          <button class="btn btn-primary" data-open-order style="margin-top:22px">Start Your Portrait →</button>
+          <button class="btn btn-primary" data-open-contact style="margin-top:22px">Start Your Portrait →</button>
         </div>
       </div>
     </section>
@@ -1736,14 +2242,6 @@
       <div>Private portraits · Human-guided creation · Secure delivery</div>
     </div>
   </footer>
-
-  <div class="modal" id="orderModal" aria-hidden="true">
-    <div class="glass modal-card">
-      <div class="modal-top"><div><span class="kicker">Lumora concierge</span><h3 style="font-family:var(--serif);font-size:40px;font-weight:400;margin:8px 0">Start your portrait</h3></div><button class="close" data-close>×</button></div>
-      <p style="color:var(--muted);line-height:1.6">We will take you to the order section, where you can choose a style, upload five photos and request a personal consultation.</p>
-      <button class="btn btn-primary" id="goOrder" style="width:100%">Continue →</button>
-    </div>
-  </div>
 
   <div class="modal" id="successModal">
     <div class="glass modal-card">
@@ -1814,16 +2312,10 @@
     }
     playChat();
 
-    const orderModal=document.getElementById('orderModal');
-    document.querySelectorAll('[data-open-order]').forEach(btn=>btn.onclick=()=>{
-      orderModal.classList.add('open');orderModal.setAttribute('aria-hidden','false');
+    document.querySelectorAll('[data-open-contact]').forEach(btn=>btn.onclick=()=>{
+      const target=document.getElementById('contact');
+      if(target) target.scrollIntoView({behavior:'smooth'});
     });
-    document.querySelector('[data-close]').onclick=()=>orderModal.classList.remove('open');
-    document.getElementById('goOrder').onclick=()=>{
-      orderModal.classList.remove('open');
-      document.getElementById('order').scrollIntoView({behavior:'smooth'});
-    };
-    orderModal.addEventListener('click',e=>{if(e.target===orderModal)orderModal.classList.remove('open')});
 
     const uploadBox=document.getElementById('uploadBox');
     const photoInput=document.getElementById('photoInput');
@@ -1834,10 +2326,6 @@
     };
 
     const successModal=document.getElementById('successModal');
-    document.getElementById('orderForm').addEventListener('submit',e=>{
-      e.preventDefault();
-      successModal.classList.add('open');
-    });
     document.querySelector('[data-success-close]').onclick=()=>{
       successModal.classList.remove('open');
       window.scrollTo({top:0,behavior:'smooth'});
@@ -2062,6 +2550,111 @@
           group.style.setProperty("--mx", `${e.clientX - rect.left}px`);
           group.style.setProperty("--my", `${e.clientY - rect.top}px`);
         });
+      });
+    })();
+
+    /* ===== Lumora Contact / Telegram lead form ===== */
+    (() => {
+      const form = document.getElementById("lumoraLeadForm");
+      if (!form) return;
+      const identityInput = document.getElementById("leadIdentity");
+      const serviceInput = document.getElementById("leadService");
+      const nameInput = document.getElementById("leadName");
+      const requestInput = document.getElementById("leadRequest");
+      const submitButton = document.getElementById("telegramSubmit");
+
+      const personalServices = document.getElementById("personalServices");
+      const brandServices = document.getElementById("brandServices");
+
+      const confirmModal = document.getElementById("lcConfirmModal");
+      const confirmIdentity = document.getElementById("confirmIdentity");
+      const confirmService = document.getElementById("confirmService");
+      const confirmName = document.getElementById("confirmName");
+      const confirmRequest = document.getElementById("confirmRequest");
+      const confirmTelegram = document.getElementById("confirmTelegram");
+
+      function clearServiceSelection() {
+        serviceInput.value = "";
+        document.querySelectorAll("[data-service]").forEach(button => {
+          button.classList.remove("is-selected");
+        });
+      }
+
+      function updateSubmitState() {
+        const isReady =
+          identityInput.value &&
+          serviceInput.value &&
+          nameInput.value.trim() &&
+          requestInput.value.trim();
+        submitButton.disabled = !isReady;
+      }
+
+      document.querySelectorAll("[data-identity]").forEach(button => {
+        button.addEventListener("click", () => {
+          document.querySelectorAll("[data-identity]").forEach(item => {
+            item.classList.remove("is-selected");
+          });
+          button.classList.add("is-selected");
+          identityInput.value = button.dataset.identity;
+          clearServiceSelection();
+          const isPersonal = button.dataset.identity === "Personal";
+          personalServices.classList.toggle("is-visible", isPersonal);
+          brandServices.classList.toggle("is-visible", !isPersonal);
+          updateSubmitState();
+        });
+      });
+
+      document.querySelectorAll("[data-service]").forEach(button => {
+        button.addEventListener("click", () => {
+          const activeContainer = button.closest(".lc-services");
+          activeContainer.querySelectorAll("[data-service]").forEach(item => {
+            item.classList.remove("is-selected");
+          });
+          button.classList.add("is-selected");
+          serviceInput.value = button.dataset.service;
+          updateSubmitState();
+        });
+      });
+
+      nameInput.addEventListener("input", updateSubmitState);
+      requestInput.addEventListener("input", updateSubmitState);
+
+      function openConfirm() {
+        confirmIdentity.textContent = identityInput.value || "—";
+        confirmService.textContent = serviceInput.value || "—";
+        confirmName.textContent = nameInput.value.trim() || "—";
+        confirmRequest.textContent = requestInput.value.trim() || "—";
+        confirmModal.classList.add("is-open");
+        confirmModal.setAttribute("aria-hidden", "false");
+        document.body.classList.add("lc-confirm-open");
+        requestAnimationFrame(() => confirmModal.querySelector(".lc-confirm-close").focus());
+      }
+
+      function closeConfirm() {
+        confirmModal.classList.remove("is-open");
+        confirmModal.setAttribute("aria-hidden", "true");
+        document.body.classList.remove("lc-confirm-open");
+      }
+
+      form.addEventListener("submit", event => {
+        event.preventDefault();
+        if (submitButton.disabled) return;
+        openConfirm();
+      });
+
+      document.querySelectorAll("[data-confirm-close]").forEach(btn => {
+        btn.addEventListener("click", closeConfirm);
+      });
+      confirmModal.addEventListener("click", event => {
+        if (event.target === confirmModal) closeConfirm();
+      });
+      document.addEventListener("keydown", event => {
+        if (event.key === "Escape" && confirmModal.classList.contains("is-open")) closeConfirm();
+      });
+
+      // Continue to Telegram: TODO 串接時改為 window.location.href = "https://t.me/YOUR_BOT_USERNAME?start=" + inquiryId
+      confirmTelegram.addEventListener("click", () => {
+        confirmTelegram.textContent = "Opening Telegram…";
       });
     })();
   </script>
