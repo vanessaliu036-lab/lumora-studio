@@ -788,6 +788,368 @@
       border-color:transparent;transform:translateY(-2px);
       box-shadow:0 18px 44px rgba(170,105,255,.4);
     }
+
+    /* ============================================================
+       ADDED ONLY — Lumora Pricing section + no-scroll modal
+       (sits between Editorial Block and How it works)
+       ============================================================ */
+    .lumora-pricing,
+    .lumora-pricing *,
+    .lumora-price-modal,
+    .lumora-price-modal * {
+      box-sizing: border-box;
+    }
+
+    .lumora-pricing {
+      --lp-text: #f8f5ff;
+      --lp-muted: rgba(245, 241, 255, 0.64);
+      --lp-line: rgba(255, 255, 255, 0.14);
+      --lp-serif: "Italiana", Georgia, serif;
+      --lp-sans: "DM Sans", Arial, sans-serif;
+
+      position: relative;
+      overflow: hidden;
+      padding: 100px 18px;
+      color: var(--lp-text);
+      font-family: var(--lp-sans);
+      background:
+        radial-gradient(circle at 86% 18%, rgba(137, 95, 255, 0.20), transparent 30%),
+        radial-gradient(circle at 12% 84%, rgba(80, 130, 255, 0.10), transparent 31%),
+        linear-gradient(135deg, #080a17, #111226 48%, #100b25);
+    }
+
+    .lumora-pricing::before {
+      content: "";
+      position: absolute;
+      inset: -35%;
+      pointer-events: none;
+      background: conic-gradient(
+        from 120deg,
+        rgba(122, 89, 255, 0.11),
+        rgba(255, 174, 211, 0.08),
+        rgba(126, 102, 255, 0.08),
+        rgba(122, 89, 255, 0.11)
+      );
+      filter: blur(110px);
+      animation: lpAura 24s linear infinite;
+    }
+
+    @keyframes lpAura { to { transform: rotate(360deg) scale(1.05); } }
+
+    .lp-inner { position: relative; z-index: 2; width: min(1500px, 100%); margin: auto; }
+
+    .lp-header { display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 55px; align-items: end; margin-bottom: 60px; }
+
+    .lp-kicker { margin-bottom: 20px; color: #d5c3ff; font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; }
+
+    .lp-title {
+      max-width: 960px; margin: 0;
+      font-family: var(--lp-serif);
+      font-size: clamp(62px, 7vw, 112px);
+      font-weight: 400; line-height: 0.91; letter-spacing: -0.045em;
+    }
+
+    .lp-intro { max-width: 650px; margin: 0 0 5px; color: var(--lp-muted); font-size: clamp(16px, 1.4vw, 20px); line-height: 1.7; }
+
+    .lp-groups { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+
+    .lp-group {
+      --mx: 50%; --my: 50%;
+      position: relative; overflow: hidden;
+      padding: 22px;
+      border: 1px solid var(--lp-line);
+      border-radius: 38px;
+      backdrop-filter: blur(22px);
+      transition: transform 0.45s cubic-bezier(.2,.8,.2,1), border-color 0.4s ease, box-shadow 0.45s ease;
+    }
+
+    .lp-group::before {
+      content: ""; position: absolute; inset: 0; pointer-events: none; opacity: 0;
+      background: radial-gradient(circle 260px at var(--mx) var(--my), rgba(255,255,255,0.18), rgba(183,143,255,0.10) 34%, transparent 70%);
+      transition: opacity 0.35s ease;
+    }
+
+    .lp-group:hover { transform: translateY(-7px); }
+    .lp-group:hover::before { opacity: 1; }
+
+    .lp-group-personal {
+      background:
+        radial-gradient(circle at 12% 15%, rgba(107, 174, 255, 0.14), transparent 34%),
+        linear-gradient(145deg, rgba(66, 78, 111, 0.42), rgba(31, 34, 58, 0.50));
+    }
+    .lp-group-personal:hover {
+      border-color: rgba(155, 221, 255, 0.48);
+      box-shadow: 0 32px 90px rgba(54, 121, 201, 0.22), 0 0 55px rgba(121, 205, 255, 0.13), inset 0 1px rgba(255,255,255,0.10);
+    }
+
+    .lp-group-brand {
+      background:
+        radial-gradient(circle at 87% 14%, rgba(255, 160, 219, 0.14), transparent 35%),
+        linear-gradient(145deg, rgba(80, 59, 105, 0.48), rgba(38, 28, 61, 0.54));
+    }
+    .lp-group-brand:hover {
+      border-color: rgba(255, 188, 229, 0.48);
+      box-shadow: 0 32px 90px rgba(151, 88, 186, 0.23), 0 0 55px rgba(255, 158, 222, 0.13), inset 0 1px rgba(255,255,255,0.10);
+    }
+
+    .lp-group-head { position: relative; z-index: 2; display: flex; justify-content: space-between; gap: 18px; padding: 8px 12px 18px; }
+    .lp-group-name { font-size: 12px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; }
+    .lp-group-personal .lp-group-name { color: #b8e7ff; }
+    .lp-group-brand .lp-group-name { color: #ffc2e8; }
+    .lp-group-note { color: rgba(255,255,255,0.42); font-size: 12px; }
+
+    .lp-cards { position: relative; z-index: 2; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+
+    .lp-card {
+      position: relative; min-height: 375px; overflow: hidden;
+      padding: 30px; color: var(--lp-text); text-align: left;
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 28px; cursor: pointer; font: inherit;
+      transition: transform 0.5s cubic-bezier(.2,.8,.2,1), border-color 0.4s ease, box-shadow 0.45s ease;
+    }
+    .lp-group-personal .lp-card {
+      background:
+        radial-gradient(circle at 92% 5%, rgba(198, 219, 255, 0.20), transparent 32%),
+        linear-gradient(145deg, rgba(255,255,255,0.085), rgba(105,139,190,0.055));
+    }
+    .lp-group-brand .lp-card {
+      background:
+        radial-gradient(circle at 92% 5%, rgba(255, 183, 226, 0.20), transparent 32%),
+        linear-gradient(145deg, rgba(255,255,255,0.085), rgba(175,106,174,0.055));
+    }
+
+    .lp-card::before {
+      content: ""; position: absolute; inset: -20%; pointer-events: none;
+      background: linear-gradient(115deg, transparent 37%, rgba(255,255,255,0.16) 49%, transparent 61%);
+      transform: translateX(-130%);
+      transition: transform 1.05s ease;
+    }
+
+    .lp-card:hover, .lp-card:focus-visible { transform: translateY(-8px) scale(1.012); outline: none; }
+    .lp-card:hover::before, .lp-card:focus-visible::before { transform: translateX(130%); }
+
+    .lp-group-personal .lp-card:hover, .lp-group-personal .lp-card:focus-visible {
+      border-color: rgba(174, 228, 255, 0.60);
+      box-shadow: 0 22px 60px rgba(58, 139, 220, 0.24), 0 0 30px rgba(158, 220, 255, 0.17);
+    }
+    .lp-group-brand .lp-card:hover, .lp-group-brand .lp-card:focus-visible {
+      border-color: rgba(255, 195, 232, 0.60);
+      box-shadow: 0 22px 60px rgba(175, 92, 184, 0.25), 0 0 30px rgba(255, 174, 224, 0.17);
+    }
+
+    .lp-tag {
+      display: inline-flex; min-height: 35px; align-items: center;
+      padding: 0 14px; border: 1px solid rgba(255,255,255,0.16);
+      border-radius: 999px; color: rgba(255,255,255,0.78);
+      background: rgba(15,15,38,0.42);
+      font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase;
+    }
+
+    .lp-card-content { position: absolute; right: 30px; bottom: 27px; left: 30px; }
+    .lp-card h3 {
+      margin: 0 0 14px; font-family: var(--lp-serif);
+      font-size: clamp(30px, 2.4vw, 46px); font-weight: 400;
+      line-height: 1.02; letter-spacing: -0.025em;
+    }
+    .lp-value {
+      margin-bottom: 18px; font-family: var(--lp-serif);
+      font-size: clamp(58px, 5vw, 80px); line-height: 0.9; letter-spacing: -0.04em;
+    }
+    .lp-description { min-height: 66px; margin: 0; color: var(--lp-muted); font-size: 14px; line-height: 1.55; }
+    .lp-link {
+      display: flex; justify-content: space-between; gap: 16px;
+      margin-top: 18px; padding-top: 16px;
+      border-top: 1px solid rgba(255,255,255,0.11);
+      color: rgba(255,255,255,0.86); font-size: 11px;
+      letter-spacing: 0.13em; text-transform: uppercase;
+    }
+    .lp-arrow { font-size: 24px; transition: transform 0.3s ease; }
+    .lp-card:hover .lp-arrow { transform: translate(4px, -4px); }
+
+    /* ===================== MODAL ===================== */
+    body.lp-modal-open { overflow: hidden; }
+
+    .lumora-price-modal {
+      --modal-accent: #b48cff;
+      --modal-accent-soft: rgba(180, 140, 255, 0.22);
+
+      position: fixed; inset: 0; z-index: 99999;
+      display: grid; place-items: center;
+      padding: clamp(20px, 4vh, 42px);
+      visibility: hidden; opacity: 0;
+      background: rgba(4,5,16,0.82);
+      backdrop-filter: blur(20px);
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+    .lumora-price-modal.is-open { visibility: visible; opacity: 1; }
+    .lumora-price-modal[data-theme="personal"] { --modal-accent: #9bdfff; --modal-accent-soft: rgba(117, 199, 255, 0.22); }
+    .lumora-price-modal[data-theme="brand"] { --modal-accent: #ffc0e7; --modal-accent-soft: rgba(255, 159, 219, 0.22); }
+
+    .lp-modal-panel {
+      position: relative;
+      width: min(1120px, calc(100vw - 64px));
+      height: min(700px, calc(100dvh - 80px));
+      min-height: 540px;
+      display: grid; grid-template-columns: 38% 62%;
+      overflow: hidden; color: #f8f5ff;
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 32px;
+      background: radial-gradient(circle at 90% 10%, var(--modal-accent-soft), transparent 30%), linear-gradient(145deg, #111225, #17132f 56%, #0b0b1d);
+      box-shadow: 0 55px 170px rgba(0,0,0,0.68);
+      transform: translateY(18px) scale(0.98);
+      transition: transform 0.42s cubic-bezier(.2,.8,.2,1);
+    }
+    .lumora-price-modal.is-open .lp-modal-panel { transform: none; }
+
+    .lp-modal-close {
+      position: absolute; z-index: 20; top: 19px; right: 19px;
+      width: 43px; height: 43px; display: grid; place-items: center;
+      color: #fff; border: 1px solid rgba(255,255,255,0.20);
+      border-radius: 50%; background: rgba(255,255,255,0.07);
+      backdrop-filter: blur(12px); cursor: pointer; font-size: 19px;
+      transition: transform 0.3s ease, background 0.3s ease;
+    }
+    .lp-modal-close:hover { transform: rotate(90deg); background: rgba(255,255,255,0.14); }
+
+    .lp-modal-visual {
+      position: relative; overflow: hidden;
+      background: radial-gradient(circle at 30% 23%, var(--modal-accent-soft), transparent 25%), linear-gradient(145deg, #312851, #17162d 72%);
+    }
+    .lp-modal-visual::after {
+      content: ""; position: absolute; inset: 0;
+      background: linear-gradient(180deg, transparent 48%, rgba(7,7,22,0.72));
+    }
+
+    .lp-orb {
+      position: absolute; border-radius: 50%;
+      background: radial-gradient(circle at 34% 30%, #fff, #ffd8ec 23%, #ad8dff 61%, #6d4ce4);
+      box-shadow: 0 0 40px var(--modal-accent-soft), 0 30px 70px rgba(0,0,0,0.26);
+      animation: lpOrb 7s ease-in-out infinite;
+    }
+    .lp-orb-large { width: clamp(170px, 17vw, 245px); aspect-ratio: 1; top: 12%; left: 12%; }
+    .lp-orb-small {
+      width: clamp(90px, 9vw, 125px); aspect-ratio: 1; right: 12%; bottom: 12%;
+      background: radial-gradient(circle at 32% 29%, #fff, #bfffee 24%, #a588ff 63%, #6949dc);
+      animation-delay: 1.3s;
+    }
+    @keyframes lpOrb { 50% { transform: translateY(-12px); } }
+
+    .lp-modal-visual-copy { position: absolute; z-index: 2; right: 34px; bottom: 32px; left: 34px; }
+    .lp-modal-visual-kicker { margin-bottom: 12px; color: rgba(255,255,255,0.66); font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; }
+    .lp-modal-visual-title { margin: 0; font-family: var(--lp-serif); font-size: clamp(42px, 4vw, 62px); font-weight: 400; line-height: 0.96; letter-spacing: -0.04em; }
+
+    .lp-modal-main { min-width: 0; display: grid; grid-template-rows: 1fr auto; }
+    .lp-modal-content { min-height: 0; overflow: hidden; padding: 42px 52px 22px; }
+    .lp-modal-eyebrow { margin-bottom: 13px; color: var(--modal-accent); font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; }
+    .lp-modal-title {
+      margin: 0 0 14px; padding-right: 45px; font-family: var(--lp-serif);
+      font-size: clamp(50px, 5vw, 76px); font-weight: 400; line-height: 0.92; letter-spacing: -0.045em;
+    }
+    .lp-modal-price-line { display: flex; align-items: flex-end; gap: 15px; margin-bottom: 22px; }
+    .lp-modal-price { font-family: var(--lp-serif); font-size: clamp(48px, 4.5vw, 66px); line-height: 0.9; }
+    .lp-modal-unit { padding-bottom: 7px; color: rgba(255,255,255,0.55); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; }
+    .lp-modal-description { max-width: 700px; margin: 0 0 21px; color: rgba(245,241,255,0.68); font-size: 14px; line-height: 1.58; }
+    .lp-modal-features { margin: 0; padding: 0; list-style: none; border-top: 1px solid rgba(255,255,255,0.12); }
+    .lp-modal-features li {
+      display: flex; align-items: center; justify-content: space-between; gap: 18px;
+      min-height: 45px; padding: 10px 0;
+      color: rgba(255,255,255,0.82);
+      border-bottom: 1px solid rgba(255,255,255,0.12);
+      font-size: 13px;
+    }
+    .lp-modal-features li::after { content: "✦"; flex: none; color: var(--modal-accent); }
+    .lp-modal-note { margin-top: 18px; padding: 13px 16px; color: rgba(255,255,255,0.55); border: 1px solid rgba(255,255,255,0.14); border-radius: 15px; background: rgba(255,255,255,0.04); font-size: 11px; line-height: 1.5; }
+
+    .lp-modal-actions {
+      display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 11px;
+      padding: 15px 52px 20px; border-top: 1px solid rgba(255,255,255,0.12);
+      background: rgba(10,9,25,0.92);
+      box-shadow: 0 -16px 34px rgba(5,4,15,0.28);
+    }
+    .lp-modal-primary, .lp-modal-secondary {
+      min-height: 50px; display: inline-flex; align-items: center; justify-content: center; gap: 9px;
+      padding: 13px 20px; color: #fff; border-radius: 999px;
+      font: 600 13px var(--lp-sans); cursor: pointer; text-decoration: none;
+      transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+    }
+    .lp-modal-primary {
+      border: 0;
+      background: linear-gradient(110deg, #ffc4b8, #f2a8d1 48%, #a47cff);
+      box-shadow: 0 14px 35px rgba(173,112,255,0.30), inset 0 1px rgba(255,255,255,0.68);
+    }
+    .lp-modal-primary:hover { transform: translateY(-2px); box-shadow: 0 20px 45px rgba(173,112,255,0.46), 0 0 27px var(--modal-accent-soft); }
+    .lp-modal-secondary { border: 1px solid rgba(255,255,255,0.17); background: rgba(255,255,255,0.045); }
+    .lp-modal-secondary:hover { transform: translateY(-2px); background: rgba(255,255,255,0.09); }
+
+    @media (max-width: 1050px) {
+      .lp-header { grid-template-columns: 1fr; gap: 24px; }
+      .lp-groups { grid-template-columns: 1fr; }
+      .lp-modal-panel { width: min(940px, calc(100vw - 40px)); grid-template-columns: 34% 66%; }
+      .lp-modal-content { padding: 36px 40px 18px; }
+      .lp-modal-actions { padding: 14px 40px 18px; }
+    }
+    @media (max-width: 760px) {
+      .lumora-pricing { padding: 80px 12px; }
+      .lp-cards { grid-template-columns: 1fr 1fr; gap: 10px; }
+      .lp-group { padding: 12px; border-radius: 28px; }
+      .lp-card { min-height: 300px; padding: 20px; border-radius: 22px; }
+      .lp-card-content { right: 20px; bottom: 20px; left: 20px; }
+      .lp-description { display: none; }
+      .lumora-price-modal { padding: 12px; }
+      .lp-modal-panel { width: 100%; height: min(760px, calc(100dvh - 24px)); min-height: 0; grid-template-columns: 1fr; grid-template-rows: 150px minmax(0, 1fr); border-radius: 25px; }
+      .lp-modal-visual { min-height: 150px; }
+      .lp-orb-large { width: 105px; top: 18px; left: 28px; }
+      .lp-orb-small { width: 62px; right: 27%; bottom: 15px; }
+      .lp-modal-visual-copy { right: 22px; bottom: 18px; left: auto; width: 54%; }
+      .lp-modal-visual-title { font-size: 30px; }
+      .lp-modal-content { padding: 24px 20px 12px; }
+      .lp-modal-title { font-size: 44px; margin-bottom: 10px; }
+      .lp-modal-price-line { margin-bottom: 15px; }
+      .lp-modal-price { font-size: 50px; }
+      .lp-modal-description { font-size: 12px; margin-bottom: 13px; }
+      .lp-modal-features li { min-height: 38px; padding: 7px 0; font-size: 11px; }
+      .lp-modal-note { margin-top: 12px; padding: 10px 12px; font-size: 10px; }
+      .lp-modal-actions { grid-template-columns: 1fr; padding: 11px 15px 14px; }
+      .lp-modal-secondary { display: none; }
+      .lp-modal-primary { min-height: 49px; }
+      .lp-modal-close { top: 14px; right: 14px; }
+    }
+    @media (max-width: 480px) {
+      .lp-title { font-size: 53px; }
+      .lp-group-head { padding: 7px 5px 14px; }
+      .lp-group-note { display: none; }
+      .lp-card { min-height: 255px; padding: 15px; }
+      .lp-card-content { right: 15px; bottom: 15px; left: 15px; }
+      .lp-card h3 { font-size: 24px; }
+      .lp-value { font-size: 48px; }
+      .lp-link { font-size: 9px; }
+      .lp-modal-panel { grid-template-rows: 120px minmax(0, 1fr); }
+      .lp-orb-large { width: 82px; top: 16px; left: 20px; }
+      .lp-orb-small { display: none; }
+      .lp-modal-visual-copy { width: 58%; bottom: 13px; right: 15px; }
+      .lp-modal-visual-kicker { margin-bottom: 5px; font-size: 7px; }
+      .lp-modal-visual-title { font-size: 24px; }
+      .lp-modal-content { padding: 18px 15px 8px; }
+      .lp-modal-title { font-size: 37px; }
+      .lp-modal-price { font-size: 44px; }
+      .lp-modal-description { font-size: 11px; line-height: 1.45; }
+      .lp-modal-features li { min-height: 34px; font-size: 10.5px; }
+      .lp-modal-note { display: none; }
+    }
+    @media (max-height: 680px) and (min-width: 761px) {
+      .lp-modal-panel { height: calc(100dvh - 40px); min-height: 0; }
+      .lp-modal-content { padding-top: 28px; padding-bottom: 10px; }
+      .lp-modal-title { font-size: 55px; }
+      .lp-modal-price-line { margin-bottom: 14px; }
+      .lp-modal-description { margin-bottom: 12px; font-size: 12px; }
+      .lp-modal-features li { min-height: 35px; padding: 6px 0; font-size: 11px; }
+      .lp-modal-note { margin-top: 10px; padding: 9px 12px; font-size: 9px; }
+      .lp-modal-actions { padding-top: 10px; padding-bottom: 12px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .lumora-pricing::before, .lp-orb { animation: none !important; }
+      .lp-group, .lp-card, .lp-modal-panel { transition: none !important; }
+    }
   </style>
 </head>
 <body>
@@ -1141,87 +1503,132 @@
       </div>
     </section>
 
-    <section class="lumora-portfolio" id="lumoraPortfolio">
-      <div class="lumora-portfolio-inner">
-        <header class="lumora-portfolio-head">
+    <section class="lumora-pricing" id="pricing">
+      <div class="lp-inner">
+        <header class="lp-header">
           <div>
-            <div class="lumora-kicker">Lumora Editorial Archive</div>
-            <h2 class="lumora-title">A portfolio of<br><span>visual identities.</span></h2>
+            <div class="lp-kicker">Choose your experience</div>
+            <h2 class="lp-title">Simple pricing.<br>Made to feel personal.</h2>
           </div>
-          <div>
-            <p class="lumora-intro">
-              Explore a growing archive of portrait worlds—fashion, beauty, fantasy and editorial.
-              Each image begins with a real identity, then expands into a completely new visual direction.
-              Select any cover to view the full-resolution artwork.
-            </p>
-            <div class="lumora-meta-line">
-              <span><i></i> High-resolution archive</span>
-              <span><i></i> One identity · many styles</span>
-              <span><i></i> Click to enlarge</span>
-            </div>
-          </div>
+
+          <p class="lp-intro">
+            Start with one image or build a complete brand world.
+            Select a service to view its full experience and delivery details.
+          </p>
         </header>
 
-        <div class="lumora-wall">
-          <figure class="lumora-work" data-full="lumora-portfolio-01.png" data-title="Midnight Crystal" data-category="Fashion Editorial" data-description="Cool blue light, crystal textures and a sculpted black silhouette.">
-            <img src="lumora-portfolio-01.png" alt="Midnight Crystal editorial" loading="lazy">
-            <span class="lumora-sheen"></span>
-            <span class="lumora-number">01</span>
-            <span class="lumora-chip">Fashion</span>
-            <figcaption class="lumora-caption"><h3>Midnight Crystal</h3><p>Cool blue light and crystal-studded styling.</p></figcaption>
-          </figure>
-          <figure class="lumora-work" data-full="lumora-portfolio-02.png" data-title="Crimson Apple" data-category="Concept Portrait" data-description="A saturated red studio world with pearls, tailored white and surreal still-life detail.">
-            <img src="lumora-portfolio-02.png" alt="Crimson Apple editorial" loading="lazy">
-            <span class="lumora-sheen"></span>
-            <span class="lumora-number">02</span>
-            <span class="lumora-chip">Concept</span>
-            <figcaption class="lumora-caption"><h3>Crimson Apple</h3><p>Graphic red, pearls and surreal still life.</p></figcaption>
-          </figure>
-          <figure class="lumora-work" data-full="lumora-portfolio-03.png" data-title="Ruby Detail" data-category="Beauty Close-up" data-description="A close beauty study with gem eyeliner, wet strands and deep crimson shadow.">
-            <img src="lumora-portfolio-03.png" alt="Ruby Detail close-up" loading="lazy">
-            <span class="lumora-sheen"></span>
-            <span class="lumora-number">03</span>
-            <span class="lumora-chip">Beauty</span>
-            <figcaption class="lumora-caption"><h3>Ruby Detail</h3><p>Gem eyeliner and high-gloss beauty detail.</p></figcaption>
-          </figure>
-          <figure class="lumora-work" data-full="lumora-portfolio-04.png" data-title="Garden Dream" data-category="Fantasy Editorial" data-description="Sunlit green, floating bubbles and handcrafted meadow styling.">
-            <img src="lumora-portfolio-04.png" alt="Garden Dream editorial" loading="lazy">
-            <span class="lumora-sheen"></span>
-            <span class="lumora-number">04</span>
-            <span class="lumora-chip">Fantasy</span>
-            <figcaption class="lumora-caption"><h3>Garden Dream</h3><p>Sunlit meadow fantasy with floating bubbles.</p></figcaption>
-          </figure>
-          <figure class="lumora-work" data-full="lumora-portfolio-05.png" data-title="Summer Soda" data-category="Lifestyle Editorial" data-description="A warm summer portrait with glass bottle, wet skin and playful retro styling.">
-            <img src="lumora-portfolio-05.png" alt="Summer Soda editorial" loading="lazy">
-            <span class="lumora-sheen"></span>
-            <span class="lumora-number">05</span>
-            <span class="lumora-chip">Lifestyle</span>
-            <figcaption class="lumora-caption"><h3>Summer Soda</h3><p>Warm skin, retro soda and playful summer energy.</p></figcaption>
-          </figure>
-          <figure class="lumora-work" data-full="lumora-portfolio-06.png" data-title="Tomato Veil" data-category="Soft Editorial" data-description="Cream lace, soft window light and a playful tomato still-life composition.">
-            <img src="lumora-portfolio-06.png" alt="Tomato Veil editorial" loading="lazy">
-            <span class="lumora-sheen"></span>
-            <span class="lumora-number">06</span>
-            <span class="lumora-chip">Soft Editorial</span>
-            <figcaption class="lumora-caption"><h3>Tomato Veil</h3><p>Cream lace, soft light and playful still life.</p></figcaption>
-          </figure>
+        <div class="lp-groups">
+          <section class="lp-group lp-group-personal">
+            <div class="lp-group-head">
+              <span class="lp-group-name">Personal</span>
+              <span class="lp-group-note">Portrait &amp; motion</span>
+            </div>
+
+            <div class="lp-cards">
+              <button class="lp-card" type="button" data-service="portrait">
+                <span class="lp-tag">Personal</span>
+                <div class="lp-card-content">
+                  <h3>Style Portrait</h3>
+                  <div class="lp-value">$5</div>
+                  <p class="lp-description">
+                    A personalized editorial-style portrait created from your own reference photos.
+                  </p>
+                  <span class="lp-link">
+                    View details
+                    <span class="lp-arrow">↗</span>
+                  </span>
+                </div>
+              </button>
+
+              <button class="lp-card" type="button" data-service="motion">
+                <span class="lp-tag">Personal</span>
+                <div class="lp-card-content">
+                  <h3>Style to Motion</h3>
+                  <div class="lp-value">$12</div>
+                  <p class="lp-description">
+                    Transform your finished style portrait into a short cinematic vertical film.
+                  </p>
+                  <span class="lp-link">
+                    View details
+                    <span class="lp-arrow">↗</span>
+                  </span>
+                </div>
+              </button>
+            </div>
+          </section>
+
+          <section class="lp-group lp-group-brand">
+            <div class="lp-group-head">
+              <span class="lp-group-name">Brand</span>
+              <span class="lp-group-note">Campaign &amp; custom</span>
+            </div>
+
+            <div class="lp-cards">
+              <button class="lp-card" type="button" data-service="template">
+                <span class="lp-tag">Brand</span>
+                <div class="lp-card-content">
+                  <h3>Template Video</h3>
+                  <div class="lp-value">$15</div>
+                  <p class="lp-description">
+                    A ready-designed visual concept adapted with your product, logo and brand assets.
+                  </p>
+                  <span class="lp-link">
+                    View details
+                    <span class="lp-arrow">↗</span>
+                  </span>
+                </div>
+              </button>
+
+              <button class="lp-card" type="button" data-service="custom">
+                <span class="lp-tag">Brand</span>
+                <div class="lp-card-content">
+                  <h3>Custom Brand Style</h3>
+                  <div class="lp-value">Custom</div>
+                  <p class="lp-description">
+                    Original visual direction and tailored photo or video production for your brand.
+                  </p>
+                  <span class="lp-link">
+                    View details
+                    <span class="lp-arrow">↗</span>
+                  </span>
+                </div>
+              </button>
+            </div>
+          </section>
         </div>
       </div>
     </section>
 
-    <div class="lumora-lightbox" id="lumoraLightbox" aria-hidden="true">
-      <div class="lumora-lightbox-stage">
-        <button class="lumora-lightbox-close" type="button" aria-label="Close">×</button>
-        <button class="lumora-lightbox-prev" type="button" aria-label="Previous">‹</button>
-        <button class="lumora-lightbox-next" type="button" aria-label="Next">›</button>
-        <div class="lumora-lightbox-image">
-          <img id="lumoraLightboxImage" src="" alt="">
-        </div>
-        <aside class="lumora-lightbox-info">
-          <span id="lumoraLightboxCategory"></span>
-          <h3 id="lumoraLightboxTitle"></h3>
-          <p id="lumoraLightboxDescription"></p>
+    <div class="lumora-price-modal" id="lumoraPriceModal" data-theme="personal" aria-hidden="true">
+      <div class="lp-modal-panel" role="dialog" aria-modal="true" aria-labelledby="lpModalTitle">
+        <button class="lp-modal-close" type="button" aria-label="Close" data-modal-close>×</button>
+
+        <aside class="lp-modal-visual">
+          <span class="lp-orb lp-orb-large"></span>
+          <span class="lp-orb lp-orb-small"></span>
+          <div class="lp-modal-visual-copy">
+            <div class="lp-modal-visual-kicker" id="lpVisualKicker">Lumora Personal</div>
+            <h3 class="lp-modal-visual-title" id="lpVisualTitle">Your face.<br>A new visual world.</h3>
+          </div>
         </aside>
+
+        <div class="lp-modal-main">
+          <div class="lp-modal-content">
+            <div class="lp-modal-eyebrow" id="lpModalEyebrow">Personal Experience</div>
+            <h2 class="lp-modal-title" id="lpModalTitle">Style Portrait</h2>
+            <div class="lp-modal-price-line">
+              <span class="lp-modal-price" id="lpModalPrice">$5</span>
+              <span class="lp-modal-unit" id="lpModalUnit">Per Image</span>
+            </div>
+            <p class="lp-modal-description" id="lpModalDescription"></p>
+            <ul class="lp-modal-features" id="lpModalFeatures"></ul>
+            <div class="lp-modal-note" id="lpModalNote"></div>
+          </div>
+          <div class="lp-modal-actions">
+            <button class="lp-modal-primary" type="button" data-open-order>Start This Service →</button>
+            <button class="lp-modal-secondary" type="button" data-modal-close>Continue Exploring</button>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -1519,6 +1926,142 @@
         if (e.key === 'Escape') closeLightbox();
         if (e.key === 'ArrowLeft') openAt(activeIndex - 1);
         if (e.key === 'ArrowRight') openAt(activeIndex + 1);
+      });
+    })();
+
+    /* ===== Lumora Pricing modal controller ===== */
+    (() => {
+      const services = {
+        portrait: {
+          theme: "personal",
+          eyebrow: "Personal Experience",
+          title: "Style Portrait",
+          price: "$5",
+          unit: "Per Image",
+          description:
+            "A made-for-you editorial portrait created from your own reference photos. Lumora preserves your recognizable facial identity while applying the selected visual style.",
+          features: [
+            "One finished style portrait",
+            "High-resolution image delivery",
+            "Facial identity consistency review",
+            "Curated lighting and visual direction",
+            "Suitable for profile and social content"
+          ],
+          note: "Final appearance depends on the quality and clarity of the reference photos you provide.",
+          visualKicker: "Lumora Personal",
+          visualTitle: "Your face.<br>A new visual world."
+        },
+        motion: {
+          theme: "personal",
+          eyebrow: "Personal Experience",
+          title: "Style to Motion",
+          price: "$12",
+          unit: "Per Video",
+          description:
+            "Transform one completed Lumora portrait into a short cinematic vertical video designed for Reels, TikTok and Stories.",
+          features: [
+            "One short vertical motion video",
+            "Cinematic movement and transitions",
+            "Character and facial consistency review",
+            "Social-media-ready 9:16 delivery",
+            "Created from one approved portrait"
+          ],
+          note: "Complex actions, additional scenes or longer durations may require a custom quotation.",
+          visualKicker: "Lumora Motion",
+          visualTitle: "Your portrait.<br>Now in motion."
+        },
+        template: {
+          theme: "brand",
+          eyebrow: "Brand Experience",
+          title: "Template Video",
+          price: "$15",
+          unit: "Per Video",
+          description:
+            "Choose a ready-designed Lumora visual concept and adapt it with your product, logo and selected brand assets.",
+          features: [
+            "One selected video template",
+            "Product or brand asset replacement",
+            "Logo and basic copy placement",
+            "Short vertical commercial format",
+            "Social-media-ready delivery"
+          ],
+          note: "The structure, camera language and timing follow the selected template. Major changes require custom production.",
+          visualKicker: "Lumora Brand",
+          visualTitle: "A proven format.<br>Made for your brand."
+        },
+        custom: {
+          theme: "brand",
+          eyebrow: "Bespoke Brand Experience",
+          title: "Custom Brand Style",
+          price: "Custom",
+          unit: "Project Quote",
+          description:
+            "A fully tailored visual direction developed around your brand identity, campaign objective, products and target audience.",
+          features: [
+            "Original creative and visual direction",
+            "Custom photo or video production",
+            "Brand-consistent styling and atmosphere",
+            "Campaign-oriented content planning",
+            "Project scope and quotation consultation"
+          ],
+          note: "Pricing is based on the number of visuals, video duration, creative complexity and delivery requirements.",
+          visualKicker: "Lumora Bespoke",
+          visualTitle: "Your brand.<br>Your own visual universe."
+        }
+      };
+
+      const modal = document.getElementById("lumoraPriceModal");
+      const title = document.getElementById("lpModalTitle");
+      const eyebrow = document.getElementById("lpModalEyebrow");
+      const price = document.getElementById("lpModalPrice");
+      const unit = document.getElementById("lpModalUnit");
+      const description = document.getElementById("lpModalDescription");
+      const features = document.getElementById("lpModalFeatures");
+      const note = document.getElementById("lpModalNote");
+      const visualKicker = document.getElementById("lpVisualKicker");
+      const visualTitle = document.getElementById("lpVisualTitle");
+
+      function openModal(serviceKey) {
+        const service = services[serviceKey];
+        if (!service) return;
+        modal.dataset.theme = service.theme;
+        eyebrow.textContent = service.eyebrow;
+        title.textContent = service.title;
+        price.textContent = service.price;
+        unit.textContent = service.unit;
+        description.textContent = service.description;
+        note.textContent = service.note;
+        visualKicker.textContent = service.visualKicker;
+        visualTitle.innerHTML = service.visualTitle;
+        features.innerHTML = service.features.map(item => `<li>${item}</li>`).join("");
+        modal.classList.add("is-open");
+        modal.setAttribute("aria-hidden", "false");
+        document.body.classList.add("lp-modal-open");
+        requestAnimationFrame(() => modal.querySelector(".lp-modal-close").focus());
+      }
+
+      function closeModal() {
+        modal.classList.remove("is-open");
+        modal.setAttribute("aria-hidden", "true");
+        document.body.classList.remove("lp-modal-open");
+      }
+
+      document.querySelectorAll("[data-service]").forEach(card => {
+        card.addEventListener("click", () => openModal(card.dataset.service));
+      });
+      document.querySelectorAll("[data-modal-close]").forEach(btn => {
+        btn.addEventListener("click", closeModal);
+      });
+      modal.addEventListener("click", e => { if (e.target === modal) closeModal(); });
+      document.addEventListener("keydown", e => {
+        if (e.key === "Escape" && modal.classList.contains("is-open")) closeModal();
+      });
+      document.querySelectorAll(".lp-group").forEach(group => {
+        group.addEventListener("mousemove", e => {
+          const rect = group.getBoundingClientRect();
+          group.style.setProperty("--mx", `${e.clientX - rect.left}px`);
+          group.style.setProperty("--my", `${e.clientY - rect.top}px`);
+        });
       });
     })();
   </script>
