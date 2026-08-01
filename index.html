@@ -434,6 +434,128 @@
       .film-stage{grid-template-columns:1fr;width:min(360px,100%)}
       .film-bottom{left:16px;right:16px}
     }
+
+    /* ============================================================
+       ADDED ONLY — Identity Reveal section
+       (Before/After slider, sits between Why Lumora and How it works)
+       ============================================================ */
+    .id-reveal{
+      position:relative;
+      width:min(1600px,100%);
+      margin:auto;
+      padding:70px;
+      display:grid;
+      grid-template-columns:.86fr 1.14fr;
+      gap:34px;
+      align-items:center;
+      background:
+        radial-gradient(circle at 18% 18%,rgba(137,96,255,.27),transparent 28%),
+        radial-gradient(circle at 88% 25%,rgba(255,153,201,.18),transparent 25%),
+        radial-gradient(circle at 52% 92%,rgba(92,225,208,.10),transparent 24%),
+        linear-gradient(145deg,#0a091d,#11102d 50%,#090817);
+      border-radius:34px;
+      overflow:hidden;
+      border:1px solid var(--line);
+    }
+    .id-reveal::before{
+      content:"";
+      position:absolute; inset:-30%; z-index:0;
+      background:conic-gradient(from 120deg,rgba(154,121,255,.13),rgba(255,176,207,.11),rgba(124,237,216,.07),rgba(154,121,255,.13));
+      filter:blur(100px);
+      animation:aurora 20s linear infinite;
+    }
+    .id-copy{position:relative;z-index:3;max-width:560px}
+    .id-eyebrow{text-transform:uppercase;letter-spacing:.18em;font-size:12px;color:#d9c9ff;margin-bottom:18px}
+    .id-reveal h2{
+      font-family:var(--serif);
+      font-size:clamp(58px,6.4vw,104px);
+      line-height:.9;font-weight:400;letter-spacing:-.055em;
+      margin:0 0 26px;
+    }
+    .id-reveal .gradient{background:linear-gradient(90deg,#fff,#ffd6e8 46%,#bda6ff 90%);-webkit-background-clip:text;background-clip:text;color:transparent}
+    .id-reveal p{font-size:19px;line-height:1.65;color:var(--muted);margin:0 0 28px}
+    .id-points{display:grid;gap:12px;margin:28px 0 34px}
+    .id-point{display:flex;align-items:center;gap:12px;color:rgba(255,255,255,.82);font-size:14px}
+    .id-point i{width:8px;height:8px;border-radius:50%;background:var(--mint);box-shadow:0 0 16px var(--mint)}
+    .id-cta{
+      display:inline-flex;align-items:center;gap:10px;border:none;color:#fff;
+      border-radius:999px;padding:15px 22px;
+      background:linear-gradient(110deg,var(--pink),var(--violet));
+      box-shadow:0 16px 40px rgba(151,111,255,.35),inset 0 1px rgba(255,255,255,.65);
+      font:inherit;font-weight:600;cursor:pointer;transition:.3s ease;
+    }
+    .id-cta:hover{transform:translateY(-2px);box-shadow:0 22px 54px rgba(151,111,255,.5)}
+
+    .id-visual{
+      position:relative;z-index:3;width:100%;
+      aspect-ratio:16/10;border-radius:34px;overflow:hidden;
+      border:1px solid var(--line);
+      box-shadow:0 45px 120px rgba(0,0,0,.45);
+      background:#131225;
+    }
+    .id-layer{position:absolute;inset:0}
+    .id-layer img{width:100%;height:100%;object-fit:cover;display:block}
+    .id-before img{object-position:center 38%}
+    .id-after{
+      clip-path:inset(0 100% 0 0);
+      animation:revealSlide 8s cubic-bezier(.65,0,.25,1) infinite;
+    }
+    .id-after img{object-position:center 36%}
+    @keyframes revealSlide{
+      0%,20%{clip-path:inset(0 100% 0 0)}
+      42%,74%{clip-path:inset(0 0 0 0)}
+      94%,100%{clip-path:inset(0 100% 0 0)}
+    }
+    .id-visual::after{
+      content:"";position:absolute;inset:0;
+      background:linear-gradient(180deg,transparent 58%,rgba(7,7,20,.72));
+      pointer-events:none;
+    }
+    .id-label{
+      position:absolute;z-index:5;top:20px;
+      padding:9px 14px;border:1px solid var(--line);
+      border-radius:999px;backdrop-filter:blur(16px);
+      background:rgba(10,8,28,.52);
+      font-size:11px;letter-spacing:.13em;text-transform:uppercase;
+    }
+    .id-label.id-before-label{left:20px}
+    .id-label.id-after-label{right:20px}
+    .id-divider{
+      position:absolute;z-index:6;top:0;bottom:0;left:0%;width:2px;
+      background:rgba(255,255,255,.86);
+      box-shadow:0 0 18px rgba(255,255,255,.65);
+      animation:dividerMove 8s cubic-bezier(.65,0,.25,1) infinite;
+    }
+    .id-handle{
+      position:absolute;z-index:7;width:48px;height:48px;border-radius:50%;
+      left:0%;top:50%;transform:translate(-50%,-50%);
+      display:grid;place-items:center;
+      background:rgba(16,12,39,.72);
+      border:1px solid rgba(255,255,255,.34);
+      backdrop-filter:blur(14px);
+      box-shadow:0 0 30px rgba(185,146,255,.45);
+      animation:handleMove 8s cubic-bezier(.65,0,.25,1) infinite;
+      font-size:18px;
+    }
+    @keyframes dividerMove{0%,20%{left:0%}42%,74%{left:100%}94%,100%{left:0%}}
+    @keyframes handleMove{0%,20%{left:0%}42%,74%{left:100%}94%,100%{left:0%}}
+    .id-caption{position:absolute;z-index:5;left:26px;bottom:24px}
+    .id-caption strong{
+      display:block;font-family:var(--serif);
+      font-size:34px;font-weight:400;letter-spacing:-.025em;
+    }
+    .id-caption span{font-size:12px;color:var(--muted);letter-spacing:.08em}
+
+    .id-spark{position:absolute;border-radius:50%;background:#fff;box-shadow:0 0 10px #fff,0 0 24px #b995ff;animation:float 6s ease-in-out infinite}
+    .id-s1{width:4px;height:4px;left:8%;top:18%}
+    .id-s2{width:5px;height:5px;right:6%;top:14%;animation-delay:1.4s}
+    .id-s3{width:3px;height:3px;left:42%;bottom:9%;animation-delay:2.6s}
+
+    @media(max-width:1000px){
+      .id-reveal{aspect-ratio:auto;grid-template-columns:1fr;min-height:auto;padding:60px 24px;gap:36px}
+      .id-copy{max-width:none}
+      .id-visual{aspect-ratio:4/5}
+    }
   </style>
 </head>
 <body>
@@ -719,6 +841,47 @@
               <div>Type a message...</div><button aria-label="Send">➤</button>
             </div>
           </aside>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="identity-reveal">
+      <div class="shell">
+        <div class="id-reveal reveal">
+          <span class="id-spark id-s1"></span>
+          <span class="id-spark id-s2"></span>
+          <span class="id-spark id-s3"></span>
+
+          <div class="id-copy">
+            <div class="id-eyebrow">Your identity, reimagined</div>
+            <h2>Every style.<br><span class="gradient">Still unmistakably you.</span></h2>
+            <p>
+              Lumora transforms your own photos into highly personalized visual worlds.
+              We preserve your real facial identity, natural proportions and recognizable features—
+              then apply the editorial style you choose.
+            </p>
+            <div class="id-points">
+              <div class="id-point"><i></i>Real-person likeness, not a generic AI face</div>
+              <div class="id-point"><i></i>Human-guided identity review before creation</div>
+              <div class="id-point"><i></i>Luxury editorial styles built around you</div>
+            </div>
+            <button class="id-cta" data-open-order>Create Your Signature Style →</button>
+          </div>
+
+          <div class="id-visual">
+            <div class="id-layer id-before"><img src="before.png" alt="Original photo"></div>
+            <div class="id-layer id-after"><img src="after.jpg" alt="Generated editorial portrait"></div>
+
+            <div class="id-label id-before-label">Original</div>
+            <div class="id-label id-after-label">Lumora Result</div>
+            <div class="id-divider"></div>
+            <div class="id-handle">↔</div>
+
+            <div class="id-caption">
+              <strong>From real to remarkable.</strong>
+              <span>Your face. Your mood. Your visual world.</span>
+            </div>
+          </div>
         </div>
       </div>
     </section>
