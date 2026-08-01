@@ -1,0 +1,16 @@
+# macOS noise
+.DS_Store
+._*
+.Spotlight-V100
+.Trashes
+
+# Editor / OS temp
+*.swp
+*.swo
+*~
+.idea/
+.vscode/
+*.log
+
+# Lumora: keep all images & videos tracked (they ARE the deliverable)
+# No binary ignores here on purpose.
