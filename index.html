@@ -166,9 +166,29 @@
     .problem-card h3{font-family:var(--serif);font-size:46px;font-weight:400;line-height:1.05}
     .problem-card p{color:var(--muted);line-height:1.7;font-size:17px}
     .comparison{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:28px}
-    .comparison>div{padding:20px;border-radius:20px;background:rgba(255,255,255,.045);border:1px solid var(--line)}
-    .comparison b{display:block;margin-bottom:12px}
-    .comparison ul{padding:0;margin:0;list-style:none;color:var(--muted);font-size:13px;line-height:2}
+    .comparison>div{padding:22px;border-radius:20px;background:rgba(255,255,255,.045);border:1px solid var(--line)}
+    .comparison b{display:flex;align-items:center;gap:10px;margin-bottom:14px;font-size:14px;letter-spacing:.04em}
+    .comparison>div:nth-child(1) b::before{
+      content:"✕";display:inline-grid;place-items:center;
+      width:22px;height:22px;border-radius:50%;
+      background:rgba(255,120,140,.18);color:#ff8aa0;
+      font-size:13px;line-height:1;
+    }
+    .comparison>div:nth-child(2) b::before{
+      content:"✓";display:inline-grid;place-items:center;
+      width:22px;height:22px;border-radius:50%;
+      background:rgba(139,244,220,.2);color:var(--mint);
+      font-size:13px;line-height:1;font-weight:600;
+    }
+    .comparison ul{padding:0;margin:0;list-style:none;color:var(--muted);font-size:13px;line-height:2.1}
+    .comparison>div:nth-child(1) ul li{display:flex;align-items:center;gap:10px;opacity:.78}
+    .comparison>div:nth-child(1) ul li::before{
+      content:"✕";color:#ff8aa0;font-size:11px;flex:none;width:14px;text-align:center;
+    }
+    .comparison>div:nth-child(2) ul li{display:flex;align-items:center;gap:10px;color:rgba(255,255,255,.92)}
+    .comparison>div:nth-child(2) ul li::before{
+      content:"✓";color:var(--mint);font-size:12px;flex:none;width:14px;text-align:center;font-weight:600;
+    }
     .concierge{padding:30px;display:flex;flex-direction:column;min-height:520px}
     .chat-head{display:flex;justify-content:space-between;align-items:center;padding-bottom:18px;border-bottom:1px solid var(--line)}
     .online{color:var(--mint);font-size:12px}
