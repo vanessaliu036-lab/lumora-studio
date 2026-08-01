@@ -755,6 +755,19 @@
       .lumora-lightbox-info{padding:18px}
       .lumora-lightbox-info h3{font-size:30px}
     }
+    .see-more-wrap{display:flex;justify-content:center;margin:48px 0 0}
+    .see-more{
+      display:inline-flex;align-items:center;gap:10px;
+      padding:15px 28px;border-radius:999px;border:1px solid rgba(255,255,255,.18);
+      background:rgba(255,255,255,.05);backdrop-filter:blur(12px);
+      color:white;font:inherit;font-weight:500;font-size:13px;letter-spacing:.18em;text-transform:uppercase;
+      cursor:pointer;transition:.3s ease;
+    }
+    .see-more:hover{
+      background:linear-gradient(110deg,var(--peach),var(--pink),var(--violet));
+      border-color:transparent;transform:translateY(-2px);
+      box-shadow:0 18px 44px rgba(170,105,255,.4);
+    }
   </style>
 </head>
 <body>
@@ -911,6 +924,9 @@
               <p>A built set, sculpted architecture and couture volume—the most theatrical direction in the collection.</p>
             </figcaption>
           </figure>
+        </div>
+        <div class="see-more-wrap reveal">
+          <a class="see-more" href="https://lumora-studiokh.vercel.app/images.html" target="_blank" rel="noopener">See More →</a>
         </div>
       </div>
     </section>

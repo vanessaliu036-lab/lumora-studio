@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lumora — Editorial Archive</title>
+<meta name="description" content="A growing archive of Lumora portrait worlds — fashion, beauty, fantasy and editorial.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Italiana&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#f6f7fb;
+  --muted:rgba(245,241,255,.68);
+  --line:rgba(255,255,255,.14);
+  --pink:#ffb0cc;
+  --violet:#9a79ff;
+  --peach:#ffd0bd;
+  --mint:#8bf4dc;
+  --night:#080817;
+  --night-2:#11102b;
+  --serif:"Italiana", Georgia, serif;
+  --sans:"DM Sans", Arial, sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--night);color:var(--ink);font-family:var(--sans)}
+body{
+  background:
+    radial-gradient(circle at 10% 8%, rgba(126,88,255,.24), transparent 30%),
+    radial-gradient(circle at 90% 18%, rgba(255,153,197,.18), transparent 27%),
+    radial-gradient(circle at 50% 92%, rgba(65,217,198,.12), transparent 28%),
+    var(--night);
+  min-height:100vh;
+  overflow-x:hidden;
+}
+a{color:inherit;text-decoration:none}
+button{font:inherit}
+
+.top-nav{
+  position:sticky;top:0;z-index:50;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:18px 28px;
+  background:rgba(8,8,23,.65);
+  backdrop-filter:blur(18px);
+  border-bottom:1px solid var(--line);
+}
+.top-nav .logo{display:flex;align-items:center;gap:10px;font-family:var(--serif);font-size:24px;letter-spacing:.02em}
+.top-nav .logo-mark{
+  width:30px;height:30px;border-radius:50%;
+  display:grid;place-items:center;
+  background:radial-gradient(circle at 35% 35%, #fff, #efc8ff 24%, #9876ff 58%, #1e1749 100%);
+  box-shadow:0 0 26px rgba(191,153,255,.85);
+  font-size:14px;
+}
+.top-nav .back{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:10px 18px;border-radius:999px;
+  background:linear-gradient(110deg,var(--peach),var(--pink),var(--violet));
+  color:white;font-weight:500;font-size:13px;letter-spacing:.04em;
+  box-shadow:0 8px 24px rgba(170,105,255,.32);
+  transition:.3s ease;
+}
+.top-nav .back:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(170,105,255,.5)}
+
+.wrap{width:min(1440px,calc(100% - 32px));margin:auto;padding:80px 0 100px}
+
+.head{text-align:center;margin-bottom:64px;max-width:880px;margin-left:auto;margin-right:auto}
+.kicker{font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:#d9c9ff;margin-bottom:18px}
+.head h1{
+  font-family:var(--serif);
+  font-size:clamp(56px,7vw,108px);
+  line-height:.92;font-weight:400;letter-spacing:-.055em;margin:0 0 24px;
+}
+.head h1 span{
+  background:linear-gradient(90deg,#fff 10%,#ffd4e8 48%,#bda6ff 90%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.head p{font-size:18px;line-height:1.65;color:var(--muted);margin:0 auto;max-width:680px}
+
+.meta-line{
+  display:flex;flex-wrap:wrap;justify-content:center;gap:22px;
+  margin-top:30px;color:rgba(255,255,255,.5);
+  font-size:11px;letter-spacing:.15em;text-transform:uppercase;
+}
+.meta-line span{display:flex;align-items:center;gap:8px}
+.meta-line i{width:6px;height:6px;border-radius:50%;background:var(--mint);box-shadow:0 0 10px var(--mint);font-style:normal}
+
+.wall{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px;align-items:start}
+.wall figure{
+  position:relative;overflow:hidden;
+  border-radius:26px;border:1px solid var(--line);background:#131128;
+  box-shadow:0 30px 90px rgba(0,0,0,.42);
+  transition:transform .9s cubic-bezier(.2,.8,.2,1),box-shadow .7s ease,border-color .7s ease;
+}
+.wall figure:hover{
+  transform:translateY(-8px);
+  border-color:rgba(255,207,235,.45);
+  box-shadow:0 50px 130px rgba(146,101,255,.3);
+}
+.wall img{
+  display:block;width:100%;height:auto;
+  filter:saturate(.96) contrast(.98);
+  transition:transform 1.4s cubic-bezier(.2,.8,.2,1),filter .8s ease;
+}
+.wall figure:hover img{transform:scale(1.04);filter:saturate(1.05) contrast(1)}
+.wall figcaption{
+  position:absolute;z-index:3;left:24px;right:24px;bottom:22px;
+  display:flex;align-items:flex-end;justify-content:space-between;gap:14px;
+  background:linear-gradient(180deg,transparent 0%,rgba(8,6,22,.7) 70%);
+  padding:32px 0 4px;margin:-32px 0 0;
+}
+.wall figcaption .name{font-family:var(--serif);font-size:clamp(22px,2vw,32px);font-weight:400;letter-spacing:-.025em}
+.wall figcaption .chip{
+  display:inline-flex;align-items:center;padding:6px 11px;border-radius:999px;
+  border:1px solid rgba(255,255,255,.18);
+  background:rgba(12,9,32,.5);backdrop-filter:blur(14px);
+  font-size:10px;letter-spacing:.16em;text-transform:uppercase;
+}
+.wall figcaption .desc{font-size:12px;color:rgba(255,255,255,.7);line-height:1.55;margin:6px 0 0;max-width:34ch;opacity:.78}
+.wall figcaption .left{flex:1;min-width:0}
+
+@media (max-width:900px){
+  .wall{grid-template-columns:1fr;gap:18px}
+  .wrap{padding:60px 0 80px}
+  .top-nav{padding:14px 18px}
+}
+</style>
+</head>
+<body>
+
+<nav class="top-nav">
+  <a href="/" class="logo"><span class="logo-mark">✦</span>Lumora</a>
+  <a href="/" class="back" target="_blank" rel="noopener">← Back to Lumora</a>
+</nav>
+
+<div class="wrap">
+  <header class="head">
+    <div class="kicker">Lumora Editorial Archive</div>
+    <h1>All worlds.<br><span>One archive.</span></h1>
+    <p>A growing selection of high-resolution portrait work — fashion, beauty, fantasy and editorial. Each piece begins with a real identity, then expands into a complete visual direction.</p>
+    <div class="meta-line">
+      <span><i></i> High-resolution artwork</span>
+      <span><i></i> One identity · many styles</span>
+      <span><i></i> Archive open · more added regularly</span>
+    </div>
+  </header>
+
+  <section class="wall">
+    <figure>
+      <img src="poster 02.png" alt="Editorial poster 02" loading="lazy">
+      <figcaption>
+        <div class="left">
+          <div class="name">Golden Field</div>
+          <div class="desc">Last light across open grass, tulle lifting in the wind.</div>
+        </div>
+        <span class="chip">Editorial</span>
+      </figcaption>
+    </figure>
+    <figure>
+      <img src="poster 03 .png" alt="Editorial poster 03" loading="lazy">
+      <figcaption>
+        <div class="left">
+          <div class="name">Soft Bloom</div>
+          <div class="desc">A draped figure under warm afternoon haze.</div>
+        </div>
+        <span class="chip">Fashion</span>
+      </figcaption>
+    </figure>
+    <figure>
+      <img src="poster 04.png" alt="Editorial poster 04" loading="lazy">
+      <figcaption>
+        <div class="left">
+          <div class="name">Coastal Blue</div>
+          <div class="desc">Cool coastal light against sculpted fabric.</div>
+        </div>
+        <span class="chip">Fashion</span>
+      </figcaption>
+    </figure>
+    <figure>
+      <img src="poster 05.png" alt="Editorial poster 05" loading="lazy">
+      <figcaption>
+        <div class="left">
+          <div class="name">Marble Veil</div>
+          <div class="desc">Marble-light studio, soft couture and quiet luxury.</div>
+        </div>
+        <span class="chip">Beauty</span>
+      </figcaption>
+    </figure>
+    <figure>
+      <img src="poster 06.png" alt="Editorial poster 06" loading="lazy">
+      <figcaption>
+        <div class="left">
+          <div class="name">Vermillion</div>
+          <div class="desc">High-saturation red studio world with pearl details.</div>
+        </div>
+        <span class="chip">Concept</span>
+      </figcaption>
+    </figure>
+    <figure>
+      <img src="poster 07.png" alt="Editorial poster 07" loading="lazy">
+      <figcaption>
+        <div class="left">
+          <div class="name">Petal Sun</div>
+          <div class="desc">Sunlit meadow fantasy with floating accents.</div>
+        </div>
+        <span class="chip">Fantasy</span>
+      </figcaption>
+    </figure>
+    <figure>
+      <img src="poster 08.png" alt="Editorial poster 08" loading="lazy">
+      <figcaption>
+        <div class="left">
+          <div class="name">Glass Skin</div>
+          <div class="desc">Dewy beauty close-up with reflective styling.</div>
+        </div>
+        <span class="chip">Beauty</span>
+      </figcaption>
+    </figure>
+  </section>
+</div>
+
+</body>
+</html>
