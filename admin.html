@@ -1246,9 +1246,9 @@ async function syncFromAirtable(){
       _airtableGet('/orders/full'),
       _airtableGet('/partners/full'),
     ]);
-    if(c.ok) CORE_CRM = _airtableFieldMap(c.records, 'crm');
-    if(o.ok) CORE_ORD = _airtableFieldMap(o.records, 'ord');
-    if(p.ok) CORE_PTN = _airtableFieldMap(p.records, 'ptn');
+    if(c.ok){ CORE_CRM.length = 0; _airtableFieldMap(c.records, 'crm').forEach(r => CORE_CRM.push(r)); }
+    if(o.ok){ CORE_ORD.length = 0; _airtableFieldMap(o.records, 'ord').forEach(r => CORE_ORD.push(r)); }
+    if(p.ok){ CORE_PTN.length = 0; _airtableFieldMap(p.records, 'ptn').forEach(r => CORE_PTN.push(r)); }
     if(banner){
       const ts = new Date().toLocaleTimeString();
       banner.innerHTML = `✅ 已同步 Airtable · ${ts} · CRM ${CORE_CRM.length} / Orders ${CORE_ORD.length} / Partners ${CORE_PTN.length}`;
