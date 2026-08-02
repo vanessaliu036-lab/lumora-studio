@@ -57,6 +57,7 @@ export default async function handler(req, res) {
         tgId: f['Telegram User ID'] || tgIdFromCustomer,
         tgUser: f['Telegram Username'] || '',
         partner: partnerRec, partnerCode,
+        partnerWebsite: partnerRec ? (pById[partnerRec]?.['Official Website'] || pById[partnerRec]?.['Website URL'] || pById[partnerRec]?.['Partner URL'] || pById[partnerRec]?.['Tracking URL'] || pById[partnerRec]?.URL || '') : '',
         lang: f['Language'] || '', returning: !!f['Is Returning'],
         summary: f['Inquiry Summary'] || '',
         files: f['Reference Files'], hasFiles: !!f['Has Reference Files'],

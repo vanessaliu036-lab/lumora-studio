@@ -33,6 +33,7 @@ export default async function handler(req, res) {
       return {
         id: r.id, name: f['Brand Name'] || f['Partner Name'] || f['Partner ID'] || '', code: f['Partner Code'] || '',
         contact: f.Owner || '', brand: f['Brand Name'] || f['Partner Name'] || f['Partner ID'] || '',
+        url: f['Vercel URL'] || f['Tracking URL'] || f['Partner URL'] || f['Website URL'] || f.URL || '',
         tgId: '', tgUser: f.Telegram || '',
         onboard: f['Onboarding Status'] || '',
         team: '',

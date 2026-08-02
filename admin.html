@@ -278,6 +278,10 @@ window.addEventListener('hashchange',render);render();
   .table td{white-space:nowrap}
   .cell-main{font-weight:600;color:#fff}
   .cell-sub{display:block;font-size:11px;color:var(--muted);margin-top:4px}
+  .partner-url-cell{white-space:nowrap}
+  .partner-url-cell a{color:#cbb6ff;text-decoration:underline;text-underline-offset:3px}
+  .url-status-dot{display:inline-block;width:9px;height:9px;margin-right:7px;border-radius:50%;background:#73f0bd;box-shadow:0 0 0 3px rgba(115,240,189,.14),0 0 12px rgba(115,240,189,.75);vertical-align:middle}
+  .url-status-dot.missing{background:rgba(255,255,255,.28);box-shadow:none}
   .status-select{border:1px solid var(--line);background:rgba(255,255,255,.055);color:white;border-radius:999px;padding:8px 12px}
   .sync-badge{display:inline-flex;align-items:center;gap:6px;padding:7px 10px;border-radius:999px;border:1px solid rgba(129,243,211,.2);background:rgba(129,243,211,.07);font-size:11px;color:#baffea}
 
@@ -791,8 +795,11 @@ html{background:#080817}
 .crm-workflow-step b{font-size:12px}.crm-workflow-step small{font-size:10px;margin-top:3px;color:#9e94c5}
 .crm-workflow-gate{display:flex;flex-wrap:wrap;gap:8px 14px;margin-top:14px;padding-top:12px;border-top:1px solid rgba(255,255,255,.1);color:#c9c0e8;font-size:12px}
 .crm-workflow-gate span{color:#ffcf9a}.crm-workflow-gate span.done{color:#a8f0c8}
+.crm-edit-panel{margin:0 0 22px;padding:16px;border:1px solid rgba(205,173,255,.28);border-radius:18px;background:rgba(37,28,76,.32)}
+.crm-edit-head{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:12px}.crm-edit-head b{color:#fff}.crm-edit-head span{color:#a99cd0;font-size:12px}
+.crm-edit-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.crm-edit-field{display:flex;flex-direction:column;gap:6px;color:#bdb0e5;font-size:12px}.crm-edit-field.full{grid-column:1/-1}.crm-edit-field input,.crm-edit-field textarea{width:100%;box-sizing:border-box;background:#0e0b24;border:1px solid rgba(151,126,255,.45);border-radius:10px;padding:10px;color:#fff}.crm-edit-field textarea{min-height:72px;resize:vertical}.crm-edit-field input:disabled,.crm-edit-field textarea:disabled{opacity:.45;cursor:not-allowed;border-style:dashed}.crm-edit-label{display:flex;justify-content:space-between;gap:8px}.crm-edit-lock{color:#8d83b1;font-size:10px}
 @media(max-width:900px){.crm-workflow-steps{grid-template-columns:repeat(3,minmax(0,1fr))}}
-@media(max-width:560px){.crm-workflow-head{flex-direction:column}.crm-workflow-steps{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){.crm-workflow-head{flex-direction:column}.crm-workflow-steps{grid-template-columns:repeat(2,minmax(0,1fr))}.crm-edit-grid{grid-template-columns:1fr}.crm-edit-field.full{grid-column:auto}}
 .gsec-h{display:flex;align-items:center;gap:11px;padding-bottom:9px;margin-bottom:13px;border-bottom:1px solid rgba(255,255,255,.14)}
 .gsec-n{
   width:23px;height:23px;border-radius:50%;flex:none;display:grid;place-items:center;
@@ -855,6 +862,8 @@ html{background:#080817}
    三張核心表 — Airtable 唯一資料來源；頁面不使用 mock 作為 fallback
    CRM（詢問漏斗）→ Orders（專案製作）→ Partners（歸屬額度）
    ═══════════════════════════════════════════════════ */
+
+const MOCK_ONLY_MODE = true;
 
 const CORE_CRM = [
   { id:"CRM-20260802-006", name:"Mock New Inquiry", status:"New", statusTag:"blue",
@@ -1018,6 +1027,7 @@ const CORE_PTN = [
   { name:"Taiwan Studio", code:"PTN-001", remain:2, limit:10, used:8, pct:80, pending:3, plan:"Partner Starter", planAmount:150, subscriptionRevenue:150, subscriptionStatus:"ACTIVE",
     sync:"正常", syncTag:"ok", lastSync:"08-01 18:42",
     contact:"Ivy Chen", tgId:"552104883", tgUser:"@taiwan_studio", brand:"LUMINA Studio", onboard:"已完成",
+    url:"",
     plan:"10 筆方案", period:"總量制", planStart:"2026-06-01", planExpiry:null,
     planStatus:"額度偏低", renewal:true, partnerPaid:"已付款",
     submitted:14, received:14, diff:0, webhook:"正常", lastAlert:"07-28 · 剩餘 ≤2 提醒",
@@ -1029,6 +1039,7 @@ const CORE_PTN = [
   { name:"Phnom Penh Studio", code:"PTN-002", remain:0, limit:10, used:10, pct:100, pending:2, plan:"Partner Starter", planAmount:150, subscriptionRevenue:150, subscriptionStatus:"ACTIVE",
     sync:"正常", syncTag:"ok", lastSync:"08-01 09:12",
     contact:"Sok Piseth", tgId:"814255310", tgUser:"@pp_studio", brand:"PP Image Lab", onboard:"已完成",
+    url:"",
     plan:"10 筆方案", period:"總量制", planStart:"2026-06-15", planExpiry:null,
     planStatus:"已用完", renewal:true, partnerPaid:"已付款",
     submitted:12, received:12, diff:0, webhook:"正常", lastAlert:"—",
@@ -1040,6 +1051,7 @@ const CORE_PTN = [
   { name:"Siem Reap Digital", code:"PTN-003", remain:14, limit:20, used:6, pct:30, pending:5, plan:"Partner Pro", planAmount:150, subscriptionRevenue:150, subscriptionStatus:"ACTIVE",
     sync:"正常", syncTag:"ok", lastSync:"08-01 16:30",
     contact:"Chea Vibol", tgId:"902551377", tgUser:"@sr_digital", brand:"Angkor Portrait", onboard:"進行中",
+    url:"",
     plan:"20 筆方案", period:"總量制", planStart:"2026-07-10", planExpiry:null,
     planStatus:"正常", renewal:false, partnerPaid:"已付款",
     submitted:19, received:19, diff:0, webhook:"正常", lastAlert:null,
@@ -1050,8 +1062,14 @@ const CORE_PTN = [
 ];
 
 // 保留既有流程示範資料；新詢問與新訂單不再以假編號出現在正式清單。
-CORE_CRM.splice(0, 1);
-CORE_ORD.splice(0, 1);
+if(MOCK_ONLY_MODE){
+  // 保留單一 mock 入口；其餘舊展示資料不進入正式清單。
+  CORE_CRM.splice(1);
+  CORE_ORD.splice(1);
+} else {
+  CORE_CRM.splice(0, 1);
+  CORE_ORD.splice(0, 1);
+}
 let airtableDataState = 'loading';
 let airtableSyncError = '';
 
@@ -1443,6 +1461,18 @@ const _fi = (k,v,note,chip) => `<div class="fitem">
   <div class="fv ${v?'':'none'}">${v?_esc(v):"—"}</div>
   ${note?`<div class="fn">${_esc(note)}</div>`:""}</div>`;
 const _fiw = (k,v,note,chip) => _fi(k,v,note,chip).replace('class="fitem"','class="fitem full"');
+const _safeUrl = value => {
+  try {
+    const url = new URL(String(value || ''));
+    return /^https?:$/.test(url.protocol) ? url.href : '';
+  } catch { return ''; }
+};
+const _fiUrl = (k,v,note) => {
+  const url = _safeUrl(v);
+  return `<div class="fitem"><div class="fk">${_esc(k)}</div><div class="fv ${url?'':'none'}">${url
+    ? `<a href="${_esc(url)}" target="_blank" rel="noopener noreferrer" style="color:#cbb6ff;text-decoration:underline;text-underline-offset:3px;overflow-wrap:anywhere">${_esc(url)}</a>`
+    : '—'}</div>${note?`<div class="fn">${_esc(note)}</div>`:''}</div>`;
+};
 const _gs = (n,title,right,inner) => `<div class="gsec" id="detail-section-${n}">
   <div class="gsec-h"><span class="gsec-n">${n}</span><b>${_esc(title)}</b>${right?`<span>${_esc(right)}</span>`:""}</div>
   ${inner}</div>`;
@@ -1661,7 +1691,7 @@ function crmPartnersPage(){
   return `<div class="page-title"><div><h1>Partners</h1>
     <p style="color:#c3bce0">一筆 = 一個經銷商。額度剩多少、有沒有漏單、還有多少在漏斗裡沒轉換。</p></div></div>
   <div class="core3-wrap"><div class="table-wrap"><table class="table l1-table"><thead><tr>
-    <th>最後警示</th><th>經銷商</th><th>訂閱方案</th><th>方案金額</th><th>剩餘額度</th><th>已使用</th><th>待轉換</th><th>同步狀態</th>
+    <th>最後警示</th><th>經銷商</th><th>訂閱方案</th><th>方案金額</th><th>剩餘額度</th><th>已使用</th><th>待轉換</th><th>Vercel 網址</th>
   </tr></thead><tbody>${CORE_PTN.map((r,i)=>`<tr onclick="core3Open('ptn',${i})">
     <td class="cell-date">${_fmt(r.lastAlert || r.lastSync)}</td>
     <td><div class="cell-name">${_esc(r.name)}</div><div class="cell-sub">${_esc(r.code)}</div></td>
@@ -1670,8 +1700,8 @@ function crmPartnersPage(){
     <td><span class="tag ${r.remain<=2?'bad':'ok'}">${r.remain} / ${r.limit}</span></td>
     <td>${r.used}<div class="mini-bar"><i class="${r.pct>=100?'hot':''}" style="width:${r.pct}%"></i></div></td>
     <td>${r.pending}</td>
-    <td><span class="tag ${r.syncTag}">${_esc(r.sync)}</span></td>
-    <td class="cell-due">${_esc(r.lastSync)}</td></tr>`).join('')}</tbody></table></div></div>
+    <td class="partner-url-cell">${_safeUrl(r.url) ? `<span class="url-status-dot" title="Vercel 網址已設定"></span><a href="${_esc(_safeUrl(r.url))}" target="_blank" rel="noopener noreferrer" title="開啟 Vercel 網站">開啟網站 ↗</a>` : `<span class="url-status-dot missing" title="尚未設定 Vercel 網址"></span><span class="cell-sub">尚未設定</span>`}</td>
+    </tr>`).join('')}</tbody></table></div></div>
   <div class="openq"><h4>三個還沒定的問題（會影響欄位邏輯）</h4><ul style="margin:0;padding-left:18px">
     <li><b>方案週期：總量制</b> — 10 筆額度使用完即用完，不按月重置。</li>
     <li><b>同步差異</b> — 只呈現 Airtable 實際送出數與收到數，不使用手動假警示。</li>
@@ -1682,7 +1712,7 @@ function crmPartnersPage(){
 /* ═══ 第二層抽屜 ═══ */
 const CRM_WORKFLOW_STAGES = [
   { status:'New', label:'新進件', section:1, task:'確認已接手案件並指定負責客服', fields:[['負責客服', r => r.cs]] },
-  { status:'Contacted', label:'已聯絡', section:3, task:'完成第一次聯絡並留下回應時間', fields:[['首次回應時間', r => r.firstResp]] },
+  { status:'Contacted', label:'已聯絡', section:3, task:'完成第一次聯絡並留下聯絡時間', fields:[['最近聯絡時間', r => r.lastContact]] },
   { status:'Discussing', label:'洽談中', section:2, task:'確認需求與預算，補上需求摘要', fields:[['需求摘要', r => r.summary], ['預算區間', r => r.budget]] },
   { status:'Waiting Customer', label:'等客戶回覆', section:3, task:'設定下一次追蹤時間', fields:[['下次追蹤', r => r.next && r.next !== '—']] },
   { status:'Ready to Close', label:'準備成交', section:4, task:'確認方案與報價金額，等待付款驗證', fields:[['報價金額', r => r.quoted]] },
@@ -1702,6 +1732,21 @@ function crmJumpToSection(section){
   const target = document.getElementById(`detail-section-${section}`);
   if(target) target.scrollIntoView({behavior:'smooth', block:'start'});
 }
+const CRM_EDIT_FIELDS = [
+  {key:'lastContact', label:'最近聯絡時間', stage:1, type:'text', placeholder:'例如 2026-08-02 19:30'},
+  {key:'summary', label:'需求摘要', stage:2, type:'textarea', full:true},
+  {key:'budget', label:'預算區間', stage:2, type:'text', placeholder:'例如 $20–50'},
+  {key:'nextFollowUp', label:'下次追蹤時間', stage:3, type:'text', placeholder:'例如 2026-08-05 14:00'},
+  {key:'followupNote', label:'追蹤備註', stage:3, type:'textarea', full:true},
+  {key:'quoted', label:'報價金額', stage:4, type:'text', placeholder:'例如 28'},
+  {key:'method', label:'付款方式', stage:4, type:'text', placeholder:'例如 ABA / 銀行匯款'},
+];
+function crmEditPanel(r, index){
+  const currentKey = String(r.status || 'New').trim().toLowerCase();
+  const currentIndex = Math.max(0, CRM_WORKFLOW_STAGES.findIndex(stage => stage.status.toLowerCase() === (currentKey === 'closed won' ? 'converted' : currentKey)));
+  const values = {lastContact:r.lastContact, summary:r.summary, budget:r.budget, nextFollowUp:r.next, followupNote:r.note, quoted:r.quoted, method:r.method};
+  return `<section class="crm-edit-panel"><div class="crm-edit-head"><b>本步驟工作欄位</b><span>只有已到達或正在進入的步驟可編輯；帶入資料維持唯讀</span></div><div class="crm-edit-grid">${CRM_EDIT_FIELDS.map(field => { const enabled = field.stage <= currentIndex + 1; const tag = enabled ? (field.stage === currentIndex + 1 ? '本步驟' : '已開啟') : '尚未到步驟'; const control = field.type === 'textarea' ? `<textarea id="crm-edit-${field.key}-${index}" ${enabled?'':'disabled'} placeholder="${_esc(field.placeholder || '')}">${_esc(values[field.key] || '')}</textarea>` : `<input id="crm-edit-${field.key}-${index}" ${enabled?'':'disabled'} value="${_esc(values[field.key] || '')}" placeholder="${_esc(field.placeholder || '')}">`; return `<label class="crm-edit-field ${field.full?'full':''}"><span class="crm-edit-label"><span>${_esc(field.label)}</span><span class="crm-edit-lock">${tag}</span></span>${control}</label>`; }).join('')}</div><div style="display:flex;align-items:center;gap:12px;margin-top:14px"><button class="btn primary" onclick="saveCrmFields(${index})">儲存工作欄位</button><span style="color:#a99cd0;font-size:12px">儲存後由後台同步 Airtable</span></div></section>`;
+}
 function setCrmStatus(index, status){
   saveCrmStatus(index, status);
 }
@@ -1712,7 +1757,7 @@ function core3CrmCard(r){
   if(r.locked) box = `<div class="infobox lock"><span class="ic">🔒</span><div><b>付款已鎖定</b> — ${_esc(r.verBy)} 於 ${_esc(r.verAt)} 確認入帳，欄位不可再修改。<br>系統已自動建立 <b>${_esc(r.convOrder)}</b>，Partner 額度 +1。</div></div>`;
   else if(r.payStatus === "待帳務確認") box = `<div class="infobox lock"><span class="ic">⏳</span><div><b>等待帳務確認</b> — 客服已填後五碼 ${_esc(r.last5)}，待帳務比對銀行入帳後鎖定。<br>核准人必須與填寫人（${_esc(r.subBy)}）不同，否則職責分離形同虛設。</div></div>`;
 
-  return crmWorkflow(r.status, CORE_CRM.indexOf(r), r) + crmStatusEditor + _gs(1,"詢問基本資料","",`<div class="fgrid">
+  return crmWorkflow(r.status, CORE_CRM.indexOf(r), r) + crmEditPanel(r, CORE_CRM.indexOf(r)) + crmStatusEditor + _gs(1,"詢問基本資料","",`<div class="fgrid">
       ${_fi("詢問編號", _inquiryLabel(r), null, ["自動"])}
       ${_fi("進件時間", _fmt(r.inqDate), null, ["自動"])}
       ${_fi("客戶姓名", r.name)}
@@ -1721,6 +1766,7 @@ function core3CrmCard(r){
       ${_fi("Telegram 帳號", r.tgUser)}
       ${_fi("所屬經銷商", r.partner)}
       ${_fi("經銷商代碼", r.partnerCode, null, ["帶入"])}
+      ${_fiUrl("經銷商官網", r.partnerWebsite, "由 Partners 帶入")}
       ${_fi("溝通語言", r.lang, "決定派給哪位客服", ["新增","new"])}
       ${_fi("是否回頭客", r.returning ? `是 · 過去 ${r.prevCount} 次詢問` : "否 · 新客", "回頭客成交率完全不同", ["新增","new"])}
     </div>`)
@@ -1804,6 +1850,26 @@ async function saveCrmStatus(index, requestedStatus){
   }catch(error){
     toast(`狀態更新失敗：${error.message}`);
   }
+}
+
+async function saveCrmFields(index){
+  const crm = CORE_CRM[index];
+  if(!crm?.recordId){ toast('案件尚未同步 Airtable，請先同步後再操作'); return; }
+  const fields = Object.fromEntries(CRM_EDIT_FIELDS.map(field => [field.key, document.getElementById(`crm-edit-${field.key}-${index}`)?.value ?? '']).filter(([, value]) => value !== ''));
+  const endpoint = location.protocol === 'file:' ? 'https://lumora-studiokh.vercel.app/api/crm/update-fields' : '/api/crm/update-fields';
+  try{
+    const response = await fetch(endpoint, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({recordId:crm.recordId, fields})});
+    const result = await response.json();
+    if(!response.ok || !result.ok) throw new Error(result.error || `HTTP ${response.status}`);
+    if(Object.prototype.hasOwnProperty.call(fields,'lastContact')) crm.lastContact = fields.lastContact;
+    if(Object.prototype.hasOwnProperty.call(fields,'summary')) crm.summary = fields.summary;
+    if(Object.prototype.hasOwnProperty.call(fields,'budget')) crm.budget = fields.budget;
+    if(Object.prototype.hasOwnProperty.call(fields,'nextFollowUp')) crm.next = fields.nextFollowUp;
+    if(Object.prototype.hasOwnProperty.call(fields,'followupNote')) crm.note = fields.followupNote;
+    if(Object.prototype.hasOwnProperty.call(fields,'quoted')) crm.quoted = fields.quoted;
+    if(Object.prototype.hasOwnProperty.call(fields,'method')) crm.method = fields.method;
+    core3Close(); render(); toast('工作欄位已更新並同步 Airtable');
+  }catch(error){ toast(`工作欄位更新失敗：${error.message}`); }
 }
 
 function orderProcessDate(raw, offset=0){
@@ -1904,6 +1970,7 @@ function core3PtnCard(r){
       ${_fi("Telegram 帳號", r.tgUser)}
       ${_fi("導入狀態", r.onboard, "教過怎麼用，直接影響送件品質", ["新增","new"])}
       ${_fi("官方承接team", r.team)}
+      ${_fiUrl("Vercel 網址", r.url, "夥伴可從 Vercel 後台維護自己的網站")}
     </div>`)
   + _gs(2,"方案與額度","額度在 Order 建立成功才扣",`<div class="fgrid">
       ${_fi("方案名稱", r.plan)}
@@ -1944,7 +2011,11 @@ function core3Open(kind, i){
   let kindTxt, color, title, meta, body;
   if(kind === "crm"){
     const r = CORE_CRM[i];
-    if(['new','新進件'].includes(String(r.status || '').trim().toLowerCase())) markInquiryRead(i);
+    if(['new','新進件'].includes(String(r.status || '').trim().toLowerCase())){
+      markInquiryRead(i);
+      // 重新渲染清單，立即移除該案件的紅點與未讀樣式。
+      render();
+    }
     kindTxt = "CRM · 詢問案件"; color = "#c6b8ff";
     title = `${r.name}　${_inquiryLabel(r)}`;
     meta = `<span class="tag ${r.statusTag}">${_esc(r.status)}</span><span class="tag ${r.payTag}">${_esc(r.pay)}</span><span class="tag mute">${_esc(r.partnerCode)}</span>`;
@@ -2064,7 +2135,7 @@ function _airtableFieldMap(rows, kind){
       cs: r.cs || '',
       // 抽屜完整欄位
       inqDate: r.inqDate, service: r.service, tgId: r.tgId, tgUser: r.tgUser,
-      partner: r.partnerCode || r.partner, partnerCode: r.partnerCode,
+      partner: r.partnerCode || r.partner, partnerCode: r.partnerCode, partnerWebsite: r.partnerWebsite || '',
       lang: r.lang, returning: r.returning, summary: r.summary,
       files: r.files, hasFiles: r.hasFiles, budget: r.budget, pri_d: r.pri,
       firstResp: r.firstResp, touch: r.touch, daysIn: r.daysIn,
@@ -2103,7 +2174,7 @@ function _airtableFieldMap(rows, kind){
       pending: r.submitted || 0, sync: r.sync, syncTag: r.sync,
       lastSync: r.lastSync,
       planAmount: r.planAmount, currency: r.currency, subscriptionStatus: r.subscriptionStatus,
-      contact: r.contact, brand: r.brand, tgUser: r.tgUser, onboard: r.onboard,
+      contact: r.contact, brand: r.brand, url: r.url, tgUser: r.tgUser, onboard: r.onboard,
       team: r.team, plan: r.plan, period: r.period,
       planStart: r.planStart, planExpiry: r.planExpiry, planStatus: r.planStatus,
       renewal: r.renewal, partnerPaid: r.partnerPaid,
@@ -2118,6 +2189,17 @@ function _airtableFieldMap(rows, kind){
 }
 
 async function syncFromAirtable(){
+  if(MOCK_ONLY_MODE){
+    airtableDataState = 'ready';
+    airtableSyncError = '';
+    const banner = document.getElementById('sync-banner');
+    if(banner){
+      banner.textContent = '🧪 Mock 預覽模式 · Airtable 資料暫不載入';
+      banner.style.color = '#cbb6ff';
+    }
+    if(typeof render === 'function') render();
+    return;
+  }
   const banner = document.getElementById('sync-banner');
   airtableDataState = 'loading';
   airtableSyncError = '';
