@@ -775,6 +775,24 @@ html{background:#080817}
 .dw-body::-webkit-scrollbar-thumb{background:#3d3660;border-radius:4px}
 
 .gsec{margin-top:24px}
+.crm-workflow{margin:0 0 22px;padding:18px;border:1px solid rgba(116,239,204,.28);border-radius:18px;background:linear-gradient(135deg,rgba(31,63,70,.44),rgba(30,22,61,.5));scroll-margin-top:24px}
+.crm-workflow-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:18px}
+.crm-workflow-current{font-size:21px;font-weight:800;color:#fff;margin-top:4px}
+.crm-workflow-task{color:#c9c0e8;font-size:13px;margin-top:5px}
+.crm-workflow-head .btn:disabled{opacity:.58;cursor:not-allowed;color:#c9c0e8}
+.crm-workflow-steps{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px}
+.crm-workflow-step{display:flex;align-items:center;gap:8px;min-width:0;padding:10px 8px;border:1px solid rgba(255,255,255,.13);border-radius:12px;background:rgba(11,9,31,.3);color:#aaa0d0;text-align:left;cursor:pointer}
+.crm-workflow-step:hover,.crm-workflow-step.active{border-color:rgba(116,239,204,.65);background:rgba(116,239,204,.12);color:#fff}
+.crm-workflow-step.done{color:#a8f0c8;border-color:rgba(116,239,204,.3)}
+.crm-workflow-dot{display:grid;place-items:center;flex:0 0 24px;width:24px;height:24px;border-radius:50%;background:#332962;color:#cfc6f4;font-size:11px;font-weight:800}
+.crm-workflow-step.done .crm-workflow-dot{background:#1b604d;color:#b8ffe9}
+.crm-workflow-step span:last-child{min-width:0}
+.crm-workflow-step b,.crm-workflow-step small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.crm-workflow-step b{font-size:12px}.crm-workflow-step small{font-size:10px;margin-top:3px;color:#9e94c5}
+.crm-workflow-gate{display:flex;flex-wrap:wrap;gap:8px 14px;margin-top:14px;padding-top:12px;border-top:1px solid rgba(255,255,255,.1);color:#c9c0e8;font-size:12px}
+.crm-workflow-gate span{color:#ffcf9a}.crm-workflow-gate span.done{color:#a8f0c8}
+@media(max-width:900px){.crm-workflow-steps{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:560px){.crm-workflow-head{flex-direction:column}.crm-workflow-steps{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .gsec-h{display:flex;align-items:center;gap:11px;padding-bottom:9px;margin-bottom:13px;border-bottom:1px solid rgba(255,255,255,.14)}
 .gsec-n{
   width:23px;height:23px;border-radius:50%;flex:none;display:grid;place-items:center;
@@ -1425,7 +1443,7 @@ const _fi = (k,v,note,chip) => `<div class="fitem">
   <div class="fv ${v?'':'none'}">${v?_esc(v):"—"}</div>
   ${note?`<div class="fn">${_esc(note)}</div>`:""}</div>`;
 const _fiw = (k,v,note,chip) => _fi(k,v,note,chip).replace('class="fitem"','class="fitem full"');
-const _gs = (n,title,right,inner) => `<div class="gsec">
+const _gs = (n,title,right,inner) => `<div class="gsec" id="detail-section-${n}">
   <div class="gsec-h"><span class="gsec-n">${n}</span><b>${_esc(title)}</b>${right?`<span>${_esc(right)}</span>`:""}</div>
   ${inner}</div>`;
 
@@ -1662,16 +1680,39 @@ function crmPartnersPage(){
 }
 
 /* ═══ 第二層抽屜 ═══ */
+const CRM_WORKFLOW_STAGES = [
+  { status:'New', label:'新進件', section:1, task:'確認已接手案件並指定負責客服', fields:[['負責客服', r => r.cs]] },
+  { status:'Contacted', label:'已聯絡', section:3, task:'完成第一次聯絡並留下回應時間', fields:[['首次回應時間', r => r.firstResp]] },
+  { status:'Discussing', label:'洽談中', section:2, task:'確認需求與預算，補上需求摘要', fields:[['需求摘要', r => r.summary], ['預算區間', r => r.budget]] },
+  { status:'Waiting Customer', label:'等客戶回覆', section:3, task:'設定下一次追蹤時間', fields:[['下次追蹤', r => r.next && r.next !== '—']] },
+  { status:'Ready to Close', label:'準備成交', section:4, task:'確認方案與報價金額，等待付款驗證', fields:[['報價金額', r => r.quoted]] },
+  { status:'Converted', label:'已轉單', section:5, task:'付款確認並完成轉單', fields:[['付款鎖定', r => r.locked || ['已付款','已確認','confirmed','paid'].includes(String(r.payStatus || '').trim().toLowerCase())]] },
+];
+function crmWorkflow(status, index, r){
+  const currentKey = String(status || 'New').trim().toLowerCase();
+  const normalizedKey = currentKey === 'closed won' || currentKey === '已轉單' ? 'converted' : currentKey;
+  const currentIndex = Math.max(0, CRM_WORKFLOW_STAGES.findIndex(stage => stage.status.toLowerCase() === normalizedKey));
+  const next = CRM_WORKFLOW_STAGES[currentIndex + 1];
+  const nextChecks = next ? next.fields.map(([label, get]) => ({label, done:Boolean(get(r))})) : [];
+  const missing = nextChecks.filter(check => !check.done);
+  const canAdvance = Boolean(next && missing.length === 0);
+  return `<section class="crm-workflow" aria-label="案件流程"><div class="crm-workflow-head"><div><div class="fk">客服工作流程</div><div class="crm-workflow-current">目前在：${_esc(CRM_WORKFLOW_STAGES[currentIndex].label)}</div>${next ? `<div class="crm-workflow-task">下一步：${_esc(next.task)}</div>` : '<div class="crm-workflow-task">所有流程已完成</div>'}</div>${next ? `<button class="btn ${canAdvance ? 'success' : ''}" ${canAdvance ? `onclick="setCrmStatus(${index},'${_esc(next.status)}')"` : 'disabled'}>${canAdvance ? `完成並進入「${_esc(next.label)}」 →` : `先完成 ${missing.length} 項必要資料`}</button>` : '<span class="tag ok">流程完成</span>'}</div><div class="crm-workflow-steps">${CRM_WORKFLOW_STAGES.map((stage, stepIndex) => { const active = stepIndex === currentIndex; const done = stepIndex < currentIndex; return `<button type="button" class="crm-workflow-step ${active?'active':''} ${done?'done':''}" onclick="crmJumpToSection(${stage.section})"><span class="crm-workflow-dot">${done?'✓':stepIndex+1}</span><span><b>${_esc(stage.label)}</b><small>${active?'目前步驟':done?'已完成':'點擊查看資料'}</small></span></button>`; }).join('')}</div>${next ? `<div class="crm-workflow-gate"><b>進入下一步前需完成：</b>${nextChecks.map(check => `<span class="${check.done?'done':''}">${check.done?'✓':'○'} ${_esc(check.label)}</span>`).join('')}</div>` : ''}</section>`;
+}
+function crmJumpToSection(section){
+  const target = document.getElementById(`detail-section-${section}`);
+  if(target) target.scrollIntoView({behavior:'smooth', block:'start'});
+}
+function setCrmStatus(index, status){
+  saveCrmStatus(index, status);
+}
 function core3CrmCard(r){
   const tl = `<div class="tl">${r.history.map(h=>`<div class="tl-i ${h.s}"><div class="tl-t">${_esc(h.t)}</div><div class="tl-d">${_esc(h.d)}</div></div>`).join('')}</div>`;
-  const crmStatuses = ['New','Contacted','Discussing','Waiting Customer','Ready to Close','Closed Won','Converted','Closed Lost'];
-  const crmStatusOptions = crmStatuses.includes(r.status) ? crmStatuses : [r.status, ...crmStatuses.filter(status => status !== r.status)];
-  const crmStatusEditor = `<div style="display:flex;align-items:end;gap:10px;flex-wrap:wrap;margin:0 0 18px;padding:14px 16px;border:1px solid rgba(151,126,255,.3);border-radius:14px;background:rgba(50,37,104,.18)"><label style="display:flex;flex-direction:column;gap:6px;color:#bdb0e5;font-size:12px;min-width:220px"><span>下一步狀態</span><select id="crm-status-${_esc(r.id)}" style="background:#0e0b24;border:1px solid rgba(151,126,255,.45);border-radius:10px;padding:10px;color:#fff">${crmStatusOptions.map(status => `<option value="${_esc(status)}" ${status === r.status ? 'selected' : ''}>${_esc(status)}</option>`).join('')}</select></label><button class="btn primary" onclick="saveCrmStatus(${CORE_CRM.indexOf(r)})">儲存狀態</button><span style="color:#a99cd0;font-size:12px">更新後會同步回 Airtable CRM</span></div>`;
+  const crmStatusEditor = `<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 18px;padding:12px 16px;border:1px solid rgba(151,126,255,.3);border-radius:14px;background:rgba(50,37,104,.18)"><span class="tag">目前狀態：${_esc(r.status || 'New')}</span><span style="color:#a99cd0;font-size:12px">狀態只能透過上方流程主操作更新，完成必要資料後才會同步 Airtable</span></div>`;
   let box = "";
   if(r.locked) box = `<div class="infobox lock"><span class="ic">🔒</span><div><b>付款已鎖定</b> — ${_esc(r.verBy)} 於 ${_esc(r.verAt)} 確認入帳，欄位不可再修改。<br>系統已自動建立 <b>${_esc(r.convOrder)}</b>，Partner 額度 +1。</div></div>`;
   else if(r.payStatus === "待帳務確認") box = `<div class="infobox lock"><span class="ic">⏳</span><div><b>等待帳務確認</b> — 客服已填後五碼 ${_esc(r.last5)}，待帳務比對銀行入帳後鎖定。<br>核准人必須與填寫人（${_esc(r.subBy)}）不同，否則職責分離形同虛設。</div></div>`;
 
-  return crmStatusEditor + _gs(1,"詢問基本資料","",`<div class="fgrid">
+  return crmWorkflow(r.status, CORE_CRM.indexOf(r), r) + crmStatusEditor + _gs(1,"詢問基本資料","",`<div class="fgrid">
       ${_fi("詢問編號", _inquiryLabel(r), null, ["自動"])}
       ${_fi("進件時間", _fmt(r.inqDate), null, ["自動"])}
       ${_fi("客戶姓名", r.name)}
@@ -1730,25 +1771,28 @@ function core3CrmCard(r){
     </div>`);
 }
 
-async function saveCrmStatus(index){
+async function saveCrmStatus(index, requestedStatus){
   const crm = CORE_CRM[index];
-  const select = document.getElementById(`crm-status-${crm?.id || ''}`);
-  const status = String(select?.value || '').trim();
+  const status = String(requestedStatus || '').trim();
   if(!crm || !status) return;
+  const currentKey = String(crm.status || 'New').trim().toLowerCase();
+  const currentIndex = Math.max(0, CRM_WORKFLOW_STAGES.findIndex(stage => stage.status.toLowerCase() === (currentKey === 'closed won' ? 'converted' : currentKey)));
+  const nextStage = CRM_WORKFLOW_STAGES[currentIndex + 1];
+  if(!nextStage || status !== nextStage.status){
+    toast('流程必須依序完成，不能跳過必要步驟');
+    return;
+  }
   const endpoint = location.protocol === 'file:'
     ? 'https://lumora-studiokh.vercel.app/api/crm/update-status'
     : '/api/crm/update-status';
-  const button = select?.closest('div')?.querySelector('button');
-  if(button){ button.disabled = true; button.textContent = '儲存中…'; }
   try{
-    if(crm.recordId){
-      const response = await fetch(endpoint, {
-        method:'POST', headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({recordId:crm.recordId,status})
-      });
-      const result = await response.json();
-      if(!response.ok || !result.ok) throw new Error(result.error || `HTTP ${response.status}`);
-    }
+    if(!crm.recordId) throw new Error('案件尚未同步 Airtable，請先同步後再操作');
+    const response = await fetch(endpoint, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({recordId:crm.recordId,status})
+    });
+    const result = await response.json();
+    if(!response.ok || !result.ok) throw new Error(result.error || `HTTP ${response.status}`);
     const previous = crm.status;
     crm.status = status;
     crm.statusTag = _tagClass('status', status);
@@ -1756,9 +1800,8 @@ async function saveCrmStatus(index){
     if(previous !== status) crm.history.push({t:`狀態更新 · ${status}`, d:'後台操作 · 已同步 Airtable', s:'now'});
     core3Close();
     render();
-    toast(crm.recordId ? `已更新狀態：${status}` : `已更新狀態（本機預覽）：${status}`);
+    toast(`已更新狀態：${status}`);
   }catch(error){
-    if(button){ button.disabled = false; button.textContent = '儲存狀態'; }
     toast(`狀態更新失敗：${error.message}`);
   }
 }
