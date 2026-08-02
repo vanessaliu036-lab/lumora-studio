@@ -545,6 +545,7 @@ html{background:#080817}
 .l1-table tbody tr:hover{background:#1d1743}
 .l1-table tbody tr:last-child td{border-bottom:none}
 .cell-id{font-family:ui-monospace,"SF Mono",Menlo,monospace;font-size:12.5px;color:#a99cd0}
+.cell-date{font-family:ui-monospace,"SF Mono",Menlo,monospace;font-size:11.5px;color:rgba(228,215,255,.55);white-space:nowrap}
 .cell-name{font-weight:600;color:#fff}
 .cell-sub{font-size:11.5px;color:#a99cd0;margin-top:2px}
 .cell-due{font-family:ui-monospace,"SF Mono",Menlo,monospace;font-size:13px;color:#e8e2ff}
@@ -832,6 +833,14 @@ const CORE_PTN = [
 
 /* ── 小工具 ── */
 const _esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const _fmt = v => {
+  if (v === null || v === undefined || v === "") return "—";
+  if (typeof v !== "string") return String(v);
+  // ISO datetime "2026-08-05T14:00:00.000Z" → "08-05 14:00"
+  const m = v.match(/^(\d{4})-(\d{2})-(\d{2})(?:T(\d{2}):(\d{2}))?/);
+  if (m) return `${m[2]}-${m[3]}${m[4] ? ' ' + m[4] + ':' + m[5] : ''}`;
+  return v;
+};
 const _fi = (k,v,note,chip) => `<div class="fitem">
   <div class="fk">${_esc(k)}${chip?`<span class="chip ${chip[1]||'auto'}">${_esc(chip[0])}</span>`:""}</div>
   <div class="fv ${v?'':'none'}">${v?_esc(v):"—"}</div>
@@ -864,8 +873,9 @@ function crmPage(){
     <button class="btn" onclick="toast('詢問由 TG Bot 自動進件')">＋ 手動建立詢問</button></div>
   ${core3Flow()}
   <div class="core3-wrap"><div class="table-wrap"><table class="table l1-table"><thead><tr>
-    <th>詢問編號</th><th>客戶</th><th>狀態</th><th>付款</th><th>優先</th><th>下次追蹤</th><th>負責客服</th>
+    <th>進件日期</th><th>詢問編號</th><th>客戶</th><th>狀態</th><th>付款</th><th>優先</th><th>下次追蹤</th><th>負責客服</th>
   </tr></thead><tbody>${CORE_CRM.map((r,i)=>`<tr onclick="core3Open('crm',${i})">
+    <td class="cell-date">${_fmt(r.inqDate)}</td>
     <td class="cell-id">${_esc(r.id)}</td>
     <td><div class="cell-name">${_esc(r.name)}</div><div class="cell-sub">${_esc(r.partnerCode)}</div></td>
     <td><span class="tag ${r.statusTag}">${_esc(r.status)}</span></td>
@@ -880,8 +890,9 @@ function crmOrdersPage(){
   return `<div class="page-title"><div><h1>Orders</h1>
     <p style="color:#c3bce0">一筆 = 一次專案。付款欄位唯讀，從 CRM 帶入，不在這裡修改。</p></div></div>
   <div class="core3-wrap"><div class="table-wrap"><table class="table l1-table"><thead><tr>
-    <th>訂單編號</th><th>客戶</th><th>製作狀態</th><th>素材</th><th>承諾交期</th><th>製作負責</th>
+    <th>日期</th><th>訂單編號</th><th>客戶</th><th>製作狀態</th><th>素材</th><th>承諾交期</th><th>製作負責</th>
   </tr></thead><tbody>${CORE_ORD.map((r,i)=>`<tr onclick="core3Open('ord',${i})">
+    <td class="cell-date">${_fmt(r.orderDate)}</td>
     <td class="cell-id">${_esc(r.id)}</td>
     <td><div class="cell-name">${_esc(r.name)}</div><div class="cell-sub">${_esc(r.service)}</div></td>
     <td><span class="tag ${r.prodTag}">${_esc(r.prod)}</span></td>
@@ -895,8 +906,9 @@ function crmPartnersPage(){
   return `<div class="page-title"><div><h1>Partners</h1>
     <p style="color:#c3bce0">一筆 = 一個經銷商。額度剩多少、有沒有漏單、還有多少在漏斗裡沒轉換。</p></div></div>
   <div class="core3-wrap"><div class="table-wrap"><table class="table l1-table"><thead><tr>
-    <th>經銷商</th><th>剩餘額度</th><th>已使用</th><th>待轉換</th><th>同步狀態</th><th>最近同步</th>
+    <th>最後警示</th><th>經銷商</th><th>剩餘額度</th><th>已使用</th><th>待轉換</th><th>同步狀態</th>
   </tr></thead><tbody>${CORE_PTN.map((r,i)=>`<tr onclick="core3Open('ptn',${i})">
+    <td class="cell-date">${_fmt(r.lastAlert || r.lastSync)}</td>
     <td><div class="cell-name">${_esc(r.name)}</div><div class="cell-sub">${_esc(r.code)}</div></td>
     <td><span class="tag ${r.remain<=2?'bad':'ok'}">${r.remain} / ${r.limit}</span></td>
     <td>${r.used}<div class="mini-bar"><i class="${r.pct>=100?'hot':''}" style="width:${r.pct}%"></i></div></td>
@@ -919,7 +931,7 @@ function core3CrmCard(r){
 
   return _gs(1,"詢問基本資料","",`<div class="fgrid">
       ${_fi("詢問編號", r.id, null, ["自動"])}
-      ${_fi("進件時間", r.inqDate, null, ["自動"])}
+      ${_fi("進件時間", _fmt(r.inqDate), null, ["自動"])}
       ${_fi("客戶姓名", r.name)}
       ${_fi("服務類型", r.service)}
       ${_fi("Telegram User ID", r.tgId)}
@@ -939,8 +951,8 @@ function core3CrmCard(r){
   + _gs(3,"客服追蹤","",`<div class="fgrid">
       ${_fi("負責客服", r.cs)}
       ${_fi("目前狀態", r.status)}
-      ${_fi("最近聯絡", r.lastContact)}
-      ${_fi("下次追蹤", r.next === "—" ? null : r.next)}
+      ${_fi("最近聯絡", _fmt(r.lastContact))}
+      ${_fi("下次追蹤", r.next === "—" ? null : _fmt(r.next))}
       ${_fi("首次回應時間", r.firstResp, "最能預測成交率的單一指標", ["新增","new"])}
       ${_fi("已聯絡次數", `${r.touch} 次`, "分辨「還沒追」和「追五次沒回」", ["新增","new"])}
       ${_fi("卡在現狀態", `${r.daysIn} 天`, "撈爛尾案件", ["新增","new"])}
@@ -950,20 +962,20 @@ function core3CrmCard(r){
       ${_fi("付款狀態", r.payStatus)}
       ${_fi("報價金額", r.quoted)}
       ${_fi("付款方式", r.method)}
-      ${_fi("匯款日期", r.transferDate)}
+      ${_fi("匯款日期", _fmt(r.transferDate))}
       ${_fi("帳戶後五碼", r.last5, r.last5 ? "客戶銀行帳戶後五碼" : "尚未填寫", ["新增","new"])}
       ${_fi("後五碼檢核", r.last5valid === null ? null : (r.last5valid ? "✓ 五碼正確" : "✗ 長度不符"), "自動判斷長度是否為 5，打錯當下就看得到", ["公式"])}
       ${_fi("匯款證明", r.proof)}
       ${_fi("付款鎖定", r.locked ? "🔒 已鎖定" : "未鎖定", null, ["新增","lk"])}
       ${_fi("填寫人", r.subBy, "客服", ["新增","new"])}
-      ${_fi("填寫時間", r.subAt)}
+      ${_fi("填寫時間", _fmt(r.subAt))}
       ${_fi("核准人", r.verBy, "帳務，必須 ≠ 填寫人", ["新增","new"])}
-      ${_fi("核准時間", r.verAt)}
+      ${_fi("核准時間", _fmt(r.verAt))}
       ${_fiw("驗證備註", r.verNote, "對不上時記錄原因")}
     </div>${box}`)
   + _gs(5,"結案結果","",`<div class="fgrid">
       ${_fi("結案結果", r.closeResult)}
-      ${_fi("結案時間", r.closedAt)}
+      ${_fi("結案時間", _fmt(r.closedAt))}
       ${_fi("轉入訂單", r.convOrder, r.convOrder ? "系統自動寫入，非手動建立" : "尚未成交", ["自動"])}
       ${_fi("未成交原因", r.lostReason)}
       ${_fi("成交耗時", r.daysToClose, "排產能與現金流", ["新增","new"])}
@@ -972,7 +984,7 @@ function core3CrmCard(r){
       ${_fi("Bot 訊息 ID", r.botMsg, "防止 TG 重複建立")}
       ${_fi("Bot 同步狀態", r.botSync)}
       ${_fi("建立來源", r.createdBy)}
-      ${_fi("最後更新", r.updated)}
+      ${_fi("最後更新", _fmt(r.updated))}
     </div>`);
 }
 
@@ -985,7 +997,7 @@ function core3OrdCard(r){
 
   return _gs(1,"訂單來源","唯讀 · 由 CRM 帶入",`<div class="fgrid">
       ${_fi("訂單編號", r.id, null, ["自動"])}
-      ${_fi("成單時間", r.orderDate, "付款鎖定後自動建立", ["自動"])}
+      ${_fi("成單時間", _fmt(r.orderDate), "付款鎖定後自動建立", ["自動"])}
       ${_fi("來源詢問", r.crm, null, ["連結"])}
       ${_fi("客戶姓名", r.name, null, ["帶入"])}
       ${_fi("Telegram User ID", r.tgId, null, ["帶入"])}
@@ -1016,9 +1028,9 @@ function core3OrdCard(r){
     </div>`)
   + _gs(4,"交付","",`<div class="fgrid">
       ${_fi("承諾交期", r.promisedDate, "沒有這欄就算不出延遲率", ["新增","new"])}
-      ${_fi("交付日期", r.deliveryDate)}
+      ${_fi("交付日期", _fmt(r.deliveryDate))}
       ${_fi("延遲天數", r.daysLate, null, ["新增","new"])}
-      ${_fi("完成日期", r.completion)}
+      ${_fi("完成日期", _fmt(r.completion))}
       ${_fi("交付連結", r.link)}
       ${_fi("訂單狀態", r.orderStatus)}
     </div>${late}`)
@@ -1069,7 +1081,7 @@ function core3PtnCard(r){
       ${_fi("差異", String(r.diff), null, ["公式"])}
       ${_fi("同步狀態", r.sync, null, ["公式"])}
       ${_fi("Webhook 狀態", r.webhook)}
-      ${_fi("最近同步", r.lastSync)}
+      ${_fi("最近同步", _fmt(r.lastSync))}
       ${_fiw("最近警示", r.lastAlert, "避免同一異常重複轟炸", ["新增","new"])}
     </div>${warn}`)
   + _gs(4,"業績與分潤","",`<div class="fgrid">
