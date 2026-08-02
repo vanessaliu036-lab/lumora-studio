@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Lumora Cloud — Backoffice</title>
+<title>Lumora Cloud — Backoffice UI V1</title>
 <style>
 :root{--bg:#0b0d12;--panel:#121620;--panel2:#181d29;--line:#2a3140;--text:#f6f7fb;--muted:#9aa4b5;--gold:#c8a86b;--green:#4fd18b;--red:#ff6b6b;--yellow:#f0c65b;--blue:#70a5ff;--radius:18px;--shadow:0 18px 60px rgba(0,0,0,.35)}
 *{box-sizing:border-box} body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:linear-gradient(180deg,#080a0e,#0e1118);color:var(--text)}
@@ -1166,7 +1166,7 @@ const STAFF_API = "http://127.0.0.1:8765";
 function staffPage(){
   return `<div class="page-title"><div>
     <h1>TG 客服觸發器</h1>
-    <p class="muted" style="color:#c3bce0">客戶付款後，到這裡人工核帳、通知客戶、標記交付、結案歸檔。<br>
+    <p style="color:#c3bce0">客戶付款後，到這裡人工核帳、通知客戶、標記交付、結案歸檔。<br>
     對接本地 Bot API：<code>${STAFF_API}</code>（需先啟動 <code>bot_crm.py</code>）</p>
   </div></div>
 
@@ -1174,25 +1174,29 @@ function staffPage(){
     <div class="grid cols-3">
       <div class="card">
         <h3>① 待核帳（Payment = Pending Verification）</h3>
-        <p class="muted" style="color:#a99cd0;font-size:12.5px">客戶已傳後五碼。點「✓ 核帳通過」會把 CRM 改 Confirmed，並自動傳 TG 訊息給客戶。</p>
+        <p style="color:#a99cd0;font-size:12.5px">客戶已傳後五碼。點「✓ 核帳通過」會把 CRM 改 Confirmed，並自動傳 TG 訊息給客戶。</p>
         <div id="staff-pending"><div class="muted">載入中…</div></div>
       </div>
 
       <div class="card">
         <h3>② 進行中 Order（Production Status ≠ Completed）</h3>
-        <p class="muted" style="color:#a99cd0;font-size:12.5px">已建 Order 還在製作。點「✓ 通知交付」會把狀態改 Ready to Deliver 並通知客戶。</p>
+        <p style="color:#a99cd0;font-size:12.5px">已建 Order 還在製作。點「✓ 通知交付」會把狀態改 Ready to Deliver 並通知客戶。</p>
         <div id="staff-active"><div class="muted">載入中…</div></div>
       </div>
 
       <div class="card">
         <h3>③ 已結案（Production Status = Completed）</h3>
-        <p class="muted" style="color:#a99cd0;font-size:12.5px">客戶已收貨、訂單歸檔到歷史。</p>
+        <p style="color:#a99cd0;font-size:12.5px">客戶已收貨、訂單歸檔到歷史。</p>
         <div id="staff-closed"><div class="muted">載入中…</div></div>
       </div>
     </div>
 
-    <div class="notice warn" style="margin-top:18px">
-      ⚠️ 本頁直接對 Airtable + TG 客戶寫入。動之前確認 CRM ID / Order ID 對得起來。
+    <div class="openq">
+      <h4>⚠️ 直接寫入提示</h4>
+      <ul style="margin:0;padding-left:18px">
+        <li><b>本頁直接對 Airtable + TG 客戶寫入</b>，按按鈕前先確認 CRM ID / Order ID 對得起來。</li>
+        <li>每個動作都有 <b>瀏覽器 confirm 二次確認</b>，按下去就是真實生效。</li>
+      </ul>
     </div>
   </div>
 
@@ -1207,44 +1211,51 @@ function staffPage(){
         const pe = document.getElementById('staff-pending');
         if (pending.ok && pending.records.length){
           pe.innerHTML = pending.records.map(r => `
-            <div style="border-top:1px solid rgba(255,255,255,.08);padding:10px 0">
-              <div><b>${esc(r.name)}</b> <span class="muted">${esc(r.crm_id)}</span></div>
-              <div class="muted" style="font-size:11.5px">後五碼 <b>${esc(r.last5)}</b> · 服務 ${esc(r.service)} · TG ${esc(r.tg_id)}</div>
-              <button class="btn success" style="margin-top:8px"
-                onclick="staffConfirm('${esc(r.id)}','${esc(r.name)}')">✓ 核帳通過</button>
+            <div class="tl">
+              <div class="tl-i done">
+                <div class="tl-t"><b>${esc(r.name)}</b> <span style="color:#a99cd0">${esc(r.crm_id)}</span></div>
+                <div class="tl-d">後五碼 <b>${esc(r.last5)}</b> · 服務 ${esc(r.service)} · TG ${esc(r.tg_id)}</div>
+                <button class="btn success" style="margin-top:8px"
+                  onclick="staffConfirm('${esc(r.id)}','${esc(r.name)}')">✓ 核帳通過</button>
+              </div>
             </div>`).join('');
-        } else { pe.innerHTML = '<div class="muted">無待核帳筆</div>'; }
+        } else { pe.innerHTML = '<div class="muted" style="margin-top:12px">無待核帳筆</div>'; }
         // 進行中
         const ac = document.getElementById('staff-active');
         if (orders.ok && orders.records.length){
-          ac.innerHTML = orders.records.filter(o=>o.production!=='Completed 已完成').map(o => `
-            <div style="border-top:1px solid rgba(255,255,255,.08);padding:10px 0">
-              <div><b>${esc(o.name)}</b> <span class="muted">${esc(o.order_id)}</span></div>
-              <div class="muted" style="font-size:11.5px">${esc(o.production)} · ${esc(o.service||'')}</div>
-              <button class="btn success" style="margin-top:8px"
-                onclick="staffDeliver('${esc(o.id)}','${esc(o.order_id)}','${esc(o.crm_rec)}','${esc(o.tg_id)}','${esc(o.name)}')">✓ 通知交付</button>
-              <button class="btn" style="margin-top:8px;margin-left:6px"
-                onclick="staffClose('${esc(o.id)}','${esc(o.name)}')">直接結案</button>
-            </div>`).join('') || '<div class="muted">無進行中訂單</div>';
-        } else { ac.innerHTML = '<div class="muted">無進行中訂單</div>'; }
+          const active = orders.records.filter(o=>o.production!=='Completed 已完成');
+          ac.innerHTML = active.length ? active.map(o => `
+            <div class="tl">
+              <div class="tl-i now">
+                <div class="tl-t"><b>${esc(o.name)}</b> <span style="color:#a99cd0">${esc(o.order_id)}</span></div>
+                <div class="tl-d">${esc(o.production)} · ${esc(o.service||'')}</div>
+                <button class="btn success" style="margin-top:8px"
+                  onclick="staffDeliver('${esc(o.id)}','${esc(o.order_id)}','${esc(o.crm_rec)}','${esc(o.tg_id)}','${esc(o.name)}')">✓ 通知交付</button>
+                <button class="btn" style="margin-top:8px;margin-left:6px"
+                  onclick="staffClose('${esc(o.id)}','${esc(o.name)}')">直接結案</button>
+              </div>
+            </div>`).join('') : '<div class="muted" style="margin-top:12px">無進行中訂單</div>';
+        } else { ac.innerHTML = '<div class="muted" style="margin-top:12px">無進行中訂單</div>'; }
         // 已結案
         const cl = document.getElementById('staff-closed');
         if (orders.ok && orders.records.length){
           const closed = orders.records.filter(o=>o.production==='Completed 已完成');
           cl.innerHTML = closed.length ? closed.map(o => `
-            <div style="border-top:1px solid rgba(255,255,255,.08);padding:10px 0">
-              <div><b>${esc(o.name)}</b> <span class="muted">${esc(o.order_id)}</span></div>
-              <div class="muted" style="font-size:11.5px">${esc(o.service||'')} · ${esc(o.completed_at||'')}</div>
-            </div>`).join('') : '<div class="muted">尚無已結案</div>';
-        } else { cl.innerHTML = '<div class="muted">尚無已結案</div>'; }
+            <div class="tl">
+              <div class="tl-i done">
+                <div class="tl-t"><b>${esc(o.name)}</b> <span style="color:#a99cd0">${esc(o.order_id)}</span></div>
+                <div class="tl-d">${esc(o.service||'')} · ${esc(o.completed_at||'')}</div>
+              </div>
+            </div>`).join('') : '<div class="muted" style="margin-top:12px">尚無已結案</div>';
+        } else { cl.innerHTML = '<div class="muted" style="margin-top:12px">尚無已結案</div>'; }
       } catch (e) {
         document.getElementById('staff-pending').innerHTML =
-          '<div class="notice danger">⚠️ 連不到本地 Bot API（需先啟動 bot_crm.py）：' + esc(String(e)) + '</div>';
+          '<div class="infobox bad"><span class="ic">⚠</span><div>連不到本地 Bot API（需先啟動 <code>bot_crm.py</code>）：<br><code>' + esc(String(e)) + '</code></div></div>';
       }
     }
-    function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));}
+    function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
     async function staffConfirm(crmRec,name){
-      if(!confirm('核帳通過？\\n' + name + ' 的 CRM 會被改為 Confirmed，\\n並自動傳 TG 訊息給客戶。')) return;
+      if(!confirm('核帳通過？\\n\\n' + name + ' 的 CRM 會被改為 Confirmed，\\n並自動傳 TG 訊息給客戶。')) return;
       const r = await fetch('${STAFF_API}/staff/confirm-payment',{
         method:'POST', headers:{'Content-Type':'application/json'},
         body: JSON.stringify({crm_rec:crmRec})}).then(r=>r.json());
@@ -1252,7 +1263,7 @@ function staffPage(){
       if(r.ok) staffLoad();
     }
     async function staffDeliver(orderId,orderNo,crmRec,tgId,name){
-      if(!confirm('通知客戶交付？\\n' + name + ' Order ' + orderNo)) return;
+      if(!confirm('通知客戶交付？\\n\\n' + name + ' · Order ' + orderNo)) return;
       const r = await fetch('${STAFF_API}/staff/mark-delivered',{
         method:'POST', headers:{'Content-Type':'application/json'},
         body: JSON.stringify({order_id:orderId,crm_rec:crmRec,tg_id:tgId,name:name})}).then(r=>r.json());
@@ -1260,7 +1271,7 @@ function staffPage(){
       if(r.ok) staffLoad();
     }
     async function staffClose(orderId,name){
-      if(!confirm('直接結案？\\n' + name + ' 的 Order 會改 Completed')) return;
+      if(!confirm('直接結案？\\n\\n' + name + ' 的 Order 會改 Completed 並歸檔歷史')) return;
       const r = await fetch('${STAFF_API}/staff/close-order',{
         method:'POST', headers:{'Content-Type':'application/json'},
         body: JSON.stringify({order_id:orderId})}).then(r=>r.json());
@@ -1280,6 +1291,4 @@ window.addEventListener('hashchange',()=>{
   const r=(location.hash||'').replace('#','');
   if(['home','retail','checkout','telegram'].includes(r)) location.hash='#admin-login';
 });
-// 後台獨立頁：第一次打開直接跳登入，避免 publicPage 預設 hero
-if(!location.hash) location.replace(location.pathname + '#admin-login');
 </script>
