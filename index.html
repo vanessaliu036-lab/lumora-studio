@@ -2579,8 +2579,8 @@
           identityInput.value = button.dataset.identity;
           clearServiceSelection();
           const isPersonal = button.dataset.identity === "Personal";
-          personalServices.style.display = isPersonal ? "block" : "none";
-          brandServices.style.display = isPersonal ? "none" : "block";
+          personalServices.classList.toggle("is-visible", isPersonal);
+          brandServices.classList.toggle("is-visible", !isPersonal);
           updateSubmitState();
         });
       });
