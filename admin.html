@@ -1793,9 +1793,18 @@ const AIRTABLE_API = (location.hostname === 'localhost' || location.hostname ===
 
 async function _airtableGet(path){
   const url = (AIRTABLE_API === '/api' ? '/api' : AIRTABLE_API) + path;
-  const r = await fetch(url, { headers: { 'Accept': 'application/json' } });
-  if(!r.ok) throw new Error('HTTP ' + r.status);
-  return r.json();
+  let lastError;
+  for(let attempt=0; attempt<3; attempt++){
+    try{
+      const r = await fetch(url, { headers: { 'Accept': 'application/json' }, cache:'no-store' });
+      if(!r.ok) throw new Error(`${path} HTTP ${r.status}`);
+      return await r.json();
+    }catch(error){
+      lastError = error;
+      if(attempt < 2) await new Promise(resolve => setTimeout(resolve, 450 * (attempt + 1)));
+    }
+  }
+  throw lastError || new Error(`Failed to fetch ${path}`);
 }
 
 function _airtableFieldMap(rows, kind){
@@ -1867,11 +1876,9 @@ async function syncFromAirtable(){
   if(typeof render === 'function' && location.hash.startsWith('#admin')) render();
   if(banner) banner.textContent = '🔄 同步中…';
   try {
-    const [c, o, p] = await Promise.all([
-      _airtableGet('/crm/full'),
-      _airtableGet('/orders/full'),
-      _airtableGet('/partners/full'),
-    ]);
+    const c = await _airtableGet('/crm/full');
+    const o = await _airtableGet('/orders/full');
+    const p = await _airtableGet('/partners/full');
     if(c.ok){ CORE_CRM.length = 0; _airtableFieldMap(c.records, 'crm').forEach(r => CORE_CRM.push(r)); }
     if(o.ok){ CORE_ORD.length = 0; _airtableFieldMap(o.records, 'ord').forEach(r => CORE_ORD.push(r)); }
     if(p.ok){ CORE_PTN.length = 0; _airtableFieldMap(p.records, 'ptn').forEach(r => CORE_PTN.push(r)); }
