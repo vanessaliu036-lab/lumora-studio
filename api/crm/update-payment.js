@@ -25,7 +25,8 @@ export default async function handler(req, res) {
       body: JSON.stringify({
         fields: {
           fldoEQxMpsAdrK7bo: String(last5),
-          fldVJoRnj7Jh4YGu1: confirm ? 'Paid' : 'Pending Verification',
+          // Airtable CRM 的 Payment Status 選項是 Confirmed，不能寫入 Paid。
+          fldVJoRnj7Jh4YGu1: confirm ? 'Confirmed' : 'Pending Verification',
           fldUexjkaTZrvYVEx: 'Bank',
         },
         typecast: true,
