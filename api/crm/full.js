@@ -7,7 +7,6 @@ const CUSTOMERS = 'tblAmgyZ0iN8Ka00a';
 const API = `https://api.airtable.com/v0/${BASE}`;
 
 const PAT = process.env.AIRTABLE_PAT;
-if (!PAT) return { statusCode: 500, body: { ok: false, error: 'AIRTABLE_PAT missing' } };
 
 async function atList(table, formula = '', max = 100) {
   const url = new URL(`${API}/${table}`);
