@@ -3,6 +3,11 @@ const BASE = 'appOLY56Y7cNExxzs';
 const PARTNERS = 'tblF3paIolcwlzu6v';
 const API = `https://api.airtable.com/v0/${BASE}`;
 const PAT = process.env.AIRTABLE_PAT;
+const numberValue = value => {
+  if (typeof value === 'number') return value;
+  const parsed = Number(String(value ?? '').replace(/[^\d.-]/g, ''));
+  return Number.isFinite(parsed) ? parsed : 0;
+};
 
 async function atList(table, formula = '', max = 100) {
   const url = new URL(`${API}/${table}`);
@@ -20,16 +25,19 @@ export default async function handler(req, res) {
     const rows = await atList(PARTNERS, '', 100);
     const out = rows.map(r => {
       const f = r.fields;
-      const limit = f['Plan Limit'] || 0;
-      const used = f['Used Orders'] || 0;
+      const limit = numberValue(f['Plan Limit']);
+      const used = numberValue(f['Used Orders']);
+      const revenue = numberValue(f.Revenue);
+      const plan = f.Subscription || '';
+      const planAmount = revenue;
       return {
-        id: r.id, name: f['Brand Name'] || '', code: f['Partner Code'] || '',
-        contact: f.Owner || '', brand: f['Brand Name'] || '',
+        id: r.id, name: f['Brand Name'] || f['Partner Name'] || f['Partner ID'] || '', code: f['Partner Code'] || '',
+        contact: f.Owner || '', brand: f['Brand Name'] || f['Partner Name'] || f['Partner ID'] || '',
         tgId: '', tgUser: f.Telegram || '',
         onboard: f['Onboarding Status'] || '',
         team: '',
-        plan: f['Monthly Plan'] || f.Plan || '',
-        planAmount: f['Plan Amount'] ?? f['Subscription Amount'] ?? f['Monthly Amount'] ?? f.Price ?? 0,
+        plan,
+        planAmount,
         currency: f.Currency || 'USD',
         subscriptionStatus: f['Subscription Status'] || f.Status || '',
         limit, used,
@@ -49,7 +57,7 @@ export default async function handler(req, res) {
         lastAlert: f['Last Alert Sent'] || '',
         converted: 0,
         convRate: f['Conversion Rate %'] ?? '',
-        revenue: f.Revenue || 0,
+        revenue,
         aov: '',
         commRate: f['Commission Rate %'] ?? '',
         commEarned: '',
