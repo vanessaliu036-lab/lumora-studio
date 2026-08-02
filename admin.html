@@ -972,6 +972,17 @@ const CORE_ORD = [
     prevOrders:[{id:"ORD-20260601-009", svc:"個人形象", amt:"$28", st:"已完成"}] }
 ];
 
+const ORDER_FLOW_DEMO = {
+  id:'ORD-DEMO-20260802-001', name:'Demo Customer', prod:'生成中', prodTag:'blue',
+  asset:'素材齊全', assetTag:'ok', promised:'08-05', promisedCls:'', producer:'Nita',
+  crm:'CRM-DEMO-20260802-001', tgId:'demo', partner:'— 測試資料', partnerCode:'DEMO',
+  orderDate:'2026-08-02 11:25', service:'個人形象', pkg:'測試方案', qty:1,
+  amount:'$28.00', currency:'USD', payStatus:'已付款', payMethod:'銀行匯款', last5:'41882', verAt:'2026-08-02 11:30',
+  cost:'—', commission:'$0.00', margin:'—', marginPct:'—', brief:'測試用 Order，僅用來預覽第二層製作流程。', style:'個人形象', assetNote:'—', rev:0, revLimit:2,
+  promisedDate:'2026-08-05', deliveryDate:null, completion:null, daysLate:null, link:null, orderStatus:'進行中', totalOrders:1, ltv:'$28.00', lastStyle:null,
+  consent:true, retention:null, purged:false, thread:'demo-order', notify:'測試資料', prevOrders:[]
+};
+
 const CORE_PTN = [
   { name:"Taiwan Studio", code:"PTN-001", remain:2, limit:10, used:8, pct:80, pending:3,
     sync:"正常", syncTag:"ok", lastSync:"08-01 18:42",
@@ -1128,7 +1139,7 @@ function markInquiryRead(index){
   });
   const totalNew = typeof CORE_CRM === 'undefined' ? 0 : CORE_CRM.filter(row => ['new','新進件'].includes(String(row.status || '').trim().toLowerCase())).length;
   document.querySelectorAll('.crm-queue-card.new .crm-queue-count').forEach(counter => {
-    counter.textContent = `${totalNew} 筆 · ${count} 未讀`;
+    counter.textContent = `${count} 筆未讀 · ${totalNew} 筆總計`;
   });
 }
 function openNewInquiry(index){
@@ -1460,7 +1471,7 @@ function crmStatusCards(){
   });
   return sorted.map(group => `<section class="crm-queue-card ${group.key}">
     <div class="crm-queue-head"><div><div class="crm-queue-title">${_esc(group.title)}${group.key === 'new' ? '<span class="crm-new-alert">● 新進件</span>' : ''}</div><div class="crm-queue-sub">同一狀態案件集中管理</div></div>
-      <div class="crm-queue-count">${group.key === 'new' ? `${group.rows.length} 筆 · ${newInquiryNotificationCount()} 未讀` : `${group.rows.length} 筆`}</div></div>
+      <div class="crm-queue-count">${group.key === 'new' ? `${newInquiryNotificationCount()} 筆未讀 · ${group.rows.length} 筆總計` : `${group.rows.length} 筆`}</div></div>
     <div class="crm-status-table-wrap"><table class="crm-status-table"><thead><tr>
       <th>進件日期</th><th>詢問編號</th><th>客戶</th><th>詢問項目</th><th>負責人員</th><th>狀態</th><th>付款</th><th>優先</th><th>下次追蹤</th><th>負責客服</th>
     </tr></thead><tbody>${group.rows.map(r => `<tr class="${group.key === 'new' ? 'crm-new-row' : ''}" onclick="core3Open('crm',${r._index})">
@@ -1527,10 +1538,11 @@ function crmOrdersPage(){
   if(airtableDataState !== 'ready') return airtableDataGate();
   const rows = CORE_ORD.map((r,i) => ({r,i})).sort((a,b) => String(b.r.orderDate || '').localeCompare(String(a.r.orderDate || '')));
   return `<div class="page-title"><div><h1>Orders</h1>
-    <p style="color:#c3bce0">一筆 = 一次專案。付款欄位唯讀，從 CRM 帶入，不在這裡修改。</p></div></div>
+    <p style="color:#c3bce0">一筆 = 一次專案。付款欄位唯讀，從 CRM 帶入，不在這裡修改。</p></div><button class="btn" onclick="openOrderFlowDemo()">查看流程預覽 Demo</button></div>
   ${core3Flow()}${orderCategoryCards()}
   <p style="margin-top:12px;font-size:12.5px;color:#a99cd0">依製作狀態分類 · 點任一列展開第二層製作時程</p>`;
 }
+function openOrderFlowDemo(){ core3Open('ord-demo', 0); }
 
 function crmPartnersPage(){
   if(airtableDataState !== 'ready') return airtableDataGate();
@@ -1766,6 +1778,12 @@ function core3Open(kind, i){
     kindTxt = "ORDER · 專案"; color = "#9df3d9";
     title = `${r.name}　${r.id}`;
     meta = `<span class="tag ${r.prodTag}">${_esc(r.prod)}</span><span class="tag lock">🔒 ${_esc(r.payStatus)}</span><span class="tag mute">${_esc(r.service)}</span>`;
+    body = core3OrdCard(r);
+  } else if(kind === "ord-demo"){
+    const r = ORDER_FLOW_DEMO;
+    kindTxt = "ORDER · 流程預覽"; color = "#ffb1c8";
+    title = `${r.name}　${r.id}`;
+    meta = `<span class="tag blue">測試資料</span><span class="tag ${_tagClass('payment',r.payStatus)}">${_esc(r.payStatus)}</span><span class="tag mute">${_esc(r.service)}</span>`;
     body = core3OrdCard(r);
   } else {
     const r = CORE_PTN[i];
