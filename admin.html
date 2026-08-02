@@ -641,7 +641,13 @@ html{background:#080817}
 .order-queue-name{font-weight:750;color:#fff}.order-queue-id{margin-top:4px;color:#b2a5d4;font-family:ui-monospace,monospace;font-size:11px}.order-queue-meta{display:flex;gap:7px;align-items:center;justify-content:flex-end;flex-wrap:wrap}.order-queue-empty{padding:20px;color:#a99cd0;font-size:13px}
 @media(max-width:760px){.order-queues{grid-template-columns:1fr}}
 .order-category-card{margin:18px 0 24px;overflow:hidden;border:1px solid rgba(255,63,120,.78);border-radius:20px;background:#100d2a;box-shadow:0 0 0 1px rgba(255,63,120,.16),0 14px 42px rgba(255,35,101,.14)}
+.order-category-card.process{border-color:rgba(151,126,255,.38);box-shadow:0 12px 30px rgba(7,5,22,.28)}
+.order-category-card.assets{border-color:rgba(255,190,86,.5)}
+.order-category-card.review{border-color:rgba(129,243,211,.4)}
 .order-category-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;padding:20px 22px;background:linear-gradient(110deg,rgba(106,20,55,.95),rgba(45,17,61,.96));border-bottom:1px solid rgba(255,73,126,.5)}
+.order-category-card.process .order-category-head{background:linear-gradient(110deg,rgba(47,34,105,.95),rgba(31,24,68,.96));border-bottom-color:rgba(151,126,255,.35)}
+.order-category-card.assets .order-category-head{background:linear-gradient(110deg,rgba(74,49,18,.95),rgba(39,28,59,.96));border-bottom-color:rgba(255,190,86,.35)}
+.order-category-card.review .order-category-head{background:linear-gradient(110deg,rgba(18,66,63,.86),rgba(30,24,68,.96));border-bottom-color:rgba(129,243,211,.3)}
 .order-category-title{font-size:21px;font-weight:850;color:#fff}.order-category-sub{margin-top:6px;color:#ffc4d5;font-size:13px}.order-category-count{color:#fff;font-weight:800;white-space:nowrap}.order-category-table{overflow:auto}.order-category-table table{min-width:900px;background:rgba(255,50,112,.12)}.order-category-table th{background:rgba(74,15,49,.82)!important}.order-category-table tbody tr{cursor:pointer}.order-category-table tbody tr:hover td{background:rgba(255,63,120,.22)!important}.order-category-empty{padding:24px;color:#ffc4d5}
 .crm-queue-card.payment .crm-status-table{background:rgba(54,35,17,.34)}
 .crm-queue-card.waiting .crm-status-table{background:rgba(28,22,70,.34)}
@@ -650,6 +656,21 @@ html{background:#080817}
 .crm-status-table th{padding:13px 16px;text-align:left;background:#15112e;color:#c9b8ff;font-size:11px;letter-spacing:.1em;white-space:nowrap;border-bottom:1px solid rgba(255,255,255,.1)}
 .crm-status-table td{padding:15px 16px;border-bottom:1px solid rgba(255,255,255,.08);font-size:14px;vertical-align:middle;color:#f6f2ff}
 .crm-status-table tbody tr{cursor:pointer}.crm-status-table tbody tr:hover{background:#1d1743}.crm-status-table tbody tr:last-child td{border-bottom:none}
+.crm-queue-card{background:#100d2a;border:1px solid rgba(255,255,255,.16);border-radius:20px;box-shadow:0 12px 30px rgba(7,5,22,.28)}
+.crm-queue-card.new{border-color:rgba(255,94,139,.5);box-shadow:0 12px 30px rgba(7,5,22,.28)}
+.crm-queue-card.payment{border-color:rgba(255,190,86,.5)}
+.crm-queue-card.waiting{border-color:rgba(151,126,255,.38)}
+.crm-queue-card.converted{border-color:rgba(129,243,211,.4)}
+.crm-queue-card.lost{border-color:rgba(255,111,158,.45)}
+.crm-queue-card .crm-queue-head{background:linear-gradient(110deg,#21152f,#17132e);border-bottom-color:rgba(255,255,255,.14);padding:20px 22px}
+.crm-queue-card.payment .crm-queue-head{background:linear-gradient(110deg,rgba(74,49,18,.95),rgba(39,28,59,.96));border-bottom-color:rgba(255,190,86,.35)}
+.crm-queue-card.waiting .crm-queue-head{background:linear-gradient(110deg,rgba(47,34,105,.95),rgba(31,24,68,.96));border-bottom-color:rgba(151,126,255,.35)}
+.crm-queue-card.converted .crm-queue-head{background:linear-gradient(110deg,rgba(18,66,63,.86),rgba(30,24,68,.96));border-bottom-color:rgba(129,243,211,.3)}
+.crm-queue-card.lost .crm-queue-head{background:linear-gradient(110deg,rgba(92,29,54,.86),rgba(39,22,55,.96));border-bottom-color:rgba(255,111,158,.32)}
+.crm-queue-card .crm-status-table{background:#100d2a}
+.crm-queue-card .crm-status-table th{padding:13px 16px;background:#15112e}
+.crm-queue-card .crm-status-table td{padding:15px 16px;background:#100d2a!important;border-bottom-color:rgba(255,255,255,.08)!important}
+.crm-queue-card .crm-status-table tbody tr:hover td{background:#1d1743!important}
 .new-order-row td{background:rgba(255,78,122,.16)!important;border-bottom-color:rgba(255,126,157,.3)!important}
 .new-order-row:hover td{background:rgba(255,78,122,.25)!important}
 .payment-list{display:grid;gap:9px;margin-top:18px;max-height:420px;overflow:auto}
@@ -1426,30 +1447,31 @@ function crmPage(){
   <p style="margin-top:12px;font-size:12.5px;color:#a99cd0">依狀態分組 · 點案件開啟詳細資料</p>`;
 }
 
-function orderCategoryCard(title, subtitle, rows){
-  return `<section class="order-category-card"><div class="order-category-head"><div><div class="order-category-title">${_esc(title)}</div><div class="order-category-sub">${_esc(subtitle)}</div></div><div class="order-category-count">${rows.length} 筆</div></div>${rows.length ? `<div class="order-category-table"><table class="table l1-table"><thead><tr><th>日期</th><th>訂單編號</th><th>客戶</th><th>製作狀態</th><th>素材</th><th>承諾交期</th><th>製作負責</th></tr></thead><tbody>${rows.map(({r,i}) => `<tr class="${r.isNew ? 'new-order-row' : ''}" onclick="core3Open('ord',${i})"><td class="cell-date">${_esc(_dateOnly(r.orderDate))}</td><td class="cell-id">${_esc(r.id)}</td><td><div class="cell-name">${_esc(r.name)}</div><div class="cell-sub">${_esc(r.service)}</div></td><td><span class="tag ${_esc(r.prodTag)}">${_esc(r.prod)}</span></td><td><span class="tag ${_esc(r.assetTag)}">${_esc(r.asset)}</span></td><td class="cell-due ${_esc(r.promisedCls || '')}">${_esc(r.promised)}</td><td>${_esc(r.producer)}</td></tr>`).join('')}</tbody></table></div>` : '<div class="order-category-empty">目前沒有新訂單</div>'}</section>`;
+function orderCategoryCard(title, subtitle, rows, tone='new'){
+  return `<section class="order-category-card ${tone}"><div class="order-category-head"><div><div class="order-category-title">${_esc(title)}</div><div class="order-category-sub">${_esc(subtitle)}</div></div><div class="order-category-count">${rows.length} 筆</div></div>${rows.length ? `<div class="order-category-table"><table class="table l1-table"><thead><tr><th>日期</th><th>訂單編號</th><th>客戶</th><th>製作狀態</th><th>素材</th><th>承諾交期</th><th>製作負責</th></tr></thead><tbody>${rows.map(({r,i}) => `<tr class="${r.isNew ? 'new-order-row' : ''}" onclick="core3Open('ord',${i})"><td class="cell-date">${_esc(_dateOnly(r.orderDate))}</td><td class="cell-id">${_esc(r.id)}</td><td><div class="cell-name">${_esc(r.name)}</div><div class="cell-sub">${_esc(r.service)}</div></td><td><span class="tag ${_esc(r.prodTag)}">${_esc(r.prod)}</span></td><td><span class="tag ${_esc(r.assetTag)}">${_esc(r.asset)}</span></td><td class="cell-due ${_esc(r.promisedCls || '')}">${_esc(r.promised)}</td><td>${_esc(r.producer)}</td></tr>`).join('')}</tbody></table></div>` : '<div class="order-category-empty">目前沒有案件</div>'}</section>`;
 }
 function orderCategoryCards(){
   const rows = CORE_ORD.map((r,i) => ({r,i})).sort((a,b) => String(b.r.orderDate || '').localeCompare(String(a.r.orderDate || '')));
   const newRows = rows.filter(({r}) => r.isNew || r.prod === '新訂單' || r.orderStatus === '新進件');
-  const activeRows = rows.filter(({r}) => !(r.isNew || r.prod === '新訂單' || r.orderStatus === '新進件'));
-  return orderCategoryCard('新訂單','付款確認後自動建立，等待安排製作',newRows) + orderCategoryCard('進行中','已分派製作人員，依狀態持續更新',activeRows);
+  const rest = rows.filter(({r}) => !(r.isNew || r.prod === '新訂單' || r.orderStatus === '新進件'));
+  const groups = [
+    ['生成中','製作人員已開始生成，等待成品','generating',['生成中','generating']],
+    ['等待素材','等待客戶補齊製作素材','assets',['等待素材','waiting assets','waiting_assets']],
+    ['審核中','成品進入審核與修改流程','review',['審核中','review']],
+  ];
+  const cards = [orderCategoryCard('新訂單','付款確認後自動建立，等待安排製作',newRows)];
+  groups.forEach(([title,subtitle,tone,statuses]) => {
+    const groupRows = rest.filter(({r}) => statuses.includes(String(r.prod || r.orderStatus || '').trim().toLowerCase()) || statuses.includes(String(r.prod || r.orderStatus || '').trim()));
+    if(groupRows.length) cards.push(orderCategoryCard(title,subtitle,groupRows,tone === 'generating' ? 'process' : tone));
+  });
+  return cards.join('');
 }
 function crmOrdersPage(){
   const rows = CORE_ORD.map((r,i) => ({r,i})).sort((a,b) => String(b.r.orderDate || '').localeCompare(String(a.r.orderDate || '')));
   return `<div class="page-title"><div><h1>Orders</h1>
     <p style="color:#c3bce0">一筆 = 一次專案。付款欄位唯讀，從 CRM 帶入，不在這裡修改。</p></div></div>
-  ${core3Flow()}${orderCategoryCards()}<div class="core3-wrap"><div class="table-wrap"><table class="table l1-table"><thead><tr>
-    <th>日期</th><th>訂單編號</th><th>客戶</th><th>製作狀態</th><th>素材</th><th>承諾交期</th><th>製作負責</th>
-  </tr></thead><tbody>${rows.map(({r,i})=>`<tr class="${r.isNew || r.prod === '新訂單' || r.orderStatus === '新進件' ? 'new-order-row' : ''}" onclick="core3Open('ord',${i})">
-    <td class="cell-date">${_dateOnly(r.orderDate)}</td>
-    <td class="cell-id">${_esc(r.id)}</td>
-    <td><div class="cell-name">${_esc(r.name)}</div><div class="cell-sub">${_esc(r.service)}</div></td>
-    <td><span class="tag ${r.prodTag}">${_esc(r.prod)}</span></td>
-    <td><span class="tag ${r.assetTag}">${_esc(r.asset)}</span></td>
-    <td class="cell-due ${r.promisedCls}">${_esc(r.promised)}</td>
-    <td>${_esc(r.producer)}</td></tr>`).join('')}</tbody></table></div></div>
-  <p style="margin-top:12px;font-size:12.5px;color:#a99cd0">點任一列展開第二層 · 六組資訊</p>`;
+  ${core3Flow()}${orderCategoryCards()}
+  <p style="margin-top:12px;font-size:12.5px;color:#a99cd0">依製作狀態分類 · 點任一列展開第二層製作時程</p>`;
 }
 
 function crmPartnersPage(){
