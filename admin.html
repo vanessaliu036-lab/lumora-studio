@@ -1,0 +1,1167 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Lumora Cloud — Backoffice</title>
+<style>
+:root{--bg:#0b0d12;--panel:#121620;--panel2:#181d29;--line:#2a3140;--text:#f6f7fb;--muted:#9aa4b5;--gold:#c8a86b;--green:#4fd18b;--red:#ff6b6b;--yellow:#f0c65b;--blue:#70a5ff;--radius:18px;--shadow:0 18px 60px rgba(0,0,0,.35)}
+*{box-sizing:border-box} body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:linear-gradient(180deg,#080a0e,#0e1118);color:var(--text)}
+a{color:inherit;text-decoration:none} button,input,select,textarea{font:inherit} button{cursor:pointer}
+.hidden{display:none!important}.app{min-height:100vh}.topbar{height:72px;display:flex;align-items:center;justify-content:space-between;padding:0 28px;border-bottom:1px solid var(--line);background:rgba(8,10,14,.85);backdrop-filter:blur(16px);position:sticky;top:0;z-index:20}.brand{display:flex;gap:12px;align-items:center;font-weight:800;letter-spacing:.04em}.logo{width:34px;height:34px;border-radius:11px;background:linear-gradient(135deg,var(--gold),#856837);display:grid;place-items:center;color:#0a0c10;font-weight:900}.nav{display:flex;gap:8px;flex-wrap:wrap}.nav button,.btn{border:1px solid var(--line);background:var(--panel);color:var(--text);padding:10px 14px;border-radius:12px}.nav button:hover,.btn:hover{border-color:#475169}.btn.primary{background:var(--gold);color:#0c0e12;border-color:transparent;font-weight:800}.btn.ghost{background:transparent}.btn.danger{background:#34181c;border-color:#6d2d35;color:#ffb3b3}.btn.success{background:#173224;border-color:#2c6846;color:#a8f0c8}.container{max-width:1440px;margin:0 auto;padding:30px}.hero{padding:64px 0 34px;display:grid;grid-template-columns:1.2fr .8fr;gap:24px;align-items:center}.hero h1{font-size:64px;line-height:1.02;margin:0 0 18px;max-width:850px}.hero p{font-size:20px;line-height:1.7;color:var(--muted);max-width:760px}.hero-card{background:linear-gradient(145deg,#171c28,#0f131b);border:1px solid var(--line);border-radius:28px;padding:26px;box-shadow:var(--shadow)}.mock-video{aspect-ratio:9/12;border-radius:22px;background:linear-gradient(145deg,#54442d,#151922 55%,#0b0e14);display:flex;align-items:end;padding:22px;position:relative;overflow:hidden}.mock-video:before{content:"AI VIDEO";position:absolute;top:20px;left:20px;font-size:12px;letter-spacing:.24em;color:#f0d9ac}.mock-video h3{font-size:34px;margin:0}.section{padding:40px 0}.section h2{font-size:34px;margin:0 0 10px}.sub{color:var(--muted);margin:0 0 24px}.grid{display:grid;gap:18px}.grid.cols-4{grid-template-columns:repeat(4,1fr)}.grid.cols-3{grid-template-columns:repeat(3,1fr)}.grid.cols-2{grid-template-columns:repeat(2,1fr)}.card{background:linear-gradient(180deg,var(--panel),#0f131b);border:1px solid var(--line);border-radius:var(--radius);padding:20px;box-shadow:0 10px 30px rgba(0,0,0,.16)}.card h3{margin:0 0 8px}.metric{font-size:34px;font-weight:850}.muted{color:var(--muted)}.pill{display:inline-flex;align-items:center;gap:7px;padding:7px 10px;border-radius:999px;font-size:12px;font-weight:800;border:1px solid var(--line)}.pill.green{color:#a9f2c8;background:#173224}.pill.red{color:#ffb1b1;background:#34181c}.pill.yellow{color:#f9dc8d;background:#342d17}.pill.blue{color:#b8d0ff;background:#17233b}.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:16px}.table{width:100%;border-collapse:collapse;min-width:980px;background:#10141d}.table th,.table td{padding:14px 16px;border-bottom:1px solid var(--line);text-align:left}.table th{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;background:#0d1118}.row-actions{display:flex;gap:8px;flex-wrap:wrap}.layout{display:grid;grid-template-columns:250px 1fr;min-height:calc(100vh - 72px)}.sidebar{border-right:1px solid var(--line);padding:20px;background:#0d1017;position:sticky;top:72px;height:calc(100vh - 72px)}.side-title{font-size:12px;color:var(--muted);text-transform:uppercase;margin:16px 10px 8px}.side-link{width:100%;display:flex;align-items:center;justify-content:space-between;padding:12px 13px;border-radius:12px;border:none;background:transparent;color:var(--text);text-align:left;margin-bottom:5px}.side-link:hover,.side-link.active{background:#1a202d}.main{padding:28px;min-width:0}.page-title{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:24px}.page-title h1{margin:0 0 8px;font-size:34px}.form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}.field{display:flex;flex-direction:column;gap:8px}.field label{font-size:13px;color:var(--muted)}.field input,.field select,.field textarea{background:#0c1017;border:1px solid var(--line);color:var(--text);border-radius:12px;padding:12px}.field textarea{min-height:140px;resize:vertical}.progress{height:10px;background:#202634;border-radius:99px;overflow:hidden}.progress span{display:block;height:100%;background:linear-gradient(90deg,var(--gold),#e2cb91)}.login-shell{min-height:100vh;display:grid;place-items:center;padding:24px}.login-card{width:min(460px,100%);background:var(--panel);border:1px solid var(--line);border-radius:24px;padding:28px;box-shadow:var(--shadow)}.login-card h1{margin:12px 0 8px}.stack{display:flex;flex-direction:column;gap:14px}.center{text-align:center}.steps{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:24px}.step{padding:9px 12px;border-radius:999px;border:1px solid var(--line);color:var(--muted)}.step.active{background:#2b2519;color:#f3ddb0;border-color:#6f5930}.telegram{max-width:760px;margin:0 auto;background:#dfeaf5;border-radius:22px;padding:18px;color:#17202a}.tg-bubble{max-width:78%;padding:12px 14px;border-radius:16px;margin:10px 0;background:#fff;box-shadow:0 3px 10px rgba(0,0,0,.08)}.tg-bubble.me{margin-left:auto;background:#ccefbf}.tg-buttons{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:10px}.tg-buttons button{border:none;background:#2a83c7;color:#fff;border-radius:10px;padding:10px}.template-card{position:relative;overflow:hidden}.template-thumb{aspect-ratio:16/10;border-radius:14px;background:linear-gradient(135deg,#3a2d1d,#10151e);display:grid;place-items:center;font-weight:800;color:#f4dcae;margin-bottom:14px}.notice{padding:14px 16px;border-radius:14px;border:1px solid var(--line);background:#151a24}.notice.warn{background:#2d2819;border-color:#6a5b2c;color:#f5db94}.notice.danger{background:#2d171a;border-color:#71313a;color:#ffc0c0}.notice.success{background:#173124;border-color:#2f6949;color:#a8efc8}.modal{position:fixed;inset:0;background:rgba(0,0,0,.72);display:grid;place-items:center;padding:20px;z-index:80}.modal-card{width:min(520px,100%);background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:24px;box-shadow:var(--shadow)}.footer{border-top:1px solid var(--line);padding:30px 0;color:var(--muted)}
+@media(max-width:1000px){.hero{grid-template-columns:1fr}.hero h1{font-size:48px}.grid.cols-4{grid-template-columns:repeat(2,1fr)}.grid.cols-3{grid-template-columns:1fr}.layout{grid-template-columns:1fr}.sidebar{position:static;height:auto;border-right:none;border-bottom:1px solid var(--line);display:flex;gap:6px;overflow:auto}.side-title{display:none}.side-link{white-space:nowrap;width:auto}.form-grid{grid-template-columns:1fr}}
+@media(max-width:640px){.topbar{padding:0 14px}.nav{display:none}.container,.main{padding:18px}.hero{padding-top:32px}.hero h1{font-size:38px}.grid.cols-4,.grid.cols-2{grid-template-columns:1fr}.page-title{flex-direction:column}.metric{font-size:28px}}
+</style>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Italiana&display=swap" rel="stylesheet">
+<style id="lumora-theme">
+:root{
+  --bg:#080817;--panel:rgba(23,17,52,.58);--panel2:rgba(255,255,255,.075);
+  --line:rgba(255,255,255,.13);--text:#fbf8ff;--muted:rgba(245,240,255,.62);
+  --gold:#c6a7ff;--green:#81f3d3;--red:#ff99b7;--yellow:#ffd0a8;--blue:#b9a5ff;
+  --radius:22px;--shadow:0 24px 80px rgba(0,0,0,.34);
+  --serif:"Italiana",Georgia,serif;--sans:"DM Sans",Arial,sans-serif;
+}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--sans);
+  background:
+    radial-gradient(circle at 8% 6%,rgba(126,82,255,.25),transparent 29%),
+    radial-gradient(circle at 90% 13%,rgba(255,149,199,.19),transparent 27%),
+    radial-gradient(circle at 53% 92%,rgba(92,229,208,.11),transparent 25%),
+    #080817;
+  min-height:100vh;
+}
+body:before{
+  content:"";position:fixed;inset:-28%;z-index:-2;pointer-events:none;
+  background:conic-gradient(from 90deg,rgba(110,71,255,.14),rgba(255,170,205,.11),rgba(112,240,218,.07),rgba(110,71,255,.14));
+  filter:blur(100px);animation:lumoraAurora 24s linear infinite;
+}
+body:after{
+  content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.32;
+  background-image:
+    radial-gradient(circle at 12% 22%,#fff 0 1px,transparent 1.5px),
+    radial-gradient(circle at 73% 18%,#fff 0 1px,transparent 1.6px),
+    radial-gradient(circle at 91% 66%,#fff 0 1px,transparent 1.5px),
+    radial-gradient(circle at 38% 78%,#fff 0 1px,transparent 1.4px);
+  background-size:260px 260px,330px 330px,410px 410px,290px 290px;
+  animation:starDrift 30s linear infinite;
+}
+@keyframes lumoraAurora{to{transform:rotate(360deg) scale(1.04)}}
+@keyframes starDrift{50%{transform:translate3d(16px,-22px,0);opacity:.5}}
+.topbar{
+  height:78px;padding:0 24px;border-bottom:1px solid var(--line);
+  background:rgba(8,8,23,.58);backdrop-filter:blur(25px) saturate(135%);
+  box-shadow:0 14px 55px rgba(0,0,0,.2);
+}
+.brand{font-weight:500;letter-spacing:0}
+.brand-name{font-family:var(--serif);font-size:27px}
+.brand-name em{font-family:var(--sans);font-size:10px;font-style:normal;letter-spacing:.17em;text-transform:uppercase;color:#cdbaff;margin-left:7px}
+.logo{
+  width:38px;height:38px;border-radius:50%;color:white;
+  background:radial-gradient(circle at 35% 30%,#fff 0 8%,#ffd4e9 20%,#a282ff 56%,#2b1c63 100%);
+  box-shadow:0 0 26px rgba(190,148,255,.75),inset 0 1px rgba(255,255,255,.8);
+}
+.nav button,.btn{
+  border:1px solid var(--line);background:rgba(255,255,255,.055);
+  color:var(--text);border-radius:999px;padding:10px 15px;
+  backdrop-filter:blur(14px);transition:.25s ease;
+}
+.nav button:hover,.btn:hover{transform:translateY(-1px);border-color:rgba(221,197,255,.48);background:rgba(255,255,255,.105)}
+.btn.primary{
+  color:white;border-color:rgba(255,255,255,.25);font-weight:600;
+  background:linear-gradient(110deg,#ffc9d9,#c399ff 52%,#8068ef);
+  box-shadow:0 10px 30px rgba(159,107,255,.3),inset 0 1px rgba(255,255,255,.7);
+}
+.btn.primary:hover{box-shadow:0 16px 42px rgba(159,107,255,.43)}
+.btn.danger{background:rgba(255,92,137,.12);border-color:rgba(255,130,163,.34);color:#ffc4d4}
+.btn.success{background:rgba(85,232,190,.11);border-color:rgba(116,239,204,.31);color:#b8ffe9}
+.container{max-width:1500px}
+.hero h1,.section h2,.page-title h1,.login-card h1{font-family:var(--serif);font-weight:400;letter-spacing:-.025em}
+.hero h1{font-size:70px}
+.hero-card,.card,.login-card,.modal-card{
+  background:linear-gradient(145deg,rgba(255,255,255,.105),rgba(255,255,255,.035));
+  border:1px solid var(--line);backdrop-filter:blur(22px) saturate(125%);
+  box-shadow:var(--shadow);
+}
+.hero-card{border-radius:32px}
+.mock-video{
+  background:
+    radial-gradient(circle at 65% 28%,rgba(255,183,220,.62),transparent 22%),
+    radial-gradient(circle at 38% 58%,rgba(142,108,255,.64),transparent 30%),
+    linear-gradient(150deg,#171138,#0b0a20 70%);
+}
+.mock-video:after{
+  content:"✦";position:absolute;right:28px;top:28px;font-size:74px;color:rgba(255,255,255,.72);
+  text-shadow:0 0 40px #d0a9ff;animation:pulseStar 3.6s ease-in-out infinite;
+}
+@keyframes pulseStar{50%{transform:scale(1.14) rotate(12deg);opacity:.55}}
+.card{position:relative;overflow:hidden}
+.card:before{
+  content:"";position:absolute;width:130px;height:130px;border-radius:50%;
+  right:-65px;top:-70px;background:radial-gradient(circle,rgba(190,143,255,.25),transparent 68%);
+  pointer-events:none;
+}
+.metric{font-family:var(--serif);font-weight:400;font-size:42px}
+.layout{grid-template-columns:268px 1fr}
+.sidebar{
+  top:78px;height:calc(100vh - 78px);
+  background:rgba(10,9,27,.5);backdrop-filter:blur(22px);
+  border-right:1px solid var(--line);padding:24px 16px;
+}
+.side-title{letter-spacing:.15em;color:rgba(221,207,255,.45)}
+.side-link{border:1px solid transparent;border-radius:15px;padding:13px 14px;color:rgba(250,247,255,.78);transition:.25s}
+.side-link:hover,.side-link.active{
+  background:linear-gradient(110deg,rgba(255,190,217,.15),rgba(148,111,255,.18));
+  border-color:rgba(255,255,255,.1);box-shadow:inset 0 1px rgba(255,255,255,.08);
+}
+.main{padding:34px}
+.page-title{margin-bottom:28px}
+.page-title h1{font-size:43px}
+.table-wrap{border-color:var(--line);border-radius:22px;background:rgba(16,12,38,.44);backdrop-filter:blur(20px)}
+.table{background:transparent}
+.table th{background:rgba(255,255,255,.045);color:rgba(228,215,255,.56);letter-spacing:.12em}
+.table th,.table td{border-bottom-color:rgba(255,255,255,.075)}
+.table tbody tr{transition:.2s}
+.table tbody tr:hover{background:rgba(255,255,255,.045)}
+.field input,.field select,.field textarea{
+  background:rgba(255,255,255,.045);border-color:var(--line);border-radius:15px;color:white;
+}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:rgba(205,173,255,.62);box-shadow:0 0 0 3px rgba(154,121,255,.12)}
+.progress{height:11px;background:rgba(255,255,255,.07);box-shadow:inset 0 1px 4px rgba(0,0,0,.24)}
+.progress span{background:linear-gradient(90deg,#ffbcd5,#ba8fff,#7fe5d1);box-shadow:0 0 18px rgba(186,143,255,.55)}
+.pill{font-weight:600;letter-spacing:.04em;background:rgba(255,255,255,.055)!important}
+.pill.green{color:#aaffea;border-color:rgba(100,239,198,.25)}
+.pill.red{color:#ffc0d2;border-color:rgba(255,120,161,.28)}
+.pill.yellow{color:#ffe0bf;border-color:rgba(255,190,127,.28)}
+.pill.blue{color:#d8cbff;border-color:rgba(167,132,255,.3)}
+.login-shell{
+  background:
+    radial-gradient(circle at 50% 16%,rgba(255,172,211,.22),transparent 24%),
+    radial-gradient(circle at 20% 80%,rgba(126,83,255,.28),transparent 31%);
+}
+.login-card{padding:38px;border-radius:30px;position:relative;overflow:hidden}
+.login-card:before{
+  content:"✦";position:absolute;right:30px;top:22px;font-size:48px;color:#efdaff;text-shadow:0 0 28px #bd8fff;opacity:.85;
+}
+.login-card h1{font-size:46px}
+.notice{background:rgba(255,255,255,.055);border-color:var(--line);backdrop-filter:blur(14px)}
+.notice.warn{background:rgba(255,179,96,.1);border-color:rgba(255,196,129,.25);color:#ffe0b8}
+.notice.danger{background:rgba(255,87,137,.1);border-color:rgba(255,119,158,.27);color:#ffc1d2}
+.notice.success{background:rgba(80,225,184,.1);border-color:rgba(103,235,198,.25);color:#b7ffe9}
+.template-thumb{
+  background:
+    radial-gradient(circle at 60% 25%,rgba(255,183,218,.7),transparent 19%),
+    radial-gradient(circle at 32% 63%,rgba(151,116,255,.72),transparent 27%),
+    linear-gradient(145deg,#25194c,#0d0b25);
+  color:#fff;text-shadow:0 0 24px rgba(255,255,255,.5);border:1px solid rgba(255,255,255,.1)
+}
+.modal{background:rgba(5,4,17,.72);backdrop-filter:blur(16px)}
+.telegram{background:linear-gradient(145deg,rgba(221,231,255,.92),rgba(238,225,255,.88));box-shadow:0 30px 80px rgba(0,0,0,.28)}
+.tg-bubble{background:rgba(255,255,255,.92)}
+.tg-bubble.me{background:#d7c9ff}
+.footer{border-top-color:var(--line)}
+@media(max-width:1000px){
+  .layout{grid-template-columns:1fr}.sidebar{top:78px;height:auto;background:rgba(11,9,29,.8)}
+}
+@media(prefers-reduced-motion:reduce){body:before,body:after,.mock-video:after{animation:none!important}}
+</style>
+
+</head>
+<body>
+<div id="app" class="app"></div>
+<div id="modal-root"></div>
+<script>
+const state={currentPartner:'PT-0001',isAdmin:true,partners:[
+{id:'PT-0001',brand:'Amy AI Studio',owner:'Amy Chen',email:'amy@example.com',status:'ACTIVE',enabled:true,plan:'Starter $65',limit:10,used:7,revenue:105,redirected:0,nextBilling:'2026-08-08',domain:'amy-ai.vercel.app'},
+{id:'PT-0002',brand:'Muse Motion Lab',owner:'Lina Wu',email:'lina@example.com',status:'ACTIVE',enabled:true,plan:'Starter $65',limit:10,used:10,revenue:150,redirected:2,nextBilling:'2026-08-10',domain:'muse-motion.vercel.app'},
+{id:'PT-0003',brand:'Glow Creator',owner:'John Lee',email:'john@example.com',status:'PAST_DUE',enabled:true,plan:'Starter $65',limit:10,used:4,revenue:60,redirected:0,nextBilling:'2026-07-28',domain:'glowcreator.vercel.app'},
+{id:'PT-0004',brand:'Velvet AI House',owner:'Sara Lin',email:'sara@example.com',status:'SUSPENDED',enabled:false,plan:'Starter $65',limit:10,used:6,revenue:90,redirected:0,nextBilling:'2026-07-22',domain:'velvet-ai.vercel.app'},
+{id:'PT-0005',brand:'Studio Mono',owner:'Mike Huang',email:'mike@example.com',status:'ACTIVE',enabled:true,plan:'Starter $65',limit:10,used:3,revenue:45,redirected:0,nextBilling:'2026-08-14',domain:'studio-mono.vercel.app'}],orders:[
+{id:'ORD-1101',partner:'PT-0001',customer:'Nina',template:'A01',status:'COMPLETED',price:15,source:'Partner'},
+{id:'ORD-1102',partner:'PT-0001',customer:'Mia',template:'A03',status:'GENERATING',price:15,source:'Partner'},
+{id:'ORD-1103',partner:'PT-0002',customer:'Ivy',template:'A01',status:'REDIRECTED',price:15,source:'Official'},
+{id:'ORD-1104',partner:'PT-0002',customer:'Eva',template:'A04',status:'REDIRECTED',price:15,source:'Official'},
+{id:'ORD-1105',partner:'PT-0003',customer:'Anna',template:'A02',status:'WAITING_PHOTOS',price:15,source:'Partner'}],templates:[
+{id:'A01',name:'Luxury Car Vlog',imagePrompt:'Photorealistic luxury car portrait, preserve identity...',videoPrompt:'Vertical cinematic car vlog, handheld motion...',model:'Kling 2.1',active:true},
+{id:'A02',name:'Beauty Morning Ritual',imagePrompt:'Natural morning window light portrait...',videoPrompt:'Soft skincare ritual with close-up camera...',model:'Veo 3',active:true},
+{id:'A03',name:'Street Fashion Creator',imagePrompt:'Luxury streetwear editorial portrait...',videoPrompt:'Fast-paced creator fashion reel...',model:'Seedance',active:true},
+{id:'A04',name:'Travel Lifestyle',imagePrompt:'Golden-hour travel influencer portrait...',videoPrompt:'Dynamic travel vlog with natural movement...',model:'Kling 2.1',active:true}
+]};
+function qs(s){return document.querySelector(s)}
+function partner(){return state.partners.find(p=>p.id===state.currentPartner)||state.partners[0]}
+function money(n){return '$'+Number(n).toFixed(0)}
+function pill(status){const map={ACTIVE:'green',PAST_DUE:'yellow',SUSPENDED:'red',COMPLETED:'green',GENERATING:'blue',REDIRECTED:'yellow',WAITING_PHOTOS:'yellow'};return `<span class="pill ${map[status]||'blue'}">${status}</span>`}
+function navTop(){return `<header class="topbar"><div class="brand"><div class="logo">✦</div><span class="brand-name">Lumora <em>Cloud</em></span></div><div class="nav"><button onclick="go('admin-login')">Admin Login</button><button class="btn primary" onclick="go('partner-login')">Partner Login</button></div></header>`}
+function go(route){location.hash=route}
+function route(){return location.hash.replace('#','')||'home'}
+function render(){const r=route();let html='';if(['partner-login','admin-login'].includes(r)) html=loginPage(r);else if(r.startsWith('admin')) html=adminShell(r);else if(r.startsWith('partner')) html=partnerShell(r);else html=publicPage(r);qs('#app').innerHTML=html;window.scrollTo(0,0)}
+function publicPage(r){if(r==='retail')return navTop()+retailPage();if(r==='telegram')return navTop()+telegramPage();if(r==='checkout-success')return navTop()+successPage();if(r==='official-payment')return navTop()+officialPaymentPage();return navTop()+`<main><div class="container"><section class="hero"><div><span class="pill blue">LUMORA PARTNER CLOUD</span><h1>把 Lumora 的夢幻影像服務，變成你的專屬品牌事業。</h1><p>經銷商每月訂閱即可擁有自己的品牌網站、10 次創作額度、Telegram 客戶流程與完整營運後台。額度用完後，第 11 筆訂單會自動導向 Lumora 官方結帳頁。</p><div style="display:flex;gap:12px;flex-wrap:wrap"><button class="btn" onclick="go('partner-login')">經銷商登入</button><button class="btn ghost" onclick="go('admin-login')">管理員登入</button></div></div><div class="hero-card"><div class="mock-video"><div><div class="muted">Template A01</div><h3>Luxury Car Vlog</h3></div></div></div></section><section class="section"><h2>一套系統，三個角色</h2><p class="sub">官方零售、經銷商銷售與主帳號集中管理。</p><div class="grid cols-3"><div class="card"><h3>官方網站</h3><p class="muted">展示模板、收款、建立訂單並導向 Telegram。</p></div><div class="card"><h3>經銷商後台</h3><p class="muted">查看訂單、收入、剩餘額度與訂閱狀態。</p></div><div class="card"><h3>Admin</h3><p class="muted">審核付款、停權、恢復、查看第 11 筆導流。</p></div></div></section><section class="section"><h2>熱門模板</h2><div class="grid cols-4">${state.templates.map(t=>`<div class="card template-card"><div class="template-thumb">${t.id}</div><h3>${t.name}</h3><p class="muted">${t.model}</p></div>`).join('')}</div></section><footer class="footer">© 2026 Lumora Cloud — Partner Operations Prototype</footer></div></main>`}
+function retailPage(){return `<main><div class="container"><div class="page-title"><div><h1>Retail 下單</h1><p class="muted">選擇模板、付款方案，完成後前往 Telegram 上傳照片。</p></div></div><div class="steps"><div class="step active">1 選模板</div><div class="step">2 填資料</div><div class="step">3 Stripe 付款</div><div class="step">4 Telegram</div></div><div class="grid cols-2"><div><div class="grid cols-2">${state.templates.map((t,i)=>`<div class="card"><div class="template-thumb">${t.id}</div><label><input type="radio" name="tpl" ${i===0?'checked':''}> ${t.name}</label><p class="muted">${t.model}</p></div>`).join('')}</div></div><div class="card"><h3>訂單資料</h3><div class="stack"><div class="field"><label>姓名</label><input value="Vanessa"/></div><div class="field"><label>Email</label><input value="vanessa@example.com"/></div><div class="field"><label>付款方式</label><select><option>全額付款 — $15</option><option>訂金 $5 + 尾款 $10</option></select></div><div class="notice">完成付款後，系統會建立 Order ID 並開啟 Telegram Bot。</div><button class="btn primary" onclick="openStripe()">前往 Stripe 付款</button></div></div></div></div></main>`}
+function openStripe(){modal(`<h2>Stripe Checkout</h2><p class="muted">示範付款頁。實際版本會建立 Stripe Checkout Session。</p><div class="field"><label>Card number</label><input value="4242 4242 4242 4242"></div><div class="form-grid" style="margin-top:12px"><div class="field"><label>Expiry</label><input value="12/30"></div><div class="field"><label>CVC</label><input value="123"></div></div><button class="btn primary" style="width:100%;margin-top:16px" onclick="closeModal();go('telegram')">支付 $15</button>`)}
+function telegramPage(){return `<main><div class="container"><div class="page-title"><div><h1>Telegram Bot 流程</h1><p class="muted">網站訂單已綁定 Template A01。</p></div></div><div class="telegram"><div class="tg-bubble"><strong>訂單已確認</strong><br>Order: ORD-20260731-0001<br>Template: A01 Luxury Car Vlog<div class="tg-buttons"><button onclick="tgStep('multi')">上傳多張照片</button><button onclick="tgStep('single')">只用一張</button></div></div><div id="tg-area"></div></div></div></main>`}
+function tgStep(mode){const a=qs('#tg-area');if(mode==='multi')a.innerHTML=`<div class="tg-bubble">請上傳 8–15 張照片。建議包含正面、左右側面與不同表情。</div><div class="tg-bubble me">已上傳 10 張照片</div><div class="tg-bubble">人物基準圖已生成，請選擇最像你的一張。<div class="tg-buttons"><button onclick="tgSelect(1)">選擇 1</button><button onclick="tgSelect(2)">選擇 2</button><button onclick="tgSelect(3)">選擇 3</button><button onclick="tgStep('retry')">重新生成</button></div></div>`;else if(mode==='single')a.innerHTML=`<div class="tg-bubble">請上傳一張清楚正面照。</div><div class="tg-bubble me">已上傳 1 張照片</div><div class="tg-bubble">將使用此照片作為人物基準。<div class="tg-buttons"><button onclick="tgSelect(1)">確認並生成</button><button onclick="tgStep('single')">重新上傳</button></div></div>`;else a.innerHTML=`<div class="tg-bubble">已重新生成 3 張人物基準圖。</div>`}
+function tgSelect(n){qs('#tg-area').innerHTML+=`<div class="tg-bubble me">我選第 ${n} 張</div><div class="tg-bubble">已套用 Airtable Template A01 Prompt，正在生成影片。</div><div class="tg-bubble">影片完成。<div class="tg-buttons"><button onclick="go('checkout-success')">查看交付頁</button><button>申請修改</button></div></div>`}
+function successPage(){return `<main><div class="container center" style="max-width:760px;padding-top:80px"><div class="card"><span class="pill green">COMPLETED</span><h1>影片已完成</h1><p class="muted">成品已同步回傳 Telegram，並儲存在訂單紀錄。</p><div class="mock-video" style="max-width:360px;margin:24px auto"><h3>FINAL VIDEO</h3></div><button class="btn primary">下載影片</button> </div></div></main>`}
+function officialPaymentPage(){return `<main><div class="container center" style="max-width:760px;padding-top:70px"><div class="card"><span class="pill yellow">OFFICIAL CHECKOUT</span><h1>Partner 額度已使用完畢</h1><p class="muted">這是第 11 筆訂單，已由 Partner 網站自動導向官方付款頁。</p><div class="notice warn">來源 Partner：Muse Motion Lab｜Referral ID：PT-0002</div><button class="btn primary" style="margin-top:18px" onclick="openStripe()">由官方接單付款</button></div></div></main>`}
+function loginPage(type){const admin=type==='admin-login';return `<div class="login-shell"><div class="login-card"><div class="center"><div class="logo" style="margin:auto">${admin?'A':'P'}</div><h1>${admin?'Admin Login':'Partner Login'}</h1><p class="muted">${admin?'管理所有經銷商、付款與額度':'查看訂單、收入與生成額度'}</p></div><div class="stack"><div class="field"><label>Email</label><input value="${admin?'admin@whitelabel.ai':'amy@example.com'}"></div><div class="field"><label>Password</label><input type="password" value="12345678"></div><button class="btn primary" onclick="go('${admin?'admin-dashboard':'partner-dashboard'}')">登入</button></div></div></div>`}
+function adminShell(r){
+  return navTop()+`<div class="layout"><aside class="sidebar">
+    ${sideLink('admin-dashboard','Dashboard',r)}
+    <div class="column-map" style="padding:18px 14px 8px">Airtable Data</div>
+    ${sideLink('admin-orders','Orders',r)}
+    ${sideLink('admin-partners','Partners',r)}
+    ${sideLink('admin-customers','Customers',r)}
+    <div class="column-map" style="padding:18px 14px 8px">Operations</div>
+    ${sideLink('admin-payments','Payments',r)}
+    ${sideLink('admin-credits','Credits',r)}
+    ${sideLink('admin-redirects','Redirect Logs',r)}
+    ${sideLink('admin-templates','Prompt Library',r)}
+    ${sideLink('admin-settings','Settings',r)}
+  </aside><main class="main">${adminPage(r)}</main></div>`
+}
+function partnerShell(r){return navTop()+`<div class="layout"><aside class="sidebar">${sideLink('partner-dashboard','總覽',r)}${sideLink('partner-orders','訂單',r)}${sideLink('partner-credits','Credits',r)}${sideLink('partner-revenue','收入',r)}${sideLink('partner-subscription','Stripe 訂閱',r)}${sideLink('partner-brand','白標品牌設定',r)}${sideLink('partner-telegram','Telegram',r)}${sideLink('partner-settings','帳號設定',r)}</aside><main class="main">${partnerPage(r)}</main></div>`}
+function sideLink(target,label,r){return `<button class="side-link ${r===target?'active':''}" onclick="go('${target}')">${label}<span>›</span></button>`}
+function adminPage(r){if(r==='admin-partners')return partnersPage();if(r==='admin-orders')return ordersPage(true);if(r==='admin-credits')return creditsAdmin();if(r==='admin-payments')return paymentsPage();if(r==='admin-redirects')return redirectsPage();if(r==='admin-templates')return templatesPage();if(r==='admin-settings')return settingsPage();if(r.startsWith('admin-partner-detail'))return partnerDetail();return adminDashboard()}
+function adminDashboard(){const active=state.partners.filter(p=>p.enabled).length,used=state.partners.reduce((a,p)=>a+p.used,0),rev=state.partners.reduce((a,p)=>a+p.revenue,0),redirect=state.partners.reduce((a,p)=>a+p.redirected,0);return `<div class="page-title"><div><h1>Admin Dashboard</h1><p class="muted">集中管理經銷商付款、額度、導流與停權。</p></div><button class="btn primary" onclick="go('admin-partners')">管理經銷商</button></div><div class="grid cols-4"><div class="card"><div class="muted">經銷商</div><div class="metric">${state.partners.length}</div></div><div class="card"><div class="muted">已啟用</div><div class="metric">${active}</div></div><div class="card"><div class="muted">本月已用額度</div><div class="metric">${used}</div></div><div class="card"><div class="muted">第 11 筆導流</div><div class="metric">${redirect}</div></div></div><div class="section"><h2>經銷商健康狀態</h2><div class="table-wrap">${partnerTable()}</div></div><div class="grid cols-2"><div class="card"><h3>訂閱收入</h3><div class="metric">${money(state.partners.length*65)}</div><p class="muted">以每位 $65/月計算</p></div><div class="card"><h3>經銷商零售收入</h3><div class="metric">${money(rev)}</div><p class="muted">已完成與生成中的訂單估算</p></div></div>`}
+function partnerTable(){return `<table class="table"><thead><tr><th>Partner</th><th>狀態</th><th>付款</th><th>額度</th><th>第 11 筆</th><th>收入</th><th>操作</th></tr></thead><tbody>${state.partners.map(p=>`<tr><td><strong>${p.brand}</strong><br><span class="muted">${p.domain}</span></td><td>${pill(p.status)}</td><td>${p.nextBilling}</td><td>${p.used}/${p.limit}</td><td>${p.redirected}</td><td>${money(p.revenue)}</td><td><div class="row-actions"><button class="btn" onclick="openPartner('${p.id}')">查看</button><button class="btn ${p.enabled?'danger':'success'}" onclick="togglePartner('${p.id}')">${p.enabled?'停用':'恢復'}</button></div></td></tr>`).join('')}</tbody></table>`}
+function partnersPage(){return `<div class="page-title"><div><h1>經銷商管理</h1><p class="muted">查看付款狀態、使用額度與網站權限。</p></div><button class="btn primary" onclick="modal('<h2>新增經銷商</h2><p class=muted>建立 Partner 帳號、品牌與 10 支額度。</p><button class=\'btn primary\' onclick=\'closeModal()\'>建立</button>')">新增經銷商</button></div><div class="table-wrap">${partnerTable()}</div>`}
+function openPartner(id){state.currentPartner=id;go('admin-partner-detail')}
+function togglePartner(id){const p=state.partners.find(x=>x.id===id);p.enabled=!p.enabled;p.status=p.enabled?'ACTIVE':'SUSPENDED';render();toast(p.enabled?'已恢復使用權':'已停用使用權')}
+function partnerDetail(){const p=partner();return `<div class="page-title"><div><h1>${p.brand}</h1><p class="muted">${p.id} · ${p.domain}</p></div><div class="row-actions"><button class="btn" onclick="go('partner-dashboard')">模擬登入</button><button class="btn ${p.enabled?'danger':'success'}" onclick="togglePartner('${p.id}')">${p.enabled?'Disable Access':'Enable Access'}</button></div></div>${!p.enabled?'<div class="notice danger">此經銷商已停權，網站與 API 將導向重新付款頁。</div>':''}<div class="grid cols-4" style="margin-top:18px"><div class="card"><div class="muted">Subscription</div><div class="metric">${p.status}</div></div><div class="card"><div class="muted">Credits</div><div class="metric">${p.used}/${p.limit}</div></div><div class="card"><div class="muted">Revenue</div><div class="metric">${money(p.revenue)}</div></div><div class="card"><div class="muted">Redirected</div><div class="metric">${p.redirected}</div></div></div><div class="grid cols-2 section"><div class="card"><h3>帳號資料</h3><div class="form-grid"><div class="field"><label>Owner</label><input value="${p.owner}"></div><div class="field"><label>Email</label><input value="${p.email}"></div><div class="field"><label>Domain</label><input value="${p.domain}"></div><div class="field"><label>Next Billing</label><input value="${p.nextBilling}"></div></div></div><div class="card"><h3>權限操作</h3><div class="stack"><button class="btn" onclick="resetCredits('${p.id}')">重設為 10 Credits</button><button class="btn" onclick="markPaid('${p.id}')">標記已付款</button><button class="btn" onclick="go('official-payment')">查看導流付款頁</button></div></div></div>`}
+function resetCredits(id){const p=state.partners.find(x=>x.id===id);p.used=0;render();toast('Credits 已重設')}
+function markPaid(id){const p=state.partners.find(x=>x.id===id);p.status='ACTIVE';p.enabled=true;render();toast('付款已確認，權限恢復')}
+function ordersPage(admin){const rows=admin?state.orders:state.orders.filter(o=>o.partner===partner().id);return `<div class="page-title"><div><h1>${admin?'所有訂單':'我的訂單'}</h1><p class="muted">追蹤 TG、生成狀態與官方導流來源。</p></div></div><div class="table-wrap"><table class="table"><thead><tr><th>Order</th><th>Customer</th><th>Partner</th><th>Template</th><th>Status</th><th>收入</th><th>來源</th></tr></thead><tbody>${rows.map(o=>`<tr><td>${o.id}</td><td>${o.customer}</td><td>${o.partner}</td><td>${o.template}</td><td>${pill(o.status)}</td><td>${money(o.price)}</td><td>${o.source}</td></tr>`).join('')}</tbody></table></div>`}
+function creditsAdmin(){return `<div class="page-title"><div><h1>Credits 管理</h1><p class="muted">每位 Partner 每月 10 支，額度用完後導流官方。</p></div></div><div class="grid cols-3">${state.partners.map(p=>`<div class="card"><div style="display:flex;justify-content:space-between"><h3>${p.brand}</h3>${pill(p.status)}</div><div class="metric">${p.limit-p.used} 剩餘</div><div class="progress"><span style="width:${Math.min(100,p.used/p.limit*100)}%"></span></div><p class="muted">已用 ${p.used}/${p.limit} · 導流 ${p.redirected}</p><button class="btn" onclick="resetCredits('${p.id}')">重設額度</button></div>`).join('')}</div>`}
+function paymentsPage(){return `<div class="page-title"><div><h1>付款審核</h1><p class="muted">確認 Stripe 狀態或手動恢復使用權。</p></div></div><div class="table-wrap">${partnerTable()}</div>`}
+function redirectsPage(){const rows=state.orders.filter(o=>o.status==='REDIRECTED');return `<div class="page-title"><div><h1>第 11 筆自動導流</h1><p class="muted">記錄經銷商額度用完後，轉入官方付款頁的訂單。</p></div><button class="btn" onclick="go('official-payment')">查看付款頁</button></div><div class="notice success">導流機制運作正常：Partner 額度 = 0 時，新訂單建立前即轉址。</div><div class="table-wrap" style="margin-top:18px"><table class="table"><thead><tr><th>Order</th><th>Partner</th><th>Customer</th><th>Template</th><th>Status</th><th>官方收入</th></tr></thead><tbody>${rows.map(o=>`<tr><td>${o.id}</td><td>${o.partner}</td><td>${o.customer}</td><td>${o.template}</td><td>${pill(o.status)}</td><td>${money(o.price)}</td></tr>`).join('')}</tbody></table></div>`}
+function templatesPage(){return `<div class="page-title"><div><h1>Airtable Prompt Database</h1><p class="muted">以 Template ID 拉取圖片 Prompt、影片 Prompt 與模型。</p></div><button class="btn primary" onclick="modal('<h2>新增 Template</h2><p class=muted>實際版本會寫入 Airtable Templates 表。</p><button class=\'btn primary\' onclick=\'closeModal()\'>建立</button>')">新增模板</button></div><div class="grid cols-2">${state.templates.map(t=>`<div class="card"><div style="display:flex;justify-content:space-between"><h3>${t.id} — ${t.name}</h3><span class="pill green">ACTIVE</span></div><div class="field"><label>Image Prompt</label><textarea>${t.imagePrompt}</textarea></div><div class="field"><label>Video Prompt</label><textarea>${t.videoPrompt}</textarea></div><div class="form-grid"><div class="field"><label>Model</label><input value="${t.model}"></div><div class="field"><label>Version</label><input value="v1.0"></div></div><button class="btn primary" style="margin-top:14px">儲存 Prompt</button></div>`).join('')}</div>`}
+function settingsPage(){return `<div class="page-title"><div><h1>系統設定</h1><p class="muted">Stripe、Telegram、Airtable 與官方付款頁設定。</p></div></div><div class="grid cols-2"><div class="card"><h3>Integrations</h3><div class="stack"><div class="field"><label>Stripe Secret</label><input value="sk_test_••••••••"></div><div class="field"><label>Telegram Bot Token</label><input value="123456:••••••••"></div><div class="field"><label>Airtable Base ID</label><input value="appXXXXXXXX"></div><button class="btn primary">儲存</button></div></div><div class="card"><h3>官方導流</h3><div class="stack"><div class="field"><label>Official Checkout URL</label><input value="https://official.ai/checkout"></div><div class="field"><label>Redirect Trigger</label><select><option>Credits Remaining = 0</option></select></div><div class="field"><label>Suspension Page</label><input value="https://official.ai/reactivate"></div><button class="btn primary">更新導流設定</button></div></div></div>`}
+function partnerPage(r){const p=partner();if(!p.enabled&&r!=='partner-subscription')return suspendedPage(p);if(r==='partner-orders')return ordersPage(false);if(r==='partner-credits')return partnerCredits(p);if(r==='partner-revenue')return revenuePage(p);if(r==='partner-subscription')return subscriptionPage(p);if(r==='partner-brand')return brandPage(p);if(r==='partner-telegram')return partnerTelegram();if(r==='partner-settings')return partnerSettings(p);return partnerDashboard(p)}
+function partnerDashboard(p){const remain=p.limit-p.used;return `<div class="page-title"><div><h1>Welcome, ${p.brand}</h1><p class="muted">你的 AI 影片工作室營運總覽。</p></div><button class="btn primary" onclick="simulateOrder()">建立測試訂單</button></div><div class="grid cols-4"><div class="card"><div class="muted">Credits</div><div class="metric">${remain}/${p.limit}</div></div><div class="card"><div class="muted">Orders</div><div class="metric">${state.orders.filter(o=>o.partner===p.id).length}</div></div><div class="card"><div class="muted">Revenue</div><div class="metric">${money(p.revenue)}</div></div><div class="card"><div class="muted">Subscription</div><div class="metric">${p.status}</div></div></div><div class="grid cols-2 section"><div class="card"><h3>額度使用</h3><div class="progress"><span style="width:${p.used/p.limit*100}%"></span></div><p class="muted">已使用 ${p.used}，剩餘 ${remain}。第 11 筆會自動轉入官方。</p><button class="btn" onclick="go('partner-credits')">查看 Credits</button></div><div class="card"><h3>你的白標網站</h3><p>${p.domain}</p> <button class="btn" onclick="go('partner-brand')">品牌設定</button></div></div>${remain===0?'<div class="notice warn">你的本月額度已用完，新訂單會自動導向官方付款頁。</div>':''}`}
+function simulateOrder(){const p=partner();if(p.used>=p.limit){p.redirected++;state.orders.push({id:'ORD-'+Date.now().toString().slice(-4),partner:p.id,customer:'New Customer',template:'A01',status:'REDIRECTED',price:15,source:'Official'});go('official-payment');return}p.used++;p.revenue+=15;state.orders.push({id:'ORD-'+Date.now().toString().slice(-4),partner:p.id,customer:'New Customer',template:'A01',status:'GENERATING',price:15,source:'Partner'});render();toast('新訂單已建立，Credits -1')}
+function partnerCredits(p){return `<div class="page-title"><div><h1>Credits</h1><p class="muted">月方案包含 ${p.limit} 支影片。</p></div></div><div class="grid cols-3"><div class="card"><div class="muted">Monthly Limit</div><div class="metric">${p.limit}</div></div><div class="card"><div class="muted">Used</div><div class="metric">${p.used}</div></div><div class="card"><div class="muted">Remaining</div><div class="metric">${p.limit-p.used}</div></div></div><div class="card" style="margin-top:18px"><h3>使用進度</h3><div class="progress"><span style="width:${p.used/p.limit*100}%"></span></div><p class="muted">當 Remaining = 0，系統不再扣額度，下一筆訂單直接導向官方 Checkout。</p><button class="btn primary" onclick="simulateOrder()">模擬下一筆訂單</button></div>`}
+function revenuePage(p){return `<div class="page-title"><div><h1>收入</h1><p class="muted">經銷商自己的銷售收入。</p></div></div><div class="grid cols-3"><div class="card"><div class="muted">本月收入</div><div class="metric">${money(p.revenue)}</div></div><div class="card"><div class="muted">訂閱成本</div><div class="metric">$65</div></div><div class="card"><div class="muted">估算淨收入</div><div class="metric">${money(p.revenue-65)}</div></div></div>`}
+function subscriptionPage(p){return `<div class="page-title"><div><h1>Stripe 訂閱</h1><p class="muted">管理每月 $65 訂閱與付款狀態。</p></div></div>${p.status!=='ACTIVE'?'<div class="notice danger">付款異常。請更新付款方式，否則網站將停用。</div>':''}<div class="grid cols-2" style="margin-top:18px"><div class="card"><h3>Partner Starter</h3><div class="metric">$65/月</div><p class="muted">10 Credits · 白標網站 · TG Bot · Dashboard</p><p>下次扣款：${p.nextBilling}</p><button class="btn primary" onclick="openStripeManage()">管理付款方式</button></div><div class="card"><h3>帳號狀態</h3>${pill(p.status)}<p class="muted">Access Enabled: ${p.enabled}</p><button class="btn" onclick="markPaid('${p.id}')">模擬付款成功</button></div></div>`}
+function openStripeManage(){modal(`<h2>Stripe Customer Portal</h2><p class="muted">更新信用卡、查看帳單或重新啟用訂閱。</p><button class="btn primary" style="width:100%" onclick="closeModal();markPaid('${partner().id}')">更新並付款</button>`)}
+function brandPage(p){return `<div class="page-title"><div><h1>白標品牌設定</h1><p class="muted">設定你的 Logo、品牌名稱、顏色與網域。</p></div></div><div class="grid cols-2"><div class="card"><div class="stack"><div class="field"><label>Brand Name</label><input value="${p.brand}"></div><div class="field"><label>Logo</label><input type="file"></div><div class="field"><label>Primary Color</label><input type="color" value="#c8a86b"></div><div class="field"><label>Domain</label><input value="${p.domain}"></div><button class="btn primary">儲存品牌設定</button></div></div><div class="card"><h3>即時預覽</h3><div class="template-thumb" style="height:260px">${p.brand}</div><p class="muted">你的客戶只會看到經銷商品牌，不會看到官方後台。</p></div></div>`}
+function partnerTelegram(){return `<div class="page-title"><div><h1>Telegram</h1><p class="muted">查看 Bot 綁定狀態與客戶交付流程。</p></div></div><div class="grid cols-2"><div class="card"><h3>Bot Status</h3><span class="pill green">CONNECTED</span><p class="muted">@amy_ai_studio_bot</p></div><div class="card"><h3>流程</h3><p class="muted">網站訂單 → Order Token → TG 上傳 → 人物基準圖 → 套 Prompt → 影片交付</p></div></div>`}
+function partnerSettings(p){return `<div class="page-title"><div><h1>帳號設定</h1><p class="muted">管理帳號與通知。</p></div></div><div class="card"><div class="form-grid"><div class="field"><label>Owner</label><input value="${p.owner}"></div><div class="field"><label>Email</label><input value="${p.email}"></div><div class="field"><label>Telegram</label><input value="@${p.owner.split(' ')[0].toLowerCase()}studio"></div><div class="field"><label>通知</label><select><option>Email + Telegram</option></select></div></div><button class="btn primary" style="margin-top:16px">儲存設定</button></div>`}
+function suspendedPage(p){return `<div class="login-shell" style="min-height:calc(100vh - 72px)"><div class="login-card center"><span class="pill red">ACCESS DISABLED</span><h1>${p.brand} 已暫停使用</h1><p class="muted">我們無法確認最新訂閱付款。網站、後台與生成 API 已停用。</p><button class="btn primary" onclick="go('partner-subscription')">前往付款恢復</button></div></div>`}
+function modal(content){qs('#modal-root').innerHTML=`<div class="modal" onclick="if(event.target===this)closeModal()"><div class="modal-card">${content}<button class="btn ghost" style="width:100%;margin-top:10px" onclick="closeModal()">關閉</button></div></div>`}
+function closeModal(){qs('#modal-root').innerHTML=''}
+function toast(msg){const d=document.createElement('div');d.textContent=msg;d.style='position:fixed;right:20px;bottom:20px;background:#1c2431;color:white;border:1px solid #42506a;padding:14px 18px;border-radius:12px;z-index:99;box-shadow:0 10px 30px rgba(0,0,0,.35)';document.body.appendChild(d);setTimeout(()=>d.remove(),1800)}
+window.addEventListener('hashchange',render);render();
+</script>
+
+<style id="airtable-alignment">
+  .sync-note{display:flex;gap:12px;align-items:flex-start;padding:16px 18px;margin-bottom:20px;border:1px solid rgba(129,243,211,.2);background:rgba(76,219,181,.075);border-radius:18px;color:#caffef}
+  .sync-note small{display:block;color:var(--muted);margin-top:4px;line-height:1.55}
+  .column-map{font-size:11px;color:#bda9f4;letter-spacing:.06em;text-transform:uppercase}
+  .table-scroll{overflow:auto}
+  .table.wide{min-width:1780px}
+  .table.medium{min-width:1450px}
+  .table th{white-space:nowrap}
+  .table td{white-space:nowrap}
+  .cell-main{font-weight:600;color:#fff}
+  .cell-sub{display:block;font-size:11px;color:var(--muted);margin-top:4px}
+  .status-select{border:1px solid var(--line);background:rgba(255,255,255,.055);color:white;border-radius:999px;padding:8px 12px}
+  .sync-badge{display:inline-flex;align-items:center;gap:6px;padding:7px 10px;border-radius:999px;border:1px solid rgba(129,243,211,.2);background:rgba(129,243,211,.07);font-size:11px;color:#baffea}
+
+  .orders-master{min-width:760px}
+  .orders-master th,.orders-master td{padding:18px 20px}
+  .orders-master tbody tr{cursor:pointer}
+  .orders-master .order-date{color:rgba(245,240,255,.74)}
+  .orders-master .customer-name{font-weight:650;color:#fff}
+  .orders-master .view-cell{text-align:right}
+  .order-view-btn{min-width:88px}
+  .order-detail-overlay{position:fixed;inset:0;background:rgba(5,4,17,.78);backdrop-filter:blur(18px);z-index:90;display:grid;place-items:center;padding:24px}
+  .order-detail-panel{width:min(1080px,100%);max-height:92vh;overflow:auto;background:linear-gradient(145deg,rgba(35,27,70,.96),rgba(12,10,31,.97));border:1px solid rgba(255,255,255,.16);border-radius:30px;box-shadow:0 35px 110px rgba(0,0,0,.52);padding:28px}
+  .order-detail-head{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;padding-bottom:22px;border-bottom:1px solid rgba(255,255,255,.1)}
+  .order-detail-head h2{font-family:var(--serif);font-size:42px;font-weight:400;margin:4px 0 8px}
+  .order-detail-close{width:42px;height:42px;padding:0;border-radius:50%;font-size:22px}
+  .order-detail-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-top:20px}
+  .order-detail-section{background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:20px}
+  .order-detail-section.full{grid-column:1/-1}
+  .order-detail-section h3{margin:0 0 16px;font-size:16px}
+  .detail-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 22px}
+  .detail-item{min-width:0}
+  .detail-label{display:block;font-size:11px;color:rgba(228,215,255,.5);letter-spacing:.09em;text-transform:uppercase;margin-bottom:5px}
+  .detail-value{display:block;color:#fff;word-break:break-word}
+  .order-timeline{display:grid;gap:13px}
+  .timeline-row{display:grid;grid-template-columns:14px 1fr auto;gap:12px;align-items:center}
+  .timeline-dot{width:10px;height:10px;border-radius:50%;background:linear-gradient(135deg,#ffbcd5,#9878ff);box-shadow:0 0 16px rgba(188,143,255,.65)}
+  .detail-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
+  @media(max-width:760px){
+    .order-detail-overlay{padding:10px}.order-detail-panel{padding:20px;border-radius:22px}
+    .order-detail-grid,.detail-list{grid-template-columns:1fr}
+    .order-detail-section.full{grid-column:auto}
+    .order-detail-head h2{font-size:34px}
+  }
+
+</style>
+<script id="airtable-alignment-script">
+const airtableCustomers = [
+  {id:'CUS-0001',name:'Emily Wang',email:'emily@example.com',telegram:'@emilywang',partner:'PT-001',orders:3,lastStyle:'Pearl Bloom',ltv:120,lastOrder:'2026-07-30',status:'ACTIVE'},
+  {id:'CUS-0002',name:'Sophia Chen',email:'sophia@example.com',telegram:'@sophiachen',partner:'PT-002',orders:1,lastStyle:'Quiet Luxury',ltv:40,lastOrder:'2026-07-29',status:'ACTIVE'},
+  {id:'CUS-0003',name:'Mia Lin',email:'mia@example.com',telegram:'@mialin',partner:'PT-001',orders:2,lastStyle:'Golden Morning',ltv:80,lastOrder:'2026-07-28',status:'ACTIVE'}
+];
+
+function adminShell(r){
+  return navTop()+`<div class="layout"><aside class="sidebar">
+    ${sideLink('admin-dashboard','Dashboard',r)}
+    <div class="column-map" style="padding:18px 14px 8px">Airtable Data</div>
+    ${sideLink('admin-orders','Orders',r)}
+    ${sideLink('admin-partners','Partners',r)}
+    ${sideLink('admin-customers','Customers',r)}
+    <div class="column-map" style="padding:18px 14px 8px">Operations</div>
+    ${sideLink('admin-payments','Payments',r)}
+    ${sideLink('admin-credits','Credits',r)}
+    ${sideLink('admin-redirects','Redirect Logs',r)}
+    ${sideLink('admin-templates','Prompt Library',r)}
+    ${sideLink('admin-settings','Settings',r)}
+  </aside><main class="main">${adminPage(r)}</main></div>`
+}
+
+function adminPage(r){
+  if(r==='admin-orders')return airtableOrdersPage();
+  if(r==='admin-partners')return airtablePartnersPage();
+  if(r==='admin-customers')return customersPage();
+  if(r==='admin-credits')return creditsAdmin();
+  if(r==='admin-payments')return paymentsPage();
+  if(r==='admin-redirects')return redirectsPage();
+  if(r==='admin-templates')return templatesPage();
+  if(r==='admin-settings')return settingsPage();
+  if(r.startsWith('admin-partner-detail'))return partnerDetail();
+  return adminDashboard()
+}
+
+function syncNotice(tableName, message){
+  return `<div class="sync-note"><div>✦</div><div><strong>${tableName} 已按 Airtable 欄位對齊</strong><small>${message}</small></div><span class="sync-badge" style="margin-left:auto">Website → Airtable backup</span></div>`
+}
+
+function mappedOrder(o,index){
+  const partnerObj=state.partners.find(p=>p.id===o.partner)||state.partners[index%state.partners.length];
+  const now=`2026-07-${String(31-index).padStart(2,'0')} 10:${String(12+index).padStart(2,'0')}`;
+  const completed=o.status==='COMPLETED'?`2026-07-${String(31-index).padStart(2,'0')} 14:30`:'—';
+  return {
+    orderId:o.id,date:now,customerName:o.customer,customerEmail:`${o.customer.toLowerCase().replace(/\s+/g,'.')}@example.com`,
+    telegram:`@${o.customer.toLowerCase().replace(/\s+/g,'')}`,partner:partnerObj?.brand||o.partner,
+    style:o.template,identity:`ID-${String(index+15).padStart(5,'0')}`,photos:5,consultant:index%2?'Vanessa':'Lumora Team',
+    aiModel:index%2?'Flux Kontext':'GPT Image',imageStatus:o.status==='REDIRECTED'?'WAITING':'COMPLETED',
+    videoStatus:o.status==='COMPLETED'?'COMPLETED':'NOT REQUESTED',revision:index%3,delivery:o.status==='COMPLETED'?'DELIVERED':'PENDING',
+    download:o.status==='COMPLETED',credits:o.status==='REDIRECTED'?0:1,amount:o.price,payment:o.status==='REDIRECTED'?'PAID':'PAID',
+    createdAt:now,completedAt:completed,source:o.source
+  }
+}
+
+function airtableOrdersPage(){
+  const rows=state.orders.map(mappedOrder);
+  return `<div class="page-title"><div><h1>Orders</h1><p class="muted">查看訂單進度與客戶付款狀態。</p></div><button class="btn primary" onclick="toast('建立訂單功能預留給正式 API')">＋ New Order</button></div>
+  <div class="table-wrap"><table class="table orders-master"><thead><tr>
+    <th>Order Date</th><th>Customer Name</th><th>Payment Method</th><th>Order Status</th><th style="text-align:right">View</th>
+  </tr></thead><tbody>${rows.map((r,i)=>`<tr onclick="openOrderDetail(${i})">
+    <td class="order-date">${r.date}</td>
+    <td><span class="customer-name">${r.customerName}</span><span class="cell-sub">${r.orderId}</span></td>
+    <td>${i%3===0?'Stripe · Visa':i%3===1?'Stripe · Mastercard':'Credit Card'}</td>
+    <td>${pill(r.delivery==='DELIVERED'?'COMPLETED':r.imageStatus==='GENERATING'?'GENERATING':r.delivery)}</td>
+    <td class="view-cell"><button class="btn order-view-btn" onclick="event.stopPropagation();openOrderDetail(${i})">View</button></td>
+  </tr>`).join('')}</tbody></table></div>`
+}
+
+function detailItem(label,value){
+  return `<div class="detail-item"><span class="detail-label">${label}</span><span class="detail-value">${value ?? '—'}</span></div>`
+}
+
+function openOrderDetail(index){
+  const r=state.orders.map(mappedOrder)[index];
+  if(!r)return;
+  const paymentMethod=index%3===0?'Stripe · Visa •••• 4242':index%3===1?'Stripe · Mastercard •••• 8899':'Credit Card •••• 1024';
+  const orderStatus=r.delivery==='DELIVERED'?'COMPLETED':r.imageStatus==='GENERATING'?'GENERATING':r.delivery;
+  qs('#modal-root').innerHTML=`<div class="order-detail-overlay" onclick="if(event.target===this)closeModal()">
+    <div class="order-detail-panel">
+      <div class="order-detail-head">
+        <div><span class="pill blue">ORDER DETAIL</span><h2>${r.orderId}</h2><p class="muted">${r.date} · ${r.source}</p></div>
+        <button class="btn ghost order-detail-close" onclick="closeModal()">×</button>
+      </div>
+      <div class="order-detail-grid">
+        <section class="order-detail-section">
+          <h3>Customer</h3>
+          <div class="detail-list">
+            ${detailItem('Customer Name',r.customerName)}
+            ${detailItem('Customer Email',r.customerEmail)}
+            ${detailItem('Telegram ID',r.telegram)}
+            ${detailItem('Partner',r.partner)}
+          </div>
+        </section>
+        <section class="order-detail-section">
+          <h3>Payment</h3>
+          <div class="detail-list">
+            ${detailItem('Payment Method',paymentMethod)}
+            ${detailItem('Payment Status',pill(r.payment))}
+            ${detailItem('Amount',money(r.amount))}
+            ${detailItem('Paid At',r.createdAt)}
+            ${detailItem('Stripe Payment ID','pi_3Lumora'+String(index+1101))}
+            ${detailItem('Credits Used',r.credits)}
+          </div>
+        </section>
+        <section class="order-detail-section">
+          <h3>Creative Setup</h3>
+          <div class="detail-list">
+            ${detailItem('Style Template',r.style)}
+            ${detailItem('Identity Model',r.identity)}
+            ${detailItem('Upload Photos',r.photos)}
+            ${detailItem('Consultant',r.consultant)}
+            ${detailItem('AI Model',r.aiModel)}
+            ${detailItem('Revision',r.revision)}
+          </div>
+        </section>
+        <section class="order-detail-section">
+          <h3>Production Status</h3>
+          <div class="detail-list">
+            ${detailItem('Order Status',pill(orderStatus))}
+            ${detailItem('Image Status',pill(r.imageStatus))}
+            ${detailItem('Video Status',pill(r.videoStatus))}
+            ${detailItem('Delivery Status',pill(r.delivery))}
+            ${detailItem('Download',r.download?'Available':'Not available')}
+            ${detailItem('Completed At',r.completedAt)}
+          </div>
+        </section>
+        <section class="order-detail-section full">
+          <h3>Timeline</h3>
+          <div class="order-timeline">
+            <div class="timeline-row"><span class="timeline-dot"></span><div><strong>Order created</strong><span class="cell-sub">Customer information and template saved</span></div><span class="muted">${r.createdAt}</span></div>
+            <div class="timeline-row"><span class="timeline-dot"></span><div><strong>Payment confirmed</strong><span class="cell-sub">${paymentMethod}</span></div><span class="muted">${r.createdAt}</span></div>
+            <div class="timeline-row"><span class="timeline-dot"></span><div><strong>Production status</strong><span class="cell-sub">${r.imageStatus} · ${r.videoStatus}</span></div><span class="muted">${r.completedAt}</span></div>
+          </div>
+        </section>
+        <section class="order-detail-section full">
+          <h3>Files & Notes</h3>
+          <div class="detail-list">
+            ${detailItem('Source Photos',r.photos+' files')}
+            ${detailItem('Identity Reference',r.identity)}
+            ${detailItem('Final Delivery',r.download?'Video file ready':'Waiting for production')}
+            ${detailItem('Internal Note','Customer requested natural skin texture and consistent facial identity.')}
+          </div>
+        </section>
+      </div>
+      <div class="detail-actions">
+        <button class="btn primary" onclick="toast('訂單狀態已儲存')">Save Changes</button>
+        <button class="btn" onclick="toast('已開啟 Telegram 對話')">Open Telegram</button>
+        <button class="btn" onclick="toast('已同步至 Airtable')">Sync Airtable</button>
+      </div>
+    </div>
+  </div>`
+}
+
+function mappedPartner(p,index){
+  return {
+    id:p.id,brand:p.brand,domain:`https://${p.domain}`,owner:p.owner,email:p.email,telegram:`@${p.brand.toLowerCase().replace(/\s+/g,'')}`,
+    country:index%3===0?'Taiwan':index%3===1?'Singapore':'United States',status:p.status,plan:'Partner Starter',
+    credits:p.limit-p.used,orders:p.used,revenue:p.revenue,subscription:p.enabled?'ACTIVE':'PAST_DUE',
+    renewal:p.nextBilling,website:`https://${p.domain}`,lastLogin:`2026-07-${String(30-index).padStart(2,'0')}`,action:p.enabled?'Enabled':'Disabled'
+  }
+}
+
+function airtablePartnersPage(){
+  const rows=state.partners.map(mappedPartner);
+  return `<div class="page-title"><div><h1>Partners</h1><p class="muted">管理白標經銷商付款、額度、網站權限與訂閱狀態。</p></div><button class="btn primary" onclick="modal('<h2>New Partner</h2><p class=muted>正式版將新增網站帳號，並以 Partner ID Upsert 到 Airtable。</p><button class=\\'btn primary\\' onclick=\\'closeModal()\\'>Continue</button>')">＋ New Partner</button></div>
+  ${syncNotice('Partners','網站後台是唯一操作入口。Status、Credits、Subscription 與 Action 變更後，以 Partner ID 對 Airtable 執行 Upsert 備份。')}
+  <div class="table-wrap table-scroll"><table class="table medium"><thead><tr>
+    <th>Partner ID</th><th>Brand Logo</th><th>Brand Name</th><th>Domain</th><th>Owner</th><th>Email</th><th>Telegram</th><th>Country</th>
+    <th>Status</th><th>Monthly Plan</th><th>Credits</th><th>Orders</th><th>Revenue</th><th>Subscription</th><th>Renewal</th><th>Website</th><th>Last Login</th><th>Action</th>
+  </tr></thead><tbody>${rows.map((r,i)=>`<tr>
+    <td class="cell-main">${r.id}</td><td><div class="logo" style="width:32px;height:32px;font-size:12px">${r.brand.charAt(0)}</div></td>
+    <td><span class="cell-main">${r.brand}</span></td><td>${r.domain}</td><td>${r.owner}</td><td>${r.email}</td><td>${r.telegram}</td><td>${r.country}</td>
+    <td><select class="status-select" onchange="togglePartner('${r.id}')"><option>${r.status}</option><option>ACTIVE</option><option>SUSPENDED</option></select></td>
+    <td>${r.plan}</td><td>${r.credits}</td><td>${r.orders}</td><td>${money(r.revenue)}</td>
+    <td><select class="status-select" onchange="toast('Subscription 已在網站更新；等待同步 Airtable')"><option>${r.subscription}</option><option>ACTIVE</option><option>PAST_DUE</option><option>CANCELLED</option></select></td>
+    <td>${r.renewal}</td><td><button class="btn" onclick="toast('開啟 ${r.website}')">Open</button></td><td>${r.lastLogin}</td>
+    <td><div class="row-actions"><button class="btn" onclick="openPartner('${r.id}')">View</button><button class="btn ${r.status==='ACTIVE'?'danger':'success'}" onclick="togglePartner('${r.id}')">${r.status==='ACTIVE'?'Disable':'Enable'}</button></div></td>
+  </tr>`).join('')}</tbody></table></div>`
+}
+
+function customersPage(){
+  return `<div class="page-title"><div><h1>Customers</h1><p class="muted">跨訂單查看客戶歷史、所屬經銷商與 Lifetime Value。</p></div><button class="btn primary" onclick="toast('Customer 由新訂單自動建立')">＋ New Customer</button></div>
+  ${syncNotice('Customers','Customers 已對應 Airtable 現有客戶表。網站後台為主要操作端，Airtable 僅作同步備份。')}
+  <div class="table-wrap table-scroll"><table class="table"><thead><tr>
+    <th>Customer ID</th><th>Name</th><th>Email</th><th>Telegram</th><th>Partner</th><th>Total Orders</th><th>Last Style</th><th>Lifetime Value</th><th>Last Order</th><th>Status</th><th>Action</th>
+  </tr></thead><tbody>${airtableCustomers.map(c=>`<tr>
+    <td class="cell-main">${c.id}</td><td>${c.name}</td><td>${c.email}</td><td>${c.telegram}</td><td>${c.partner}</td><td>${c.orders}</td>
+    <td>${c.lastStyle}</td><td>${money(c.ltv)}</td><td>${c.lastOrder}</td>
+    <td><select class="status-select" onchange="toast('Customer Status 已在網站更新；等待同步 Airtable')"><option>${c.status}</option><option>ACTIVE</option><option>BLOCKED</option></select></td>
+    <td><button class="btn" onclick="modal('<h2>${c.name}</h2><p class=muted>${c.orders} orders · ${c.lastStyle} · ${money(c.ltv)} lifetime value</p><button class=\\'btn primary\\' onclick=\\'closeModal()\\'>Close</button>')">View</button></td>
+  </tr>`).join('')}</tbody></table></div>`
+}
+</script>
+
+
+<script id="final-structure-note">
+const _originalAdminDashboard = adminDashboard;
+adminDashboard = function(){
+  const page = _originalAdminDashboard();
+  const note = `<div class="sync-note"><div>✦</div><div><strong>固定資料結構</strong><small>Orders：客服與營運每日使用。Partners：管理白標經銷商。Customers：對應 Airtable 客戶資料。網站後台為主操作端，Airtable 僅作備份。</small></div></div>`;
+  return page.replace('<div class="page-title">', note + '<div class="page-title">');
+}
+</script>
+
+
+<style id="lumora-core3-style">
+/* ═══ 三張核心表：CRM / Orders / Partners ═══
+   所有容器用「實色深底」而非半透明白底 —— 半透明在手機上
+   會被極光背景沖淡成淺紫，白字就看不見了。 */
+
+/* 手機上關掉最耗效能也最容易泛白的那層模糊 */
+@media (max-width:820px){
+  body:before{filter:blur(46px);opacity:.55}
+  body:after{opacity:.16}
+}
+html{background:#080817}
+
+.core3-wrap{
+  background:rgba(11,9,28,.92);
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:22px;padding:22px;margin-bottom:22px;
+}
+
+.l1-table{width:100%;border-collapse:collapse;min-width:820px}
+.l1-table th{
+  font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  color:#c9b8ff;font-weight:700;padding:13px 16px;
+  border-bottom:1px solid rgba(255,255,255,.16);background:#15112e;white-space:nowrap;
+}
+.l1-table td{padding:15px 16px;border-bottom:1px solid rgba(255,255,255,.09);font-size:14px;vertical-align:middle;color:#f6f2ff}
+.l1-table tbody tr{cursor:pointer;transition:.2s;background:#0e0b24}
+.l1-table tbody tr:nth-child(even){background:#110d29}
+.l1-table tbody tr:hover{background:#1d1743}
+.l1-table tbody tr:last-child td{border-bottom:none}
+.cell-id{font-family:ui-monospace,"SF Mono",Menlo,monospace;font-size:12.5px;color:#a99cd0}
+.cell-name{font-weight:600;color:#fff}
+.cell-sub{font-size:11.5px;color:#a99cd0;margin-top:2px}
+.cell-due{font-family:ui-monospace,"SF Mono",Menlo,monospace;font-size:13px;color:#e8e2ff}
+.cell-due.over{color:#ff8fb0;font-weight:700}
+.cell-due.today{color:#ffc48f;font-weight:700}
+
+.tag{display:inline-block;font-size:12px;padding:4px 11px;border-radius:999px;font-weight:600;white-space:nowrap;border:1px solid}
+.tag.blue{background:#241f52;color:#cabcff;border-color:#4b3f9c}
+.tag.warn{background:#3a2a18;color:#ffca92;border-color:#7d5a2c}
+.tag.ok{background:#123830;color:#8ff0d5;border-color:#2a6d5e}
+.tag.bad{background:#3d1a28;color:#ffa8c0;border-color:#843a52}
+.tag.mute{background:#22203a;color:#b8b2d6;border-color:#3d3960}
+.tag.lock{background:#3a3118;color:#f5dda2;border-color:#7e6a2c}
+
+.mini-bar{height:5px;background:#241f45;border-radius:99px;overflow:hidden;width:80px;margin-top:6px}
+.mini-bar i{display:block;height:100%;background:linear-gradient(90deg,#c399ff,#ffc9d9)}
+.mini-bar i.hot{background:linear-gradient(90deg,#ff7a9f,#ff99b7)}
+
+/* 流程條 */
+.flowbar{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:18px}
+.flow-node{
+  flex:1;min-width:150px;padding:13px 15px;border-radius:16px;
+  background:#15112e;border:1px solid rgba(255,255,255,.13);
+}
+.flow-node .fk{font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:#b5a4e8;font-weight:700}
+.flow-node .fv{font-size:15px;font-weight:600;margin-top:4px;color:#fff}
+.flow-node .fd{font-size:12px;color:#b3aad3;margin-top:4px;line-height:1.45}
+.flow-node.gate{background:#3a3118;border-color:#8a742f}
+.flow-node.gate .fv{color:#ffe0a3}
+.flow-node.gate .fk{color:#d4b671}
+.flow-node.gate .fd{color:#d9c393}
+
+.core3-alert{
+  border-radius:14px;padding:14px 17px;margin-bottom:22px;font-size:13.5px;line-height:1.6;
+  background:#3a3118;border:1px solid #8a742f;color:#ffe0a3;
+}
+.core3-alert b{color:#fff}
+
+/* 第二層抽屜 */
+.dw-scrim{position:fixed;inset:0;background:rgba(4,3,12,.82);z-index:90;display:none}
+.dw-scrim.on{display:block}
+.dw{
+  position:fixed;top:0;right:0;bottom:0;width:min(760px,100%);z-index:91;
+  background:#0d0a22;border-left:1px solid rgba(255,255,255,.14);
+  box-shadow:-30px 0 90px rgba(0,0,0,.6);
+  transform:translateX(100%);transition:transform .34s cubic-bezier(.22,.7,.25,1);
+  display:flex;flex-direction:column;
+}
+.dw.on{transform:translateX(0)}
+@media (prefers-reduced-motion:reduce){.dw{transition:none}}
+.dw-head{padding:22px 24px 18px;border-bottom:1px solid rgba(255,255,255,.14);display:flex;justify-content:space-between;gap:14px;align-items:flex-start;background:#15112e}
+.dw-kind{font-size:11px;letter-spacing:.16em;text-transform:uppercase;font-weight:700}
+.dw-head h2{font-size:24px;font-weight:600;margin:7px 0 0;letter-spacing:-.01em;color:#fff;font-family:var(--sans)}
+.dw-meta{margin-top:10px;display:flex;gap:8px;flex-wrap:wrap}
+.dw-x{width:34px;height:34px;border-radius:50%;border:1px solid rgba(255,255,255,.2);background:#241f45;color:#fff;font-size:17px;flex:none;line-height:1}
+.dw-x:hover{background:#332c5e}
+.dw-body{padding:6px 24px 40px;overflow-y:auto;flex:1;-webkit-overflow-scrolling:touch}
+.dw-body::-webkit-scrollbar{width:6px}
+.dw-body::-webkit-scrollbar-thumb{background:#3d3660;border-radius:4px}
+
+.gsec{margin-top:24px}
+.gsec-h{display:flex;align-items:center;gap:11px;padding-bottom:9px;margin-bottom:13px;border-bottom:1px solid rgba(255,255,255,.14)}
+.gsec-n{
+  width:23px;height:23px;border-radius:50%;flex:none;display:grid;place-items:center;
+  font-size:11px;font-weight:700;font-family:ui-monospace,monospace;
+  background:#332a63;color:#e0d2ff;border:1px solid #574a9c;
+}
+.gsec-h b{font-size:15px;font-weight:700;color:#fff}
+.gsec-h span{font-size:11.5px;color:#a99cd0;margin-left:auto;text-align:right}
+
+.fgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.fitem{background:#15112e;border:1px solid rgba(255,255,255,.1);border-radius:13px;padding:11px 14px}
+.fitem.full{grid-column:1/-1}
+.fk{font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;color:#b5a4e8;font-weight:700;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.fv{font-size:14px;margin-top:4px;word-break:break-word;line-height:1.5;color:#f6f2ff}
+.fv.none{color:#7d7499;font-style:italic}
+.fn{font-size:11.5px;color:#a99cd0;margin-top:4px;line-height:1.45}
+@media(max-width:620px){.fgrid{grid-template-columns:1fr}}
+
+.chip{font-size:9.5px;font-weight:700;padding:2px 6px;border-radius:5px;letter-spacing:.04em}
+.chip.auto{background:#2b2748;color:#bdb4dd}
+.chip.new{background:#4a3418;color:#ffc48f}
+.chip.lk{background:#413617;color:#f5dda2}
+
+.tl{border-left:2px solid #3d3660;padding-left:16px;margin-top:12px}
+.tl-i{position:relative;padding-bottom:14px}
+.tl-i::before{content:'';position:absolute;left:-21px;top:5px;width:8px;height:8px;border-radius:50%;background:#5d5488}
+.tl-i.done::before{background:#5ce0bb}
+.tl-i.now::before{background:#ffb877;box-shadow:0 0 0 4px rgba(255,184,119,.22)}
+.tl-t{font-size:13.5px;font-weight:600;color:#fff}
+.tl-d{font-size:12px;color:#a99cd0;margin-top:2px}
+
+.infobox{border-radius:14px;padding:14px 16px;margin-top:14px;display:flex;gap:12px;align-items:flex-start;font-size:13px;line-height:1.6}
+.infobox.lock{background:#3a3118;border:1px solid #8a742f;color:#ffe0a3}
+.infobox.bad{background:#3d1a28;border:1px solid #8f3f5a;color:#ffb0c6}
+.infobox b{color:#fff}
+.infobox .ic{font-size:16px;flex:none}
+
+.htable{width:100%;border-collapse:collapse;margin-top:10px}
+.htable th{font-size:10px;padding:8px 11px;letter-spacing:.08em;text-transform:uppercase;color:#b5a4e8;text-align:left;border-bottom:1px solid rgba(255,255,255,.14);font-weight:700}
+.htable td{font-size:12.5px;padding:9px 11px;border-bottom:1px solid rgba(255,255,255,.08);color:#e8e2ff}
+
+.openq{margin-top:24px;border-radius:16px;padding:18px 20px;background:#15112e;border:1px solid rgba(255,255,255,.13)}
+.openq h4{margin:0 0 12px;font-size:14.5px;font-weight:700;color:#fff}
+.openq li{font-size:13px;color:#c3bce0;margin-bottom:9px;line-height:1.6}
+.openq li b{color:#fff;font-weight:700}
+
+/* 手機 */
+@media(max-width:640px){
+  .core3-wrap{padding:14px;border-radius:16px}
+  .dw-head{padding:18px 16px 14px}
+  .dw-head h2{font-size:20px}
+  .dw-body{padding:6px 16px 32px}
+  .flow-node{min-width:100%}
+  .l1-table{min-width:700px}
+}
+</style>
+
+<script id="lumora-core3">
+/* ═══════════════════════════════════════════════════
+   三張核心表 — 全部 mock 資料，確認欄位後才改 Airtable
+   CRM（詢問漏斗）→ Orders（專案製作）→ Partners（歸屬額度）
+   ═══════════════════════════════════════════════════ */
+
+const CORE_CRM = [
+  { id:"CRM-20260801-003", name:"Sreymom Chan", status:"待帳務確認", statusTag:"warn",
+    pay:"待帳務確認", payTag:"warn", pri:"高", priTag:"bad", next:"08-02 10:00", nextCls:"today", cs:"Nita",
+    tgId:"814255310", tgUser:"@sreymom_c", partner:"Phnom Penh Studio", partnerCode:"PTN-002",
+    inqDate:"2026-08-01 09:12", source:"Partner Bot", service:"個人形象", lang:"高棉文", returning:false, prevCount:0,
+    summary:"想拍一組韓系形象照放在交友軟體，希望看起來自然不要太假。有先問可不可以看樣本。",
+    files:"3 張自拍", budget:"$20–50", hasFiles:true,
+    firstResp:"1.4 小時", touch:4, daysIn:0, lastContact:"2026-08-01 18:40",
+    note:"客戶已匯款 $28，提供帳號後五碼 41882。等帳務比對 ABA 入帳。",
+    payStatus:"待帳務確認", quoted:"$28.00", method:"ABA", last5:"41882", last5valid:true,
+    transferDate:"2026-08-01", proof:"匯款截圖 1 張", subBy:"Nita（客服）", subAt:"2026-08-01 18:42",
+    verBy:null, verAt:null, locked:false, verNote:null,
+    closeResult:null, closedAt:null, convOrder:null, lostReason:null, daysToClose:null,
+    botMsg:"98431", botSync:"已同步", createdBy:"TG Bot", updated:"2026-08-01 18:42",
+    history:[
+      {t:"新進件", d:"08-01 09:12 · TG Bot 自動建立", s:"done"},
+      {t:"已聯絡 · 首次回覆", d:"08-01 10:36 · Nita（首次回應 1.4 小時）", s:"done"},
+      {t:"洽談中 · 報價 $28", d:"08-01 14:20 · Nita", s:"done"},
+      {t:"客戶同意成交", d:"08-01 18:20 · Nita", s:"done"},
+      {t:"待帳務確認 · 已填後五碼", d:"08-01 18:42 · 等帳務比對入帳", s:"now"} ] },
+
+  { id:"CRM-20260801-002", name:"Vanessa Liu", status:"已轉單", statusTag:"ok",
+    pay:"已鎖定", payTag:"lock", pri:"一般", priTag:"mute", next:"—", nextCls:"", cs:"Nita",
+    tgId:"552104883", tgUser:"@vanessa_liu", partner:"Taiwan Studio", partnerCode:"PTN-001",
+    inqDate:"2026-07-31 11:05", source:"官方 Bot", service:"品牌企劃", lang:"中文", returning:true, prevCount:7,
+    summary:"睫毛保養液新品要拍一組 IG Reels 素材，9:16，要 TK 手機紀錄感，不能有 AI 感。",
+    files:"產品圖 2 張 + 模特兒照 5 張", budget:"$200–500", hasFiles:true,
+    firstResp:"0.6 小時", touch:3, daysIn:1, lastContact:"2026-07-31 16:20",
+    note:"老客戶，第 8 次下單。付款驗證完成，Order 已自動建立。",
+    payStatus:"已確認", quoted:"$320.00", method:"銀行匯款", last5:"70934", last5valid:true,
+    transferDate:"2026-07-31", proof:"匯款單 1 張", subBy:"Nita（客服）", subAt:"2026-07-31 15:50",
+    verBy:"Rithy（帳務）", verAt:"2026-07-31 16:18", locked:true, verNote:"ABA 入帳金額相符",
+    closeResult:"成交", closedAt:"2026-07-31 16:20", convOrder:"ORD-20260731-004", lostReason:null, daysToClose:"1 天",
+    botMsg:"98402", botSync:"已同步", createdBy:"TG Bot", updated:"2026-07-31 16:20",
+    history:[
+      {t:"新進件", d:"07-31 11:05 · TG Bot", s:"done"},
+      {t:"已聯絡", d:"07-31 11:41 · Nita（首次回應 0.6 小時）", s:"done"},
+      {t:"成交 · 報價 $320", d:"07-31 15:30 · Nita", s:"done"},
+      {t:"待帳務確認", d:"07-31 15:50 · 後五碼 70934", s:"done"},
+      {t:"付款已確認並鎖定 🔒", d:"07-31 16:18 · Rithy（帳務）", s:"done"},
+      {t:"已轉單 · Order 自動建立", d:"07-31 16:20 · ORD-20260731-004 · Partner 額度 +1", s:"done"} ] },
+
+  { id:"CRM-20260801-004", name:"Dara Ponlok", status:"等客戶回覆", statusTag:"mute",
+    pay:"未報價", payTag:"mute", pri:"低", priTag:"mute", next:"08-05 14:00", nextCls:"", cs:"Sok",
+    tgId:"733901255", tgUser:"@daraponlok", partner:"— 官方直客", partnerCode:"—",
+    inqDate:"2026-07-29 20:41", source:"IG", service:"個人形象", lang:"英文", returning:false, prevCount:0,
+    summary:"只問價格，沒說用途，也沒傳照片。",
+    files:null, budget:"未提供", hasFiles:false,
+    firstResp:"14.2 小時", touch:2, daysIn:3, lastContact:"2026-07-30 11:02",
+    note:"已回報價區間，客戶讀了沒回。08-05 再追一次，沒回就結案。",
+    payStatus:"等待付款", quoted:null, method:null, last5:null, last5valid:null,
+    transferDate:null, proof:null, subBy:null, subAt:null,
+    verBy:null, verAt:null, locked:false, verNote:null,
+    closeResult:null, closedAt:null, convOrder:null, lostReason:null, daysToClose:null,
+    botMsg:null, botSync:"已接收", createdBy:"人工建立", updated:"2026-07-30 11:02",
+    history:[
+      {t:"新進件", d:"07-29 20:41 · IG 私訊轉入", s:"done"},
+      {t:"已聯絡", d:"07-30 10:52 · Sok（首次回應 14.2 小時 ⚠）", s:"done"},
+      {t:"等客戶回覆", d:"07-30 11:02 · 已讀未回，已卡 3 天", s:"now"} ] },
+
+  { id:"CRM-20260731-001", name:"Kanha Sok", status:"未成交", statusTag:"bad",
+    pay:"—", payTag:"mute", pri:"一般", priTag:"mute", next:"—", nextCls:"", cs:"Nita",
+    tgId:"690183422", tgUser:"@kanha_s", partner:"Phnom Penh Studio", partnerCode:"PTN-002",
+    inqDate:"2026-07-28 15:30", source:"Partner Bot", service:"個人形象", lang:"高棉文", returning:false, prevCount:0,
+    summary:"想要婚紗風格照片，但預算只有 $10。",
+    files:"2 張自拍", budget:"< $20", hasFiles:true,
+    firstResp:"2.1 小時", touch:5, daysIn:0, lastContact:"2026-07-30 09:15",
+    note:"預算差距太大，已婉拒並說明最低方案。",
+    payStatus:"等待付款", quoted:"$25.00", method:null, last5:null, last5valid:null,
+    transferDate:null, proof:null, subBy:null, subAt:null,
+    verBy:null, verAt:null, locked:false, verNote:null,
+    closeResult:"未成交", closedAt:"2026-07-30 09:15", convOrder:null, lostReason:"預算不符", daysToClose:"2 天",
+    botMsg:"98388", botSync:"已同步", createdBy:"TG Bot", updated:"2026-07-30 09:15",
+    history:[
+      {t:"新進件", d:"07-28 15:30 · TG Bot", s:"done"},
+      {t:"已聯絡", d:"07-28 17:36 · Nita", s:"done"},
+      {t:"洽談中 · 報價 $25", d:"07-29 10:20 · Nita", s:"done"},
+      {t:"未成交 · 預算不符", d:"07-30 09:15 · Nita", s:"done"} ] }
+];
+
+const CORE_ORD = [
+  { id:"ORD-20260731-004", name:"Vanessa Liu", prod:"生成中", prodTag:"blue",
+    asset:"素材齊全", assetTag:"ok", promised:"08-03", promisedCls:"", producer:"Chan",
+    crm:"CRM-20260801-002", tgId:"552104883", partner:"Taiwan Studio", partnerCode:"PTN-001",
+    orderDate:"2026-07-31 16:20", service:"品牌企劃", pkg:"品牌 10 支", qty:1,
+    amount:"$320.00", currency:"USD", payStatus:"已確認", payMethod:"銀行匯款",
+    last5:"70934", verAt:"2026-07-31 16:18",
+    cost:"$18.40", commission:"$48.00", margin:"$253.60", marginPct:"79%",
+    brief:"睫毛保養液 IG Reels 素材 ×10。9:16，TK UGC 手機紀錄感，不能有 AI 感。品牌字 LA SHAUNNIE 必須完全正確。",
+    style:"TK UGC · 9:16", assetNote:null, rev:1, revLimit:2,
+    promisedDate:"2026-08-03", deliveryDate:null, completion:null, daysLate:null,
+    link:null, orderStatus:"進行中", totalOrders:8, ltv:"$1,860.00", lastStyle:"Luxury Portrait",
+    consent:true, retention:"2026-08-30", purged:false, thread:"tg://ord-4482", notify:"已發送",
+    prevOrders:[
+      {id:"ORD-20260712-011", svc:"個人形象", amt:"$180", st:"已完成"},
+      {id:"ORD-20260628-007", svc:"品牌企劃", amt:"$320", st:"已完成"},
+      {id:"ORD-20260605-003", svc:"個人形象", amt:"$150", st:"已完成"} ] },
+
+  { id:"ORD-20260730-003", name:"Mealea Vann", prod:"等待素材", prodTag:"warn",
+    asset:"素材不全", assetTag:"warn", promised:"08-02", promisedCls:"today", producer:"Chan",
+    crm:"CRM-20260730-006", tgId:"771204558", partner:"— 官方直客", partnerCode:"—",
+    orderDate:"2026-07-30 14:02", service:"個人形象", pkg:"個人雙模板", qty:1,
+    amount:"$45.00", currency:"USD", payStatus:"已確認", payMethod:"ABA",
+    last5:"22507", verAt:"2026-07-30 13:58",
+    cost:"$3.20", commission:"$0.00", margin:"$41.80", marginPct:"93%",
+    brief:"法式優雅 + 純淨棚拍各一組，共 12 張。客戶希望保留自然膚質，不要過度磨皮。",
+    style:"法式優雅 / 純淨棚拍", assetNote:"只收到 3 張，還缺 2 張正面照。已於 08-01 提醒一次。",
+    rev:0, revLimit:2, promisedDate:"2026-08-02", deliveryDate:null, completion:null, daysLate:null,
+    link:null, orderStatus:"進行中", totalOrders:1, ltv:"$45.00", lastStyle:null,
+    consent:true, retention:"2026-08-29", purged:false, thread:"tg://ord-4471", notify:"已發送",
+    prevOrders:[] },
+
+  { id:"ORD-20260728-002", name:"Sophea Kim", prod:"審核中", prodTag:"blue",
+    asset:"素材齊全", assetTag:"ok", promised:"08-01", promisedCls:"over", producer:"Bora",
+    crm:"CRM-20260727-004", tgId:"640228719", partner:"Siem Reap Digital", partnerCode:"PTN-003",
+    orderDate:"2026-07-28 10:15", service:"個人形象", pkg:"個人單模板", qty:1,
+    amount:"$28.00", currency:"USD", payStatus:"已確認", payMethod:"Wing",
+    last5:"81340", verAt:"2026-07-28 10:11",
+    cost:"$5.70", commission:"$4.20", margin:"$18.10", marginPct:"65%",
+    brief:"韓系電梯閃燈風格 6 張。", style:"韓系電梯閃燈", assetNote:null,
+    rev:2, revLimit:2, promisedDate:"2026-08-01", deliveryDate:null, completion:null, daysLate:"1 天",
+    link:null, orderStatus:"進行中", totalOrders:2, ltv:"$56.00", lastStyle:"韓系電梯閃燈",
+    consent:true, retention:"2026-08-27", purged:false, thread:"tg://ord-4455", notify:"已發送",
+    prevOrders:[{id:"ORD-20260601-009", svc:"個人形象", amt:"$28", st:"已完成"}] }
+];
+
+const CORE_PTN = [
+  { name:"Taiwan Studio", code:"PTN-001", remain:2, limit:10, used:8, pct:80, pending:3,
+    sync:"正常", syncTag:"ok", lastSync:"08-01 18:42",
+    contact:"Ivy Chen", tgId:"552104883", tgUser:"@taiwan_studio", brand:"LUMINA Studio", onboard:"已完成",
+    plan:"10 筆方案", period:"總量制（待確認）", planStart:"2026-06-01", planExpiry:null,
+    planStatus:"額度偏低", renewal:true, partnerPaid:"已付款",
+    submitted:14, received:14, diff:0, webhook:"正常", lastAlert:"07-28 · 剩餘 ≤2 提醒",
+    converted:8, convRate:"57%", revenue:"$2,140.00", aov:"$267.50",
+    commRate:"15%", commEarned:"$321.00", commUnpaid:"$48.00",
+    lastOrder:"ORD-20260731-004 · 07-31", team:"Nita / Chan",
+    notes:"配合最久的經銷商，送件品質穩定。額度剩 2 筆，已發續約提醒。" },
+
+  { name:"Phnom Penh Studio", code:"PTN-002", remain:0, limit:10, used:10, pct:100, pending:2,
+    sync:"缺單", syncTag:"bad", lastSync:"08-01 09:12",
+    contact:"Sok Piseth", tgId:"814255310", tgUser:"@pp_studio", brand:"PP Image Lab", onboard:"已完成",
+    plan:"10 筆方案", period:"總量制（待確認）", planStart:"2026-06-15", planExpiry:null,
+    planStatus:"已用完", renewal:true, partnerPaid:"已付款",
+    submitted:12, received:11, diff:1, webhook:"異常", lastAlert:"08-01 · 漏單警示",
+    converted:10, convRate:"91%", revenue:"$1,480.00", aov:"$148.00",
+    commRate:"15%", commEarned:"$222.00", commUnpaid:"$222.00",
+    lastOrder:"ORD-20260729-001 · 07-29", team:"Nita",
+    notes:"送出 12 筆但官方只收到 11 筆，Webhook 異常，需人工比對。額度已用完，等續約。" },
+
+  { name:"Siem Reap Digital", code:"PTN-003", remain:14, limit:20, used:6, pct:30, pending:5,
+    sync:"正常", syncTag:"ok", lastSync:"08-01 16:30",
+    contact:"Chea Vibol", tgId:"902551377", tgUser:"@sr_digital", brand:"Angkor Portrait", onboard:"進行中",
+    plan:"20 筆方案", period:"總量制（待確認）", planStart:"2026-07-10", planExpiry:null,
+    planStatus:"正常", renewal:false, partnerPaid:"已付款",
+    submitted:19, received:19, diff:0, webhook:"正常", lastAlert:null,
+    converted:6, convRate:"32%", revenue:"$310.00", aov:"$51.67",
+    commRate:"12%", commEarned:"$37.20", commUnpaid:"$37.20",
+    lastOrder:"ORD-20260728-002 · 07-28", team:"Bora",
+    notes:"帶客量大但轉換率偏低（32%），多為低預算詢問。Onboarding 尚未完成，建議先補教學。" }
+];
+
+/* ── 小工具 ── */
+const _esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const _fi = (k,v,note,chip) => `<div class="fitem">
+  <div class="fk">${_esc(k)}${chip?`<span class="chip ${chip[1]||'auto'}">${_esc(chip[0])}</span>`:""}</div>
+  <div class="fv ${v?'':'none'}">${v?_esc(v):"—"}</div>
+  ${note?`<div class="fn">${_esc(note)}</div>`:""}</div>`;
+const _fiw = (k,v,note,chip) => _fi(k,v,note,chip).replace('class="fitem"','class="fitem full"');
+const _gs = (n,title,right,inner) => `<div class="gsec">
+  <div class="gsec-h"><span class="gsec-n">${n}</span><b>${_esc(title)}</b>${right?`<span>${_esc(right)}</span>`:""}</div>
+  ${inner}</div>`;
+
+/* ── 流程條 ── */
+function core3Flow(){
+  return `<div class="flowbar">
+    <div class="flow-node"><div class="fk">Partners</div><div class="fv">經銷商帶客</div><div class="fd">Partner Code 由 Bot 自動寫入</div></div>
+    <div class="flow-node"><div class="fk">CRM</div><div class="fv">詢問進件</div><div class="fd">Bot 只建 CRM，不建 Order</div></div>
+    <div class="flow-node"><div class="fk">CRM</div><div class="fv">客服追蹤談成</div><div class="fd">談成不代表錢到帳</div></div>
+    <div class="flow-node gate"><div class="fk">CRM · 付款驗證</div><div class="fv">🔒 帳務確認並鎖定</div><div class="fd">客服填後五碼 → 帳務比對 → 鎖定</div></div>
+    <div class="flow-node"><div class="fk">Orders</div><div class="fv">系統自動建立</div><div class="fd">開始製作</div></div>
+    <div class="flow-node"><div class="fk">Partners</div><div class="fv">額度 +1</div><div class="fd">此時才扣額度</div></div>
+  </div>
+  <div class="core3-alert">
+    <b>建立 Order 的觸發條件：</b>付款狀態 = 已確認 <b>且</b> 已鎖定 —— 不是「客服談成」。
+    否則帳務還沒對到帳，Order 就開了、Partner 額度也扣了。
+  </div>`;
+}
+
+/* ═══ 第一層列表 ═══ */
+function crmPage(){
+  return `<div class="page-title"><div><h1>CRM</h1>
+    <p style="color:#c3bce0">一筆 = 一次詢問。客服每天只需回答四件事：誰要追、追到哪、誰負責、什麼時候追。</p></div>
+    <button class="btn" onclick="toast('詢問由 TG Bot 自動進件')">＋ 手動建立詢問</button></div>
+  ${core3Flow()}
+  <div class="core3-wrap"><div class="table-wrap"><table class="table l1-table"><thead><tr>
+    <th>詢問編號</th><th>客戶</th><th>狀態</th><th>付款</th><th>優先</th><th>下次追蹤</th><th>負責客服</th>
+  </tr></thead><tbody>${CORE_CRM.map((r,i)=>`<tr onclick="core3Open('crm',${i})">
+    <td class="cell-id">${_esc(r.id)}</td>
+    <td><div class="cell-name">${_esc(r.name)}</div><div class="cell-sub">${_esc(r.partnerCode)}</div></td>
+    <td><span class="tag ${r.statusTag}">${_esc(r.status)}</span></td>
+    <td><span class="tag ${r.payTag}">${_esc(r.pay)}</span></td>
+    <td><span class="tag ${r.priTag}">${_esc(r.pri)}</span></td>
+    <td class="cell-due ${r.nextCls}">${_esc(r.next)}</td>
+    <td>${_esc(r.cs)}</td></tr>`).join('')}</tbody></table></div></div>
+  <p style="margin-top:12px;font-size:12.5px;color:#a99cd0">點任一列展開第二層 · 六組資訊</p>`;
+}
+
+function crmOrdersPage(){
+  return `<div class="page-title"><div><h1>Orders</h1>
+    <p style="color:#c3bce0">一筆 = 一次專案。付款欄位唯讀，從 CRM 帶入，不在這裡修改。</p></div></div>
+  <div class="core3-wrap"><div class="table-wrap"><table class="table l1-table"><thead><tr>
+    <th>訂單編號</th><th>客戶</th><th>製作狀態</th><th>素材</th><th>承諾交期</th><th>製作負責</th>
+  </tr></thead><tbody>${CORE_ORD.map((r,i)=>`<tr onclick="core3Open('ord',${i})">
+    <td class="cell-id">${_esc(r.id)}</td>
+    <td><div class="cell-name">${_esc(r.name)}</div><div class="cell-sub">${_esc(r.service)}</div></td>
+    <td><span class="tag ${r.prodTag}">${_esc(r.prod)}</span></td>
+    <td><span class="tag ${r.assetTag}">${_esc(r.asset)}</span></td>
+    <td class="cell-due ${r.promisedCls}">${_esc(r.promised)}</td>
+    <td>${_esc(r.producer)}</td></tr>`).join('')}</tbody></table></div></div>
+  <p style="margin-top:12px;font-size:12.5px;color:#a99cd0">點任一列展開第二層 · 六組資訊</p>`;
+}
+
+function crmPartnersPage(){
+  return `<div class="page-title"><div><h1>Partners</h1>
+    <p style="color:#c3bce0">一筆 = 一個經銷商。額度剩多少、有沒有漏單、還有多少在漏斗裡沒轉換。</p></div></div>
+  <div class="core3-wrap"><div class="table-wrap"><table class="table l1-table"><thead><tr>
+    <th>經銷商</th><th>剩餘額度</th><th>已使用</th><th>待轉換</th><th>同步狀態</th><th>最近同步</th>
+  </tr></thead><tbody>${CORE_PTN.map((r,i)=>`<tr onclick="core3Open('ptn',${i})">
+    <td><div class="cell-name">${_esc(r.name)}</div><div class="cell-sub">${_esc(r.code)}</div></td>
+    <td><span class="tag ${r.remain<=2?'bad':'ok'}">${r.remain} / ${r.limit}</span></td>
+    <td>${r.used}<div class="mini-bar"><i class="${r.pct>=100?'hot':''}" style="width:${r.pct}%"></i></div></td>
+    <td>${r.pending}</td>
+    <td><span class="tag ${r.syncTag}">${_esc(r.sync)}</span></td>
+    <td class="cell-due">${_esc(r.lastSync)}</td></tr>`).join('')}</tbody></table></div></div>
+  <div class="openq"><h4>三個還沒定的問題（會影響欄位邏輯）</h4><ul style="margin:0;padding-left:18px">
+    <li><b>方案週期未定</b> — 10 筆是總量制還是每月重置？這會改變剩餘額度、續約提醒、方案狀態的全部算法。</li>
+    <li><b>缺單偵測目前無效</b> — 若「送出數」和「收到數」都來自官方 CRM 表，永遠對得起來。要抓漏單，Partner 端送出時必須先留一筆 log。PTN-002 的異常是手動塞的假資料。</li>
+    <li><b>客戶終身價值沒有錨點</b> — CRM 和 Order 都是「一次事件」，沒有代表「一個人」的記錄，統計加不起來。建議加一張薄的 Customers 表（姓名／TG ID／Partner／訂單連結／累計次數／終身價值）。</li>
+  </ul></div>`;
+}
+
+/* ═══ 第二層抽屜 ═══ */
+function core3CrmCard(r){
+  const tl = `<div class="tl">${r.history.map(h=>`<div class="tl-i ${h.s}"><div class="tl-t">${_esc(h.t)}</div><div class="tl-d">${_esc(h.d)}</div></div>`).join('')}</div>`;
+  let box = "";
+  if(r.locked) box = `<div class="infobox lock"><span class="ic">🔒</span><div><b>付款已鎖定</b> — ${_esc(r.verBy)} 於 ${_esc(r.verAt)} 確認入帳，欄位不可再修改。<br>系統已自動建立 <b>${_esc(r.convOrder)}</b>，Partner 額度 +1。</div></div>`;
+  else if(r.payStatus === "待帳務確認") box = `<div class="infobox lock"><span class="ic">⏳</span><div><b>等待帳務確認</b> — 客服已填後五碼 ${_esc(r.last5)}，待帳務比對銀行入帳後鎖定。<br>核准人必須與填寫人（${_esc(r.subBy)}）不同，否則職責分離形同虛設。</div></div>`;
+
+  return _gs(1,"詢問基本資料","",`<div class="fgrid">
+      ${_fi("詢問編號", r.id, null, ["自動"])}
+      ${_fi("進件時間", r.inqDate, null, ["自動"])}
+      ${_fi("客戶姓名", r.name)}
+      ${_fi("服務類型", r.service)}
+      ${_fi("Telegram User ID", r.tgId)}
+      ${_fi("Telegram 帳號", r.tgUser)}
+      ${_fi("所屬經銷商", r.partner)}
+      ${_fi("經銷商代碼", r.partnerCode, null, ["帶入"])}
+      ${_fi("溝通語言", r.lang, "決定派給哪位客服", ["新增","new"])}
+      ${_fi("是否回頭客", r.returning ? `是 · 過去 ${r.prevCount} 次詢問` : "否 · 新客", "回頭客成交率完全不同", ["新增","new"])}
+    </div>`)
+  + _gs(2,"客戶需求","",`<div class="fgrid">
+      ${_fiw("需求摘要", r.summary)}
+      ${_fi("參考檔案", r.files)}
+      ${_fi("是否有傳圖", r.hasFiles?"是":"否", "意願強度指標", ["新增","new"])}
+      ${_fi("預算區間", r.budget)}
+      ${_fi("優先度", r.pri)}
+    </div>`)
+  + _gs(3,"客服追蹤","",`<div class="fgrid">
+      ${_fi("負責客服", r.cs)}
+      ${_fi("目前狀態", r.status)}
+      ${_fi("最近聯絡", r.lastContact)}
+      ${_fi("下次追蹤", r.next === "—" ? null : r.next)}
+      ${_fi("首次回應時間", r.firstResp, "最能預測成交率的單一指標", ["新增","new"])}
+      ${_fi("已聯絡次數", `${r.touch} 次`, "分辨「還沒追」和「追五次沒回」", ["新增","new"])}
+      ${_fi("卡在現狀態", `${r.daysIn} 天`, "撈爛尾案件", ["新增","new"])}
+      ${_fi("追蹤備註", r.note)}
+    </div><div style="margin-top:16px"><div class="fk">狀態歷程</div>${tl}</div>`)
+  + _gs(4,"付款驗證","客服填寫 → 帳務核准 → 鎖定",`<div class="fgrid">
+      ${_fi("付款狀態", r.payStatus)}
+      ${_fi("報價金額", r.quoted)}
+      ${_fi("付款方式", r.method)}
+      ${_fi("匯款日期", r.transferDate)}
+      ${_fi("帳戶後五碼", r.last5, r.last5 ? "客戶銀行帳戶後五碼" : "尚未填寫", ["新增","new"])}
+      ${_fi("後五碼檢核", r.last5valid === null ? null : (r.last5valid ? "✓ 五碼正確" : "✗ 長度不符"), "自動判斷長度是否為 5，打錯當下就看得到", ["公式"])}
+      ${_fi("匯款證明", r.proof)}
+      ${_fi("付款鎖定", r.locked ? "🔒 已鎖定" : "未鎖定", null, ["新增","lk"])}
+      ${_fi("填寫人", r.subBy, "客服", ["新增","new"])}
+      ${_fi("填寫時間", r.subAt)}
+      ${_fi("核准人", r.verBy, "帳務，必須 ≠ 填寫人", ["新增","new"])}
+      ${_fi("核准時間", r.verAt)}
+      ${_fiw("驗證備註", r.verNote, "對不上時記錄原因")}
+    </div>${box}`)
+  + _gs(5,"結案結果","",`<div class="fgrid">
+      ${_fi("結案結果", r.closeResult)}
+      ${_fi("結案時間", r.closedAt)}
+      ${_fi("轉入訂單", r.convOrder, r.convOrder ? "系統自動寫入，非手動建立" : "尚未成交", ["自動"])}
+      ${_fi("未成交原因", r.lostReason)}
+      ${_fi("成交耗時", r.daysToClose, "排產能與現金流", ["新增","new"])}
+    </div>`)
+  + _gs(6,"系統紀錄","",`<div class="fgrid">
+      ${_fi("Bot 訊息 ID", r.botMsg, "防止 TG 重複建立")}
+      ${_fi("Bot 同步狀態", r.botSync)}
+      ${_fi("建立來源", r.createdBy)}
+      ${_fi("最後更新", r.updated)}
+    </div>`);
+}
+
+function core3OrdCard(r){
+  const prev = r.prevOrders.length
+    ? `<table class="htable"><thead><tr><th>訂單</th><th>服務</th><th>金額</th><th>狀態</th></tr></thead><tbody>
+       ${r.prevOrders.map(p=>`<tr><td class="cell-id">${_esc(p.id)}</td><td>${_esc(p.svc)}</td><td>${_esc(p.amt)}</td><td><span class="tag ok">${_esc(p.st)}</span></td></tr>`).join('')}</tbody></table>`
+    : `<div class="fn" style="margin-top:10px">首次下單，無歷史訂單。</div>`;
+  const late = r.daysLate ? `<div class="infobox bad"><span class="ic">⚠</span><div>已逾承諾交期 ${_esc(r.daysLate)}，且免費修改次數已用滿（${r.rev}/${r.revLimit}）。再改要加收或自行吸收成本。</div></div>` : "";
+
+  return _gs(1,"訂單來源","唯讀 · 由 CRM 帶入",`<div class="fgrid">
+      ${_fi("訂單編號", r.id, null, ["自動"])}
+      ${_fi("成單時間", r.orderDate, "付款鎖定後自動建立", ["自動"])}
+      ${_fi("來源詢問", r.crm, null, ["連結"])}
+      ${_fi("客戶姓名", r.name, null, ["帶入"])}
+      ${_fi("Telegram User ID", r.tgId, null, ["帶入"])}
+      ${_fi("所屬經銷商", r.partner, null, ["連結"])}
+      ${_fi("經銷商代碼", r.partnerCode, null, ["帶入"])}
+      ${_fi("服務類型", r.service)}
+    </div>`)
+  + _gs(2,"金額與付款","付款事實只在 CRM 驗證一次",`<div class="fgrid">
+      ${_fi("方案", r.pkg)}
+      ${_fi("使用筆數", String(r.qty))}
+      ${_fi("訂單金額", r.amount)}
+      ${_fi("幣別", r.currency)}
+      ${_fi("付款狀態", r.payStatus, null, ["帶入"])}
+      ${_fi("付款方式", r.payMethod, null, ["帶入"])}
+      ${_fi("帳戶後五碼", r.last5, "唯讀鏡像，不在此重複維護", ["帶入"])}
+      ${_fi("核准時間", r.verAt, null, ["帶入"])}
+      ${_fi("實際成本", r.cost, "API 實際花費", ["新增","new"])}
+      ${_fi("經銷商分潤", r.commission, "分潤落在單筆訂單上", ["新增","new"])}
+      ${_fi("毛利", `${r.margin}（${r.marginPct}）`, "金額 − 成本 − 分潤", ["新增","new"])}
+    </div>`)
+  + _gs(3,"製作","",`<div class="fgrid">
+      ${_fiw("製作需求", r.brief)}
+      ${_fi("風格 / 企劃", r.style)}
+      ${_fi("製作負責人", r.producer)}
+      ${_fi("素材狀態", r.asset)}
+      ${_fi("修改次數", `${r.rev} / ${r.revLimit}`, "超過上限要加收", ["新增","new"])}
+      ${_fiw("缺少素材說明", r.assetNote, "素材不全時要知道缺什麼才催得動", ["新增","new"])}
+    </div>`)
+  + _gs(4,"交付","",`<div class="fgrid">
+      ${_fi("承諾交期", r.promisedDate, "沒有這欄就算不出延遲率", ["新增","new"])}
+      ${_fi("交付日期", r.deliveryDate)}
+      ${_fi("延遲天數", r.daysLate, null, ["新增","new"])}
+      ${_fi("完成日期", r.completion)}
+      ${_fi("交付連結", r.link)}
+      ${_fi("訂單狀態", r.orderStatus)}
+    </div>${late}`)
+  + _gs(5,"客戶歷史","需要 Customers 錨點表才算得出來",`<div class="fgrid">
+      ${_fi("累計訂單數", String(r.totalOrders), null, ["統計"])}
+      ${_fi("終身價值", r.ltv, null, ["統計"])}
+      ${_fi("上次風格", r.lastStyle)}
+      ${_fi("所屬經銷商", r.partner)}
+    </div>${prev}`)
+  + _gs(6,"合規與系統","處理客戶臉部照片必要",`<div class="fgrid">
+      ${_fi("已取得同意", r.consent ? "✓ 已取得" : "未取得", null, ["新增","new"])}
+      ${_fi("照片保存至", r.retention, "到期自動刪除原始照", ["新增","new"])}
+      ${_fi("是否已刪除", r.purged ? "已刪除" : "保存中", null, ["新增","new"])}
+      ${_fi("TG 對話串 ID", r.thread)}
+      ${_fi("通知狀態", r.notify)}
+    </div>`);
+}
+
+function core3PtnCard(r){
+  const warn = r.diff > 0
+    ? `<div class="infobox bad"><span class="ic">⚠</span><div>送出 ${r.submitted} 筆，官方只收到 ${r.received} 筆，差 ${r.diff} 筆，Webhook ${_esc(r.webhook)}。<br><b>注意：</b>這個異常只有在 Partner 端送出時先留 log 才抓得到。若兩個數字都來自官方 CRM 表，差異會永遠是 0。</div></div>` : "";
+
+  return _gs(1,"合作資料","",`<div class="fgrid">
+      ${_fi("經銷商名稱", r.name)}
+      ${_fi("經銷商代碼", r.code)}
+      ${_fi("聯絡人", r.contact)}
+      ${_fi("白標品牌名", r.brand)}
+      ${_fi("Telegram User ID", r.tgId)}
+      ${_fi("Telegram 帳號", r.tgUser)}
+      ${_fi("導入狀態", r.onboard, "教過怎麼用，直接影響送件品質", ["新增","new"])}
+      ${_fi("官方承接team", r.team)}
+    </div>`)
+  + _gs(2,"方案與額度","額度在 Order 建立成功才扣",`<div class="fgrid">
+      ${_fi("方案名稱", r.plan)}
+      ${_fi("方案總額", String(r.limit))}
+      ${_fi("已使用", String(r.used), null, ["統計"])}
+      ${_fi("剩餘額度", String(r.remain), null, ["公式"])}
+      ${_fi("方案週期", r.period, "總量制或每月制未定，會改變所有額度算法", ["新增","new"])}
+      ${_fi("方案起始", r.planStart, null, ["新增","new"])}
+      ${_fi("方案到期", r.planExpiry, null, ["新增","new"])}
+      ${_fi("方案狀態", r.planStatus, null, ["公式"])}
+      ${_fi("續約提醒", r.renewal ? "⚠ 需續約" : "—", "剩餘 ≤ 2 觸發", ["公式"])}
+      ${_fi("經銷商付款狀態", r.partnerPaid, "經銷商自己付了沒", ["新增","new"])}
+    </div>`)
+  + _gs(3,"同步監控","",`<div class="fgrid">
+      ${_fi("送出詢問數", String(r.submitted), "Partner 端送出")}
+      ${_fi("官方收到數", String(r.received), "官方實際收到")}
+      ${_fi("差異", String(r.diff), null, ["公式"])}
+      ${_fi("同步狀態", r.sync, null, ["公式"])}
+      ${_fi("Webhook 狀態", r.webhook)}
+      ${_fi("最近同步", r.lastSync)}
+      ${_fiw("最近警示", r.lastAlert, "避免同一異常重複轟炸", ["新增","new"])}
+    </div>${warn}`)
+  + _gs(4,"業績與分潤","",`<div class="fgrid">
+      ${_fi("成交數", String(r.converted), null, ["統計"])}
+      ${_fi("轉換率", r.convRate, "分辨「帶客多」和「帶好客」", ["新增","new"])}
+      ${_fi("營收", r.revenue, null, ["統計"])}
+      ${_fi("平均客單價", r.aov, null, ["新增","new"])}
+      ${_fi("分潤比例", r.commRate)}
+      ${_fi("已產生分潤", r.commEarned, null, ["新增","new"])}
+      ${_fi("待結分潤", r.commUnpaid, null, ["新增","new"])}
+      ${_fi("最近成交", r.lastOrder, null, ["統計"])}
+    </div>`)
+  + _gs(5,"備註","",`<div class="fgrid">${_fiw("合作備註", r.notes)}</div>`);
+}
+
+/* ── 抽屜開關 ── */
+function core3Open(kind, i){
+  let kindTxt, color, title, meta, body;
+  if(kind === "crm"){
+    const r = CORE_CRM[i];
+    kindTxt = "CRM · 詢問案件"; color = "#c6b8ff";
+    title = `${r.name}　${r.id}`;
+    meta = `<span class="tag ${r.statusTag}">${_esc(r.status)}</span><span class="tag ${r.payTag}">${_esc(r.pay)}</span><span class="tag mute">${_esc(r.partnerCode)}</span>`;
+    body = core3CrmCard(r);
+  } else if(kind === "ord"){
+    const r = CORE_ORD[i];
+    kindTxt = "ORDER · 專案"; color = "#9df3d9";
+    title = `${r.name}　${r.id}`;
+    meta = `<span class="tag ${r.prodTag}">${_esc(r.prod)}</span><span class="tag lock">🔒 ${_esc(r.payStatus)}</span><span class="tag mute">${_esc(r.service)}</span>`;
+    body = core3OrdCard(r);
+  } else {
+    const r = CORE_PTN[i];
+    kindTxt = "PARTNER · 經銷商"; color = "#ffb1c8";
+    title = `${r.name}　${r.code}`;
+    meta = `<span class="tag ${r.remain<=2?'bad':'ok'}">剩餘 ${r.remain}/${r.limit}</span><span class="tag ${r.syncTag}">${_esc(r.sync)}</span><span class="tag mute">${_esc(r.planStatus)}</span>`;
+    body = core3PtnCard(r);
+  }
+  let host = document.getElementById('core3-drawer');
+  if(!host){
+    host = document.createElement('div');
+    host.id = 'core3-drawer';
+    document.body.appendChild(host);
+  }
+  host.innerHTML = `<div class="dw-scrim" onclick="core3Close()"></div>
+    <aside class="dw" role="dialog" aria-modal="true">
+      <div class="dw-head"><div>
+        <div class="dw-kind" style="color:${color}">${kindTxt}</div>
+        <h2>${_esc(title)}</h2><div class="dw-meta">${meta}</div>
+      </div><button class="dw-x" onclick="core3Close()" aria-label="關閉">×</button></div>
+      <div class="dw-body">${body}</div>
+    </aside>`;
+  requestAnimationFrame(()=>{
+    host.querySelector('.dw-scrim').classList.add('on');
+    host.querySelector('.dw').classList.add('on');
+  });
+  document.body.style.overflow = 'hidden';
+}
+function core3Close(){
+  const host = document.getElementById('core3-drawer');
+  if(!host) return;
+  const dw = host.querySelector('.dw'), sc = host.querySelector('.dw-scrim');
+  if(dw) dw.classList.remove('on');
+  if(sc) sc.classList.remove('on');
+  document.body.style.overflow = '';
+  setTimeout(()=>{ host.innerHTML = ''; }, 340);
+}
+document.addEventListener('keydown', e => { if(e.key === 'Escape') core3Close(); });
+
+/* ── 掛進既有側邊欄與路由 ── */
+(function(){
+  const _shell = adminShell;
+  adminShell = function(r){
+    const html = _shell(r);
+    const nav = `<div class="column-map" style="padding:18px 14px 8px">核心三表</div>`
+      + sideLink('admin-crm','CRM 詢問',r)
+      + sideLink('admin-crm-orders','Orders 訂單',r)
+      + sideLink('admin-crm-partners','Partners 經銷商',r);
+    return html.replace('<div class="column-map" style="padding:18px 14px 8px">Airtable Data</div>',
+                        nav + '<div class="column-map" style="padding:18px 14px 8px">Airtable Data</div>');
+  };
+  const _page = adminPage;
+  adminPage = function(r){
+    if(r === 'admin-crm') return crmPage();
+    if(r === 'admin-crm-orders') return crmOrdersPage();
+    if(r === 'admin-crm-partners') return crmPartnersPage();
+    return _page(r);
+  };
+  if(typeof render === 'function' && location.hash.startsWith('#admin')) render();
+})();
+</script>
+
+</body>
+</html>
+
+<script id="admin-only-guard">
+window.addEventListener('hashchange',()=>{
+  const r=(location.hash||'').replace('#','');
+  if(['home','retail','checkout','telegram'].includes(r)) location.hash='#admin-login';
+});
+// 後台獨立頁：第一次打開直接跳登入，避免 publicPage 預設 hero
+if(!location.hash) location.replace(location.pathname + '#admin-login');
+</script>
