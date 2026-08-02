@@ -214,7 +214,7 @@ function loginPage(type){const admin=type==='admin-login';return `<div class="lo
 function _floatingSync(){
   return `<div id="sync-fab" style="position:fixed;right:22px;bottom:22px;z-index:99;display:flex;gap:10px;align-items:center">
     <div id="sync-banner" style="font-size:12px;color:rgba(255,255,255,.65);background:rgba(15,12,30,.6);padding:6px 12px;border-radius:99px;backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.1)">🔄 待同步</div>
-    <button class="btn primary" onclick="syncFromAirtable()" style="border-radius:99px;padding:10px 18px;font-size:13px">🔄 同步 Airtable</button>
+    <button class="btn primary" onclick="syncFromAirtable()" style="border-radius:99px;padding:10px 18px;font-size:13px">🔄 重新整理 Mock</button>
   </div>`;
 }
 
@@ -859,7 +859,7 @@ html{background:#080817}
 
 <script id="lumora-core3">
 /* ═══════════════════════════════════════════════════
-   三張核心表 — Airtable 唯一資料來源；頁面不使用 mock 作為 fallback
+   三張核心表 — 目前開啟 Mock 預覽模式；正式資料暫不載入
    CRM（詢問漏斗）→ Orders（專案製作）→ Partners（歸屬額度）
    ═══════════════════════════════════════════════════ */
 
@@ -1157,6 +1157,14 @@ function paymentPendingRows(){
     return needsReview && !r.locked;
   }).sort((a,b) => String(b.subAt || b.inqDate || '').localeCompare(String(a.subAt || a.inqDate || '')));
 }
+function paymentHistoryRows(){
+  if(typeof CORE_ORD === 'undefined') return [];
+  return CORE_ORD.map((order, orderIndex) => {
+    const crmIndex = typeof CORE_CRM === 'undefined' ? -1 : CORE_CRM.findIndex(crm => String(crm.recordId || crm.id || '') === String(order.crm || '') || String(crm.id || '') === String(order.crm || ''));
+    return {...order, _orderIndex:orderIndex, _crmIndex:crmIndex};
+  }).filter(order => ['paid','已付款','confirmed','已確認'].includes(String(order.payStatus || '').trim().toLowerCase()))
+    .sort((a,b) => String(b.verAt || b.orderDate || '').localeCompare(String(a.verAt || a.orderDate || '')));
+}
 function paymentReadIds(){
   try { return new Set(JSON.parse(localStorage.getItem('lumora:payments:read') || '[]')); }
   catch { return new Set(); }
@@ -1442,7 +1450,7 @@ function followupCalendarPage(){
 function paymentReviewPage(){
   if(airtableDataState !== 'ready') return airtableDataGate();
   const rows = paymentPendingRows().filter(r => ['pending verification','待帳務確認'].includes(String(r.payStatus || r.pay || '').trim().toLowerCase()));
-  const history = CORE_CRM.map((r,i) => ({...r,_index:i})).filter(r => r.locked || ['paid','已付款','confirmed','已確認'].includes(String(r.payStatus || r.pay || '').trim().toLowerCase())).sort((a,b) => String(b.verAt || b.subAt || b.inqDate || '').localeCompare(String(a.verAt || a.subAt || a.inqDate || '')));
+  const history = paymentHistoryRows();
   const pendingMarkup = `<section class="payment-review-card"><div class="payment-review-head"><div><h2>付款審核</h2><p>以 Order 編號對應付款；確認方案、金額與後五碼後才入帳。</p></div><span class="tag ${rows.length?'bad':'ok'}">${rows.length} 筆</span></div>${rows.length ? `<div class="core3-wrap"><div class="table-wrap"><table class="table l1-table"><thead><tr><th>進件日期</th><th>訂單編號</th><th>客戶</th><th>方案</th><th>金額</th><th>付款狀態</th><th>帳戶後五碼</th><th>操作</th></tr></thead><tbody>${rows.map(r => `<tr>
       <td class="cell-date">${_esc(_dateOnly(r.inqDate))}</td>
       <td class="cell-id">${_esc(_paymentCaseLabel(r))}</td>
@@ -1453,7 +1461,7 @@ function paymentReviewPage(){
       <td><span class="payment-review-readonly">${_esc(r.last5 || '—')}</span></td>
       <td><div class="row-actions"><button class="btn payment-confirm-btn" onclick="confirmPayment(${r._index})">確認付款</button><button class="btn" onclick="core3Open('crm',${r._index})">查看</button></div></td>
     </tr>`).join('')}</tbody></table></div></div>` : '<div class="followup-empty">目前沒有待審核付款。</div>'}</section>`;
-  const historyMarkup = `<section class="payment-history-card"><div class="payment-history-head"><div><h2>付款紀錄</h2><p>確認付款後轉成 Order 編號，這裡保留付款歷史。</p></div><span class="tag ok">${history.length} 筆</span></div>${history.length ? `<div class="table-wrap"><table class="table l1-table"><thead><tr><th>確認日期</th><th>訂單編號</th><th>客戶</th><th>方案</th><th>金額</th><th>付款方式</th><th>後五碼</th><th>付款狀態</th></tr></thead><tbody>${history.map(r => `<tr onclick="core3Open('crm',${r._index})"><td class="cell-date">${_esc(_dateOnly(r.verAt || r.subAt || r.inqDate))}</td><td class="cell-id">${_esc(_paymentCaseLabel(r))}</td><td><div class="cell-name">${_esc(r.name)}</div><div class="cell-sub">${_esc(r.partnerCode || '—')}</div></td><td>${_esc(r.service || '—')}</td><td class="payment-amount">${_esc(r.quoted || '—')}</td><td>${_esc(r.method || '—')}</td><td><span class="payment-review-readonly">${_esc(r.last5 || '—')}</span></td><td><span class="tag ok">已付款</span></td></tr>`).join('')}</tbody></table></div>` : '<div class="payment-history-empty">目前沒有付款紀錄。</div>'}</section>`;
+  const historyMarkup = `<section class="payment-history-card"><div class="payment-history-head"><div><h2>付款紀錄</h2><p>確認付款後轉成 Order 編號，這裡保留付款歷史。</p></div><span class="tag ok">${history.length} 筆</span></div>${history.length ? `<div class="table-wrap"><table class="table l1-table"><thead><tr><th>確認日期</th><th>訂單編號</th><th>客戶</th><th>方案</th><th>金額</th><th>付款方式</th><th>後五碼</th><th>付款狀態</th></tr></thead><tbody>${history.map(r => `<tr ${r._crmIndex >= 0 ? `onclick="core3Open('crm',${r._crmIndex})"` : ''}><td class="cell-date">${_esc(_dateOnly(r.verAt || r.orderDate))}</td><td class="cell-id">${_esc(r.orderId || r.id || '—')}</td><td><div class="cell-name">${_esc(r.name || '—')}</div><div class="cell-sub">${_esc(r.partnerCode || '—')}</div></td><td>${_esc(r.pkg || r.service || '—')}</td><td class="payment-amount">${_esc(r.amount || '—')}</td><td>${_esc(r.payMethod || '—')}</td><td><span class="payment-review-readonly">${_esc(r.last5 || '—')}</span></td><td><span class="tag ok">已付款</span></td></tr>`).join('')}</tbody></table></div>` : '<div class="payment-history-empty">目前沒有付款紀錄。</div>'}</section>`;
   return `<div class="page-title"><div><h1>付款審核</h1><p style="color:#c3bce0">財務查看後五碼並核對入帳，確認後付款狀態變更為已付款。</p></div><span class="tag ${rows.length?'bad':'ok'}">${rows.length} 筆待審核</span></div>${pendingMarkup}${historyMarkup}`;
 }
 const _fi = (k,v,note,chip) => `<div class="fitem">
