@@ -222,7 +222,7 @@ function adminShell(r){
   return _floatingSync() + navTop() + `<div class="layout"><aside class="sidebar">
     ${sideLink('admin-dashboard','Dashboard',r)}
     <div class="column-map" style="padding:18px 14px 8px">Airtable Data</div>
-    ${sideLink('admin-orders','Orders',r)}
+    ${sideLink('admin-orders','Production',r)}
     ${sideLink('admin-partners','Partners',r)}
     ${sideLink('admin-customers','Customers',r)}
     <div class="column-map" style="padding:18px 14px 8px">Operations</div>
@@ -324,7 +324,7 @@ function adminShell(r){
   return _floatingSync() + navTop() + `<div class="layout"><aside class="sidebar">
     ${sideLink('admin-dashboard','Dashboard',r)}
     <div class="column-map" style="padding:18px 14px 8px">Airtable Data</div>
-    ${sideLink('admin-orders','Orders',r)}
+    ${sideLink('admin-orders','Production',r)}
     ${sideLink('admin-partners','Partners',r)}
     ${sideLink('admin-customers','Customers',r)}
     <div class="column-map" style="padding:18px 14px 8px">Operations</div>
@@ -370,7 +370,7 @@ function mappedOrder(o,index){
 
 function airtableOrdersPage(){
   const rows=state.orders.map(mappedOrder);
-  return `<div class="page-title"><div><h1>Orders</h1><p class="muted">查看訂單進度與客戶付款狀態。</p></div></div>
+  return `<div class="page-title"><div><h1>Production</h1><p class="muted">管理生成、素材、審核與交付狀態。</p></div></div>
   <div class="table-wrap"><table class="table orders-master"><thead><tr>
     <th>Order Date</th><th>Customer Name</th><th>Payment Method</th><th>Order Status</th><th style="text-align:right">View</th>
   </tr></thead><tbody>${rows.map((r,i)=>`<tr onclick="openOrderDetail(${i})">
@@ -1155,6 +1155,15 @@ function markPaymentRead(index){
   } catch {}
   syncPaymentNotificationBadges();
 }
+function markPaymentRowsRead(rows){
+  if(!rows?.length) return;
+  try {
+    const read = paymentReadIds();
+    rows.forEach(payment => read.add(payment.id));
+    localStorage.setItem('lumora:payments:read', JSON.stringify([...read]));
+  } catch {}
+  syncPaymentNotificationBadges();
+}
 function newInquiryNotificationRows(){
   if(typeof CORE_CRM === 'undefined') return [];
   let read = [];
@@ -1237,7 +1246,11 @@ async function savePaymentLast5(index, target='modal'){
   }
 }
 function openPaymentNotifications(){
-  const rows = paymentNotificationRows();
+  // 紅點只代表未讀；清單本身仍顯示所有尚未完成的付款，避免已讀案件消失。
+  const rows = paymentPendingRows();
+  const unreadRows = rows.filter(r => !paymentReadIds().has(r.id));
+  // 開啟通知清單即視為已讀，紅點立即清除；清單內容仍保留供查看與處理。
+  markPaymentRowsRead(unreadRows);
   const content = `<h2>付款清單</h2><p class="muted">待帳務確認的付款案件</p>
     <div class="payment-list">${rows.length ? rows.map(r => `<div class="payment-list-row" role="button" tabindex="0" onclick="openPaymentInquiry(${r._index})">
       <span><strong>${_esc(r.name)}</strong><small>${_esc(_inquiryLabel(r))}</small></span>
@@ -1618,7 +1631,7 @@ function orderDemoPreviewCard(){
 function crmOrdersPage(){
   if(airtableDataState !== 'ready') return airtableDataGate();
   const rows = CORE_ORD.map((r,i) => ({r,i})).sort((a,b) => String(b.r.orderDate || '').localeCompare(String(a.r.orderDate || '')));
-  return `<div class="page-title"><div><h1>Orders</h1>
+  return `<div class="page-title"><div><h1>Production</h1>
     <p style="color:#c3bce0">一筆 = 一次專案。付款欄位唯讀，從 CRM 帶入，不在這裡修改。</p></div><button class="btn" onclick="openOrderFlowDemo()">查看流程預覽 Demo</button></div>
   ${core3Flow()}${orderCategoryCards()}${orderDemoPreviewCard()}
   <p style="margin-top:12px;font-size:12.5px;color:#a99cd0">依製作狀態分類 · 點任一列展開第二層製作時程</p>`;
@@ -1651,11 +1664,14 @@ function crmPartnersPage(){
 /* ═══ 第二層抽屜 ═══ */
 function core3CrmCard(r){
   const tl = `<div class="tl">${r.history.map(h=>`<div class="tl-i ${h.s}"><div class="tl-t">${_esc(h.t)}</div><div class="tl-d">${_esc(h.d)}</div></div>`).join('')}</div>`;
+  const crmStatuses = ['New','Contacted','Discussing','Waiting Customer','Ready to Close','Closed Won','Converted','Closed Lost'];
+  const crmStatusOptions = crmStatuses.includes(r.status) ? crmStatuses : [r.status, ...crmStatuses.filter(status => status !== r.status)];
+  const crmStatusEditor = `<div style="display:flex;align-items:end;gap:10px;flex-wrap:wrap;margin:0 0 18px;padding:14px 16px;border:1px solid rgba(151,126,255,.3);border-radius:14px;background:rgba(50,37,104,.18)"><label style="display:flex;flex-direction:column;gap:6px;color:#bdb0e5;font-size:12px;min-width:220px"><span>下一步狀態</span><select id="crm-status-${_esc(r.id)}" style="background:#0e0b24;border:1px solid rgba(151,126,255,.45);border-radius:10px;padding:10px;color:#fff">${crmStatusOptions.map(status => `<option value="${_esc(status)}" ${status === r.status ? 'selected' : ''}>${_esc(status)}</option>`).join('')}</select></label><button class="btn primary" onclick="saveCrmStatus(${CORE_CRM.indexOf(r)})">儲存狀態</button><span style="color:#a99cd0;font-size:12px">更新後會同步回 Airtable CRM</span></div>`;
   let box = "";
   if(r.locked) box = `<div class="infobox lock"><span class="ic">🔒</span><div><b>付款已鎖定</b> — ${_esc(r.verBy)} 於 ${_esc(r.verAt)} 確認入帳，欄位不可再修改。<br>系統已自動建立 <b>${_esc(r.convOrder)}</b>，Partner 額度 +1。</div></div>`;
   else if(r.payStatus === "待帳務確認") box = `<div class="infobox lock"><span class="ic">⏳</span><div><b>等待帳務確認</b> — 客服已填後五碼 ${_esc(r.last5)}，待帳務比對銀行入帳後鎖定。<br>核准人必須與填寫人（${_esc(r.subBy)}）不同，否則職責分離形同虛設。</div></div>`;
 
-  return _gs(1,"詢問基本資料","",`<div class="fgrid">
+  return crmStatusEditor + _gs(1,"詢問基本資料","",`<div class="fgrid">
       ${_fi("詢問編號", _inquiryLabel(r), null, ["自動"])}
       ${_fi("進件時間", _fmt(r.inqDate), null, ["自動"])}
       ${_fi("客戶姓名", r.name)}
@@ -1712,6 +1728,39 @@ function core3CrmCard(r){
       ${_fi("建立來源", r.createdBy)}
       ${_fi("最後更新", _fmt(r.updated))}
     </div>`);
+}
+
+async function saveCrmStatus(index){
+  const crm = CORE_CRM[index];
+  const select = document.getElementById(`crm-status-${crm?.id || ''}`);
+  const status = String(select?.value || '').trim();
+  if(!crm || !status) return;
+  const endpoint = location.protocol === 'file:'
+    ? 'https://lumora-studiokh.vercel.app/api/crm/update-status'
+    : '/api/crm/update-status';
+  const button = select?.closest('div')?.querySelector('button');
+  if(button){ button.disabled = true; button.textContent = '儲存中…'; }
+  try{
+    if(crm.recordId){
+      const response = await fetch(endpoint, {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({recordId:crm.recordId,status})
+      });
+      const result = await response.json();
+      if(!response.ok || !result.ok) throw new Error(result.error || `HTTP ${response.status}`);
+    }
+    const previous = crm.status;
+    crm.status = status;
+    crm.statusTag = _tagClass('status', status);
+    crm.history = Array.isArray(crm.history) ? crm.history : [];
+    if(previous !== status) crm.history.push({t:`狀態更新 · ${status}`, d:'後台操作 · 已同步 Airtable', s:'now'});
+    core3Close();
+    render();
+    toast(crm.recordId ? `已更新狀態：${status}` : `已更新狀態（本機預覽）：${status}`);
+  }catch(error){
+    if(button){ button.disabled = false; button.textContent = '儲存狀態'; }
+    toast(`狀態更新失敗：${error.message}`);
+  }
 }
 
 function orderProcessDate(raw, offset=0){
@@ -1915,7 +1964,7 @@ document.addEventListener('keydown', e => { if(e.key === 'Escape') core3Close();
     const html = _shell(r);
     const nav = `<div class="column-map" style="padding:18px 14px 8px">核心三表</div>`
       + crmNotifySideLink(r)
-      + sideLink('admin-crm-orders','Orders 訂單',r)
+      + sideLink('admin-crm-orders','Production 製作',r)
       + sideLink('admin-crm-partners','Partners 經銷商',r)
       + followupSideLink(r);
     return html.replace('<div class="column-map" style="padding:18px 14px 8px">Airtable Data</div>',
