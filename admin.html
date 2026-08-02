@@ -1463,7 +1463,7 @@ function crmStatusCards(){
     <div class="crm-status-table-wrap"><table class="crm-status-table"><thead><tr>
       <th>進件日期</th><th>詢問編號</th><th>客戶</th><th>詢問項目</th><th>負責人員</th><th>狀態</th><th>付款</th><th>優先</th><th>下次追蹤</th><th>負責客服</th>
     </tr></thead><tbody>${group.rows.map(r => `<tr class="${group.key === 'new' ? 'crm-new-row' : ''}" onclick="core3Open('crm',${r._index})">
-      <td class="cell-date">${_esc(_dateOnly(r.inqDate))}</td>
+      <td class="cell-date">${_esc(_fmt(r.inqDate))}</td>
       <td class="cell-id">${_esc(_inquiryLabel(r))}</td>
       <td><div class="cell-name">${_esc(r.name)}</div><div class="cell-sub">${_esc(r.partnerCode || '—')}</div></td>
       <td>${_esc(r.service || '—')}</td>
