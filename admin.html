@@ -1125,6 +1125,10 @@ function markInquiryRead(index){
       if(!count && badge) badge.remove();
     }
   });
+  const totalNew = typeof CORE_CRM === 'undefined' ? 0 : CORE_CRM.filter(row => ['new','新進件'].includes(String(row.status || '').trim().toLowerCase())).length;
+  document.querySelectorAll('.crm-queue-card.new .crm-queue-count').forEach(counter => {
+    counter.textContent = `${totalNew} 筆 · ${count} 未讀`;
+  });
 }
 function openNewInquiry(index){
   const inquiry = CORE_CRM[index];
