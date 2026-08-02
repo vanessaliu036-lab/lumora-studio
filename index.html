@@ -2594,6 +2594,19 @@
           button.classList.add("is-selected");
           serviceInput.value = button.dataset.service;
           updateSubmitState();
+          // Open the matching pricing modal so the user sees the full
+          // 5-feature / note / theme detail for the service they just picked.
+          const pricingKey = (() => {
+            const v = (button.dataset.service || "").toLowerCase();
+            if (v.startsWith("style portrait")) return "portrait";
+            if (v.startsWith("style to motion")) return "motion";
+            if (v.startsWith("template video")) return "template";
+            if (v.startsWith("custom brand style")) return "custom";
+            return null;
+          })();
+          if (pricingKey && typeof openPricing === "function") {
+            openPricing(pricingKey);
+          }
         });
       });
 
