@@ -671,6 +671,7 @@ html{background:#080817}
 .crm-queue-card .crm-status-table th{padding:13px 16px;background:#15112e}
 .crm-queue-card .crm-status-table td{padding:15px 16px;background:#100d2a!important;border-bottom-color:rgba(255,255,255,.08)!important}
 .crm-queue-card .crm-status-table tbody tr:hover td{background:#1d1743!important}
+.airtable-data-gate{min-height:280px;display:grid;place-items:center;align-content:center;gap:10px;text-align:center;padding:36px;border:1px solid rgba(151,126,255,.3);border-radius:22px;background:linear-gradient(145deg,rgba(47,34,105,.28),rgba(16,13,42,.9));color:#fff}.airtable-data-gate-icon{display:grid;place-items:center;width:48px;height:48px;border-radius:50%;background:rgba(129,243,211,.14);color:#81f3d3;font-size:28px}.airtable-data-gate h2{margin:4px 0 0;font-size:22px}.airtable-data-gate p{margin:0;color:#aaa0ce}.airtable-data-gate.error{border-color:rgba(255,111,158,.45)}.airtable-data-gate.error .airtable-data-gate-icon{background:rgba(255,111,158,.14);color:#ffb1c8}
 .new-order-row td{background:rgba(255,78,122,.16)!important;border-bottom-color:rgba(255,126,157,.3)!important}
 .new-order-row:hover td{background:rgba(255,78,122,.25)!important}
 .payment-list{display:grid;gap:9px;margin-top:18px;max-height:420px;overflow:auto}
@@ -1005,6 +1006,8 @@ const CORE_PTN = [
 // 保留既有流程示範資料；新詢問與新訂單不再以假編號出現在正式清單。
 CORE_CRM.splice(0, 1);
 CORE_ORD.splice(0, 1);
+let airtableDataState = 'loading';
+let airtableSyncError = '';
 
 /* ── 小工具 ── */
 const _esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
@@ -1290,6 +1293,7 @@ function openFollowupDay(date){
   </div>`).join('')}</div>`);
 }
 function followupCalendarPage(){
+  if(airtableDataState !== 'ready') return airtableDataGate();
   const rows = followupPendingRows();
   const year = followupCalendarCursor.getFullYear();
   const month = followupCalendarCursor.getMonth();
@@ -1319,6 +1323,7 @@ function followupCalendarPage(){
     ${overdue.length && month === today.getMonth() && year === today.getFullYear() ? `<div class="calendar-overdue">逾期 ${overdue.length} 筆待追蹤，請優先處理。</div><div class="calendar-overdue-list">${overdue.map(row => `<button class="calendar-overdue-item" onclick="openFollowupDay('${row.followupDate}')">${_esc(row.order.id)} · ${_esc(row.followupDate)}</button>`).join('')}</div>` : ''}<div class="calendar-grid">${weekdays.map(day => `<div class="calendar-weekday">${day}</div>`).join('')}${cells.join('')}</div></div>`;
 }
 function paymentReviewPage(){
+  if(airtableDataState !== 'ready') return airtableDataGate();
   const rows = paymentPendingRows().filter(r => ['pending verification','待帳務確認'].includes(String(r.payStatus || r.pay || '').trim().toLowerCase()));
   const history = CORE_CRM.map((r,i) => ({...r,_index:i})).filter(r => r.locked || ['paid','已付款','confirmed','已確認'].includes(String(r.payStatus || r.pay || '').trim().toLowerCase())).sort((a,b) => String(b.verAt || b.subAt || b.inqDate || '').localeCompare(String(a.verAt || a.subAt || a.inqDate || '')));
   const pendingMarkup = `<section class="payment-review-card"><div class="payment-review-head"><div><h2>付款審核</h2><p>財務確認後五碼與入帳狀態。</p></div><span class="tag ${rows.length?'bad':'ok'}">${rows.length} 筆</span></div>${rows.length ? `<div class="core3-wrap"><div class="table-wrap"><table class="table l1-table"><thead><tr><th>進件日期</th><th>詢問編號</th><th>客戶</th><th>付款狀態</th><th>帳戶後五碼</th><th>操作</th></tr></thead><tbody>${rows.map(r => `<tr>
@@ -1364,6 +1369,10 @@ function crmQueueRows(kind){
     const isClosed = ['converted','已轉單','closed lost','未成交','completed','已完成'].includes(status);
     return kind === 'new' ? isNew : !isNew && !isClosed;
   }).sort((a,b) => String(b.inqDate || '').localeCompare(String(a.inqDate || '')));
+}
+function airtableDataGate(){
+  const failed = airtableDataState === 'error';
+  return `<div class="airtable-data-gate ${failed?'error':''}"><div class="airtable-data-gate-icon">${failed?'!':'↻'}</div><h2>${failed?'Airtable 資料同步失敗':'正在同步 Airtable'}</h2><p>${failed ? _esc(airtableSyncError || '請稍後再試') : '正在取得最新 CRM、Orders 與 Partners 資料，完成後才顯示分類卡片。'}</p>${failed?'<button class="btn primary" onclick="syncFromAirtable()">重新同步</button>':''}</div>`;
 }
 
 function crmQueueCard(title, subtitle, rows, tone){
@@ -1439,6 +1448,7 @@ function crmAllTable(){
 
 /* ═══ 第一層列表 ═══ */
 function crmPage(){
+  if(airtableDataState !== 'ready') return airtableDataGate();
   return `<div class="page-title"><div><h1>CRM</h1>
     <p style="color:#c3bce0">一筆 = 一次詢問。客服每天只需回答四件事：誰要追、追到哪、誰負責、什麼時候追。</p></div>
     </div>
@@ -1467,6 +1477,7 @@ function orderCategoryCards(){
   return cards.join('');
 }
 function crmOrdersPage(){
+  if(airtableDataState !== 'ready') return airtableDataGate();
   const rows = CORE_ORD.map((r,i) => ({r,i})).sort((a,b) => String(b.r.orderDate || '').localeCompare(String(a.r.orderDate || '')));
   return `<div class="page-title"><div><h1>Orders</h1>
     <p style="color:#c3bce0">一筆 = 一次專案。付款欄位唯讀，從 CRM 帶入，不在這裡修改。</p></div></div>
@@ -1475,6 +1486,7 @@ function crmOrdersPage(){
 }
 
 function crmPartnersPage(){
+  if(airtableDataState !== 'ready') return airtableDataGate();
   return `<div class="page-title"><div><h1>Partners</h1>
     <p style="color:#c3bce0">一筆 = 一個經銷商。額度剩多少、有沒有漏單、還有多少在漏斗裡沒轉換。</p></div></div>
   <div class="core3-wrap"><div class="table-wrap"><table class="table l1-table"><thead><tr>
@@ -1850,6 +1862,9 @@ function _airtableFieldMap(rows, kind){
 
 async function syncFromAirtable(){
   const banner = document.getElementById('sync-banner');
+  airtableDataState = 'loading';
+  airtableSyncError = '';
+  if(typeof render === 'function' && location.hash.startsWith('#admin')) render();
   if(banner) banner.textContent = '🔄 同步中…';
   try {
     const [c, o, p] = await Promise.all([
@@ -1860,6 +1875,7 @@ async function syncFromAirtable(){
     if(c.ok){ CORE_CRM.length = 0; _airtableFieldMap(c.records, 'crm').forEach(r => CORE_CRM.push(r)); }
     if(o.ok){ CORE_ORD.length = 0; _airtableFieldMap(o.records, 'ord').forEach(r => CORE_ORD.push(r)); }
     if(p.ok){ CORE_PTN.length = 0; _airtableFieldMap(p.records, 'ptn').forEach(r => CORE_PTN.push(r)); }
+    airtableDataState = 'ready';
     if(banner){
       const ts = new Date().toLocaleTimeString();
       banner.innerHTML = `✅ 已同步 Airtable · ${ts} · CRM ${CORE_CRM.length} / Orders ${CORE_ORD.length} / Partners ${CORE_PTN.length}`;
@@ -1867,6 +1883,8 @@ async function syncFromAirtable(){
     }
     if(typeof render === 'function') render();
   } catch (e) {
+    airtableDataState = 'error';
+    airtableSyncError = e.message || String(e);
     if(banner){
       banner.innerHTML = `⚠️ 同步失敗：${e.message}（Airtable serverless 尚未部署或路徑錯）`;
       banner.style.color = '#ffc0d2';
