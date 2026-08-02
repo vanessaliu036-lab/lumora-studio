@@ -618,6 +618,16 @@ html{background:#080817}
 .crm-status-table tbody tr.crm-new-row td{background:linear-gradient(90deg,rgba(255,50,112,.3),rgba(116,25,78,.22))!important;border-bottom-color:rgba(255,92,139,.42)!important}
 .crm-status-table tbody tr.crm-new-row td:first-child{box-shadow:inset 6px 0 0 #ff3f78}
 .crm-status-table tbody tr.crm-new-row:hover td{background:linear-gradient(90deg,rgba(255,50,112,.46),rgba(116,25,78,.32))!important}
+.crm-queue-card.new{border-color:rgba(255,94,139,.5);box-shadow:0 12px 30px rgba(7,5,22,.28);background:#0f0c25}
+.crm-queue-card.new .crm-queue-head{background:linear-gradient(110deg,#21152f,#17132e);border-bottom-color:rgba(255,94,139,.28)}
+.crm-queue-card.new .crm-queue-head::before{width:3px;background:#ff5f8f;box-shadow:0 0 12px rgba(255,95,143,.55)}
+.crm-queue-card.new .crm-status-table{background:#0f0c25}
+.crm-status-table th{padding:11px 14px;font-size:10px}
+.crm-status-table td{padding:12px 14px;font-size:13px}
+.crm-status-table tbody tr.crm-new-row td{background:#0f0c25!important;border-bottom-color:rgba(255,255,255,.08)!important}
+.crm-status-table tbody tr.crm-new-row td:first-child{box-shadow:none}
+.crm-status-table tbody tr.crm-new-row:hover td{background:#17123a!important}
+.crm-new-alert{background:rgba(255,95,143,.16);border:1px solid rgba(255,127,164,.48);color:#ffb8ca;box-shadow:none}
 .order-queues{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin:18px 0 24px}
 .order-queue-card{overflow:hidden;border:1px solid rgba(255,255,255,.14);border-radius:18px;background:#100d2a}
 .order-queue-card.new{border-color:rgba(255,63,120,.8);box-shadow:0 0 0 1px rgba(255,63,120,.16),0 12px 34px rgba(255,35,101,.14)}
@@ -1278,14 +1288,14 @@ function followupCalendarPage(){
     const date = `${year}-${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
     const events = byDate[date] || [];
     cells.push(`<div class="calendar-cell ${date===todayKey?'calendar-today':''}" onclick="openFollowupDay('${date}')">
-      <div class="calendar-number">${day}</div>${events.slice(0,2).map(({order}) => `<span class="calendar-event">${_esc(order.name || order.id)}</span>`).join('')}${events.length>2?`<span class="calendar-more">+${events.length-2} 筆</span>`:''}
+      <div class="calendar-number">${day}</div>${events.slice(0,2).map(({order}) => `<span class="calendar-event">${_esc(order.id)}</span>`).join('')}${events.length>2?`<span class="calendar-more">+${events.length-2} 筆</span>`:''}
     </div>`);
   }
   while(cells.length % 7) cells.push('<div class="calendar-cell muted"></div>');
   const overdue = rows.filter(row => row.followupDate < todayKey);
   return `<div class="page-title"><div><h1>追蹤日曆</h1><p style="color:#c3bce0">每筆訂單建立 3 天後追蹤一次；完成後不再提醒。</p></div><span class="tag ${rows.length?'bad':'ok'}">${rows.length} 筆待追蹤</span></div>
     <div class="calendar-shell"><div class="calendar-head"><div class="calendar-month">${monthName}</div><div class="calendar-nav"><button class="btn" onclick="shiftFollowupMonth(-1)">‹</button><button class="btn" onclick="followupCalendarCursor=new Date();render()">今天</button><button class="btn" onclick="shiftFollowupMonth(1)">›</button></div></div>
-    ${overdue.length && month === today.getMonth() && year === today.getFullYear() ? `<div class="calendar-overdue">逾期 ${overdue.length} 筆待追蹤，請優先處理。</div><div class="calendar-overdue-list">${overdue.map(row => `<button class="calendar-overdue-item" onclick="openFollowupDay('${row.followupDate}')">${_esc(row.order.name || row.order.id)} · ${_esc(row.followupDate)}</button>`).join('')}</div>` : ''}<div class="calendar-grid">${weekdays.map(day => `<div class="calendar-weekday">${day}</div>`).join('')}${cells.join('')}</div></div>`;
+    ${overdue.length && month === today.getMonth() && year === today.getFullYear() ? `<div class="calendar-overdue">逾期 ${overdue.length} 筆待追蹤，請優先處理。</div><div class="calendar-overdue-list">${overdue.map(row => `<button class="calendar-overdue-item" onclick="openFollowupDay('${row.followupDate}')">${_esc(row.order.id)} · ${_esc(row.followupDate)}</button>`).join('')}</div>` : ''}<div class="calendar-grid">${weekdays.map(day => `<div class="calendar-weekday">${day}</div>`).join('')}${cells.join('')}</div></div>`;
 }
 function paymentReviewPage(){
   const rows = paymentPendingRows().filter(r => ['pending verification','待帳務確認'].includes(String(r.payStatus || r.pay || '').trim().toLowerCase()));
@@ -1377,7 +1387,7 @@ function crmStatusCards(){
     <div class="crm-status-table-wrap"><table class="crm-status-table"><thead><tr>
       <th>進件日期</th><th>詢問編號</th><th>客戶</th><th>詢問項目</th><th>負責人員</th><th>狀態</th><th>付款</th><th>優先</th><th>下次追蹤</th><th>負責客服</th>
     </tr></thead><tbody>${group.rows.map(r => `<tr class="${group.key === 'new' ? 'crm-new-row' : ''}" onclick="core3Open('crm',${r._index})">
-      <td class="cell-date">${_esc(_fmt(r.inqDate))}</td>
+      <td class="cell-date">${_esc(_dateOnly(r.inqDate))}</td>
       <td class="cell-id">${_esc(_inquiryLabel(r))}</td>
       <td><div class="cell-name">${_esc(r.name)}</div><div class="cell-sub">${_esc(r.partnerCode || '—')}</div></td>
       <td>${_esc(r.service || '—')}</td>
@@ -1394,7 +1404,7 @@ function crmAllTable(){
   return `<div class="core3-wrap"><div class="table-wrap"><table class="table l1-table"><thead><tr>
     <th>進件日期</th><th>詢問編號</th><th>客戶</th><th>詢問項目</th><th>負責人員</th><th>狀態</th><th>付款</th><th>優先</th><th>下次追蹤</th><th>負責客服</th>
   </tr></thead><tbody>${CORE_CRM.map((r,i)=>`<tr onclick="core3Open('crm',${i})">
-    <td class="cell-date">${_esc(_fmt(r.inqDate))}</td>
+    <td class="cell-date">${_esc(_dateOnly(r.inqDate))}</td>
     <td class="cell-id">${_esc(_inquiryLabel(r))}</td>
     <td><div class="cell-name">${_esc(r.name)}</div><div class="cell-sub">${_esc(r.partnerCode || '—')}</div></td>
     <td>${_esc(r.service || '—')}</td>
@@ -1417,7 +1427,7 @@ function crmPage(){
 }
 
 function orderCategoryCard(title, subtitle, rows){
-  return `<section class="order-category-card"><div class="order-category-head"><div><div class="order-category-title">${_esc(title)}</div><div class="order-category-sub">${_esc(subtitle)}</div></div><div class="order-category-count">${rows.length} 筆</div></div>${rows.length ? `<div class="order-category-table"><table class="table l1-table"><thead><tr><th>日期</th><th>訂單編號</th><th>客戶</th><th>製作狀態</th><th>素材</th><th>承諾交期</th><th>製作負責</th></tr></thead><tbody>${rows.map(({r,i}) => `<tr class="${r.isNew ? 'new-order-row' : ''}" onclick="core3Open('ord',${i})"><td class="cell-date">${_esc(_fmt(r.orderDate))}</td><td class="cell-id">${_esc(r.id)}</td><td><div class="cell-name">${_esc(r.name)}</div><div class="cell-sub">${_esc(r.service)}</div></td><td><span class="tag ${_esc(r.prodTag)}">${_esc(r.prod)}</span></td><td><span class="tag ${_esc(r.assetTag)}">${_esc(r.asset)}</span></td><td class="cell-due ${_esc(r.promisedCls || '')}">${_esc(r.promised)}</td><td>${_esc(r.producer)}</td></tr>`).join('')}</tbody></table></div>` : '<div class="order-category-empty">目前沒有新訂單</div>'}</section>`;
+  return `<section class="order-category-card"><div class="order-category-head"><div><div class="order-category-title">${_esc(title)}</div><div class="order-category-sub">${_esc(subtitle)}</div></div><div class="order-category-count">${rows.length} 筆</div></div>${rows.length ? `<div class="order-category-table"><table class="table l1-table"><thead><tr><th>日期</th><th>訂單編號</th><th>客戶</th><th>製作狀態</th><th>素材</th><th>承諾交期</th><th>製作負責</th></tr></thead><tbody>${rows.map(({r,i}) => `<tr class="${r.isNew ? 'new-order-row' : ''}" onclick="core3Open('ord',${i})"><td class="cell-date">${_esc(_dateOnly(r.orderDate))}</td><td class="cell-id">${_esc(r.id)}</td><td><div class="cell-name">${_esc(r.name)}</div><div class="cell-sub">${_esc(r.service)}</div></td><td><span class="tag ${_esc(r.prodTag)}">${_esc(r.prod)}</span></td><td><span class="tag ${_esc(r.assetTag)}">${_esc(r.asset)}</span></td><td class="cell-due ${_esc(r.promisedCls || '')}">${_esc(r.promised)}</td><td>${_esc(r.producer)}</td></tr>`).join('')}</tbody></table></div>` : '<div class="order-category-empty">目前沒有新訂單</div>'}</section>`;
 }
 function orderCategoryCards(){
   const rows = CORE_ORD.map((r,i) => ({r,i})).sort((a,b) => String(b.r.orderDate || '').localeCompare(String(a.r.orderDate || '')));
@@ -1432,7 +1442,7 @@ function crmOrdersPage(){
   ${core3Flow()}${orderCategoryCards()}<div class="core3-wrap"><div class="table-wrap"><table class="table l1-table"><thead><tr>
     <th>日期</th><th>訂單編號</th><th>客戶</th><th>製作狀態</th><th>素材</th><th>承諾交期</th><th>製作負責</th>
   </tr></thead><tbody>${rows.map(({r,i})=>`<tr class="${r.isNew || r.prod === '新訂單' || r.orderStatus === '新進件' ? 'new-order-row' : ''}" onclick="core3Open('ord',${i})">
-    <td class="cell-date">${_fmt(r.orderDate)}</td>
+    <td class="cell-date">${_dateOnly(r.orderDate)}</td>
     <td class="cell-id">${_esc(r.id)}</td>
     <td><div class="cell-name">${_esc(r.name)}</div><div class="cell-sub">${_esc(r.service)}</div></td>
     <td><span class="tag ${r.prodTag}">${_esc(r.prod)}</span></td>
