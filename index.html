@@ -1670,7 +1670,7 @@
 
         <div class="film-stage">
           <article class="film-card reveal">
-            <video src="lumora-film-01-pearl-bath.mp4" poster="lumora-film-01-poster.jpg" muted loop playsinline autoplay preload="metadata"></video>
+            <video src="lumora-film-01-pearl-bath.mp4" poster="lumora-film-01-poster.jpg" muted loop playsinline autoplay preload="none"></video>
             <span class="film-veil"></span>
             <div class="film-top">
               <span class="film-rec"><i></i> Film 01</span>
@@ -1686,7 +1686,7 @@
           </article>
 
           <article class="film-card reveal" style="transition-delay:.1s">
-            <video src="lumora-film-02-flower-walk.mp4" poster="lumora-film-02-poster.jpg" muted loop playsinline autoplay preload="metadata"></video>
+            <video src="lumora-film-02-flower-walk.mp4" poster="lumora-film-02-poster.jpg" muted loop playsinline autoplay preload="none"></video>
             <span class="film-veil"></span>
             <div class="film-top">
               <span class="film-rec"><i></i> Film 02</span>
@@ -1702,7 +1702,7 @@
           </article>
 
           <article class="film-card reveal" style="transition-delay:.15s">
-            <video src="Fashion_boots_coastal_campaign_202607311807.mp4" muted loop playsinline autoplay preload="metadata"></video>
+            <video src="Fashion_boots_coastal_campaign_202607311807.mp4" muted loop playsinline autoplay preload="none"></video>
             <span class="film-veil"></span>
             <div class="film-top">
               <span class="film-rec"><i></i> Film 03</span>
@@ -1718,7 +1718,7 @@
           </article>
 
           <article class="film-card reveal" style="transition-delay:.2s">
-            <video src="Fashion_editorial_studio_fashion…_202607311909.mp4" muted loop playsinline autoplay preload="metadata"></video>
+            <video src="Fashion_editorial_studio_fashion…_202607311909.mp4" muted loop playsinline autoplay preload="none"></video>
             <span class="film-veil"></span>
             <div class="film-top">
               <span class="film-rec"><i></i> Film 04</span>
@@ -1734,7 +1734,7 @@
           </article>
 
           <article class="film-card reveal" style="transition-delay:.25s">
-            <video src="Fashion_model_in_flower_meadow_202607311955.mp4" muted loop playsinline autoplay preload="metadata"></video>
+            <video src="Fashion_model_in_flower_meadow_202607311955.mp4" muted loop playsinline autoplay preload="none"></video>
             <span class="film-veil"></span>
             <div class="film-top">
               <span class="film-rec"><i></i> Film 05</span>
@@ -1750,7 +1750,7 @@
           </article>
 
           <article class="film-card reveal" style="transition-delay:.3s">
-            <video src="Fast_fashion_editorial_sequence_202607311842.mp4" muted loop playsinline autoplay preload="metadata"></video>
+            <video src="Fast_fashion_editorial_sequence_202607311842.mp4" muted loop playsinline autoplay preload="none"></video>
             <span class="film-veil"></span>
             <div class="film-top">
               <span class="film-rec"><i></i> Film 06</span>
@@ -2651,6 +2651,23 @@
       confirmTelegram.addEventListener("click", () => {
         confirmTelegram.textContent = "Opening Telegram…";
       });
+    })();
+  </script>
+
+  <script>
+    // 6 支 autoplay-loop video 不在畫面就停，IntersectionObserver 進 viewport 再 play
+    (function(){
+      if (!('IntersectionObserver' in window)) return;
+      const videos = document.querySelectorAll('video[autoplay]');
+      if (!videos.length) return;
+      const io = new IntersectionObserver((entries) => {
+        for (const e of entries) {
+          const v = e.target;
+          if (e.isIntersecting) { v.play().catch(()=>{}); }
+          else { v.pause(); v.currentTime = 0; }
+        }
+      }, { threshold: 0.25 });
+      videos.forEach(v => io.observe(v));
     })();
   </script>
 </body>
