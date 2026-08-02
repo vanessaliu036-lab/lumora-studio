@@ -2650,9 +2650,56 @@
         if (event.key === "Escape" && confirmModal.classList.contains("is-open")) closeConfirm();
       });
 
-      // Continue to Telegram: TODO 串接時改為 window.location.href = "https://t.me/YOUR_BOT_USERNAME?start=" + inquiryId
-      confirmTelegram.addEventListener("click", () => {
+      // Keep the public Bot handle in one place so a Bot migration only needs
+      // one edit. The same handle is shown in the admin prototype.
+      const TELEGRAM_BOT_USERNAME = "amy_ai_studio_bot";
+
+      function createInquiryId() {
+        const stamp = new Date().toISOString().replace(/[-:TZ.]/g, "").slice(0, 14);
+        const suffix = Math.random().toString(36).slice(2, 8).toUpperCase();
+        return `LUM-${stamp}-${suffix}`;
+      }
+
+      confirmTelegram.addEventListener("click", async () => {
+        confirmTelegram.disabled = true;
+        confirmTelegram.textContent = "Creating inquiry…";
+        const inquiryInput = {
+          identity: identityInput.value,
+          service: serviceInput.value,
+          name: nameInput.value.trim(),
+          request: requestInput.value.trim(),
+          createdAt: new Date().toISOString()
+        };
+        let result;
+        try {
+          const response = await fetch('/api/crm/create', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(inquiryInput) });
+          result = await response.json();
+          if (!response.ok || !result.ok) throw new Error(result.error || `HTTP ${response.status}`);
+        } catch (error) {
+          confirmTelegram.disabled = false;
+          confirmTelegram.textContent = "Continue to Telegram";
+          alert(`Unable to create the inquiry in Airtable: ${error.message}`);
+          return;
+        }
+        const inquiryId = result.crmId;
+        const inquiry = {
+          inquiryId,
+          ...inquiryInput,
+          recordId: result.recordId
+        };
+
+        // Preserve the lead locally so the identifier can be reconciled if the
+        // customer returns from Telegram before the CRM API is enabled.
+        try {
+          localStorage.setItem(`lumora:inquiry:${inquiryId}`, JSON.stringify(inquiry));
+        } catch (error) {
+          // Private browsing may block localStorage; the Telegram handoff can
+          // still proceed normally.
+        }
+
         confirmTelegram.textContent = "Opening Telegram…";
+        const telegramUrl = `https://t.me/${TELEGRAM_BOT_USERNAME}?start=${encodeURIComponent(inquiryId)}`;
+        window.location.assign(telegramUrl);
       });
     })();
   </script>

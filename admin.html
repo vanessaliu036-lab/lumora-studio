@@ -69,6 +69,10 @@ body:after{
   color:var(--text);border-radius:999px;padding:10px 15px;
   backdrop-filter:blur(14px);transition:.25s ease;
 }
+.payment-notify{position:relative;display:inline-flex!important;align-items:center;gap:8px}
+.payment-notify-badge{display:inline-grid;place-items:center;min-width:21px;height:21px;padding:0 6px;border-radius:999px;background:#ff6f9e;color:#fff;font-size:11px;font-weight:800;line-height:1;box-shadow:0 0 0 3px rgba(255,111,158,.12)}
+.payment-notify-badge.empty{background:rgba(255,255,255,.12);color:#c3bce0;box-shadow:none}
+.inquiry-notify{position:relative;display:inline-flex!important;align-items:center;gap:8px}
 .nav button:hover,.btn:hover{transform:translateY(-1px);border-color:rgba(221,197,255,.48);background:rgba(255,255,255,.105)}
 .btn.primary{
   color:white;border-color:rgba(255,255,255,.25);font-weight:600;
@@ -194,7 +198,7 @@ function qs(s){return document.querySelector(s)}
 function partner(){return state.partners.find(p=>p.id===state.currentPartner)||state.partners[0]}
 function money(n){return '$'+Number(n).toFixed(0)}
 function pill(status){const map={ACTIVE:'green',PAST_DUE:'yellow',SUSPENDED:'red',COMPLETED:'green',GENERATING:'blue',REDIRECTED:'yellow',WAITING_PHOTOS:'yellow'};return `<span class="pill ${map[status]||'blue'}">${status}</span>`}
-function navTop(){return `<header class="topbar"><div class="brand"><div class="logo">✦</div><span class="brand-name">Lumora <em>Cloud</em></span></div><div class="nav"><button onclick="go('admin-login')">Admin Login</button><button class="btn primary" onclick="go('partner-login')">Partner Login</button></div></header>`}
+function navTop(){const paymentCount=typeof paymentNotificationCount==='function'?paymentNotificationCount():0;const inquiryCount=typeof newInquiryNotificationCount==='function'?newInquiryNotificationCount():0;return `<header class="topbar"><div class="brand"><div class="logo">✦</div><span class="brand-name">Lumora <em>Cloud</em></span></div><div class="nav"><button class="inquiry-notify" onclick="openNewInquiryNotifications()" aria-label="查看新詢問通知">新詢問 <span class="payment-notify-badge ${inquiryCount?'':'empty'}">${inquiryCount}</span></button><button class="payment-notify" onclick="openPaymentNotifications()" aria-label="查看付款通知">付款通知 <span class="payment-notify-badge ${paymentCount?'':'empty'}">${paymentCount}</span></button><button onclick="go('admin-login')">Admin Login</button><button class="btn primary" onclick="go('partner-login')">Partner Login</button></div></header>`}
 function go(route){location.hash=route}
 function route(){return location.hash.replace('#','')||'home'}
 function render(){const r=route();let html='';if(['partner-login','admin-login'].includes(r)) html=loginPage(r);else if(r.startsWith('admin')) html=adminShell(r);else if(r.startsWith('partner')) html=partnerShell(r);else html=publicPage(r);qs('#app').innerHTML=html;window.scrollTo(0,0)}
@@ -222,7 +226,7 @@ function adminShell(r){
     ${sideLink('admin-partners','Partners',r)}
     ${sideLink('admin-customers','Customers',r)}
     <div class="column-map" style="padding:18px 14px 8px">Operations</div>
-    ${sideLink('admin-payments','Payments',r)}
+    ${typeof paymentNotifySideLink==='function' ? paymentNotifySideLink(r) : sideLink('admin-payments','Payments',r)}
     ${sideLink('admin-credits','Credits',r)}
     ${sideLink('admin-redirects','Redirect Logs',r)}
     ${sideLink('admin-templates','Prompt Library',r)}
@@ -232,7 +236,7 @@ function adminShell(r){
 function partnerShell(r){return navTop()+`<div class="layout"><aside class="sidebar">${sideLink('partner-dashboard','總覽',r)}${sideLink('partner-orders','訂單',r)}${sideLink('partner-credits','Credits',r)}${sideLink('partner-revenue','收入',r)}${sideLink('partner-subscription','Stripe 訂閱',r)}${sideLink('partner-brand','白標品牌設定',r)}${sideLink('partner-telegram','Telegram',r)}${sideLink('partner-settings','帳號設定',r)}</aside><main class="main">${partnerPage(r)}</main></div>`}
 function sideLink(target,label,r){return `<button class="side-link ${r===target?'active':''}" onclick="go('${target}')">${label}<span>›</span></button>`}
 function adminPage(r){if(r==='admin-partners')return partnersPage();if(r==='admin-orders')return ordersPage(true);if(r==='admin-credits')return creditsAdmin();if(r==='admin-payments')return paymentsPage();if(r==='admin-redirects')return redirectsPage();if(r==='admin-templates')return templatesPage();if(r==='admin-settings')return settingsPage();if(r.startsWith('admin-partner-detail'))return partnerDetail();return adminDashboard()}
-function adminDashboard(){const active=state.partners.filter(p=>p.enabled).length,used=state.partners.reduce((a,p)=>a+p.used,0),rev=state.partners.reduce((a,p)=>a+p.revenue,0),redirect=state.partners.reduce((a,p)=>a+p.redirected,0);return `<div class="page-title"><div><h1>Admin Dashboard</h1><p class="muted">集中管理經銷商付款、額度、導流與停權。</p></div><button class="btn primary" onclick="go('admin-partners')">管理經銷商</button></div><div class="grid cols-4"><div class="card"><div class="muted">經銷商</div><div class="metric">${state.partners.length}</div></div><div class="card"><div class="muted">已啟用</div><div class="metric">${active}</div></div><div class="card"><div class="muted">本月已用額度</div><div class="metric">${used}</div></div><div class="card"><div class="muted">第 11 筆導流</div><div class="metric">${redirect}</div></div></div><div class="section"><h2>經銷商健康狀態</h2><div class="table-wrap">${partnerTable()}</div></div><div class="grid cols-2"><div class="card"><h3>訂閱收入</h3><div class="metric">${money(state.partners.length*65)}</div><p class="muted">以每位 $65/月計算</p></div><div class="card"><h3>經銷商零售收入</h3><div class="metric">${money(rev)}</div><p class="muted">已完成與生成中的訂單估算</p></div></div>`}
+function adminDashboard(){const active=state.partners.filter(p=>p.enabled).length,used=state.partners.reduce((a,p)=>a+p.used,0),rev=state.partners.reduce((a,p)=>a+p.revenue,0),redirect=state.partners.reduce((a,p)=>a+p.redirected,0),paymentCount=typeof paymentNotificationCount==='function'?paymentNotificationCount():0;return `<div class="page-title"><div><h1>Admin Dashboard</h1><p class="muted">集中管理經銷商付款、額度、導流與停權。</p></div><button class="btn primary" onclick="go('admin-partners')">管理經銷商</button></div><div class="grid cols-4"><div class="card"><div class="muted">經銷商</div><div class="metric">${state.partners.length}</div></div><div class="card"><div class="muted">已啟用</div><div class="metric">${active}</div></div><div class="card"><div class="muted">本月已用額度</div><div class="metric">${used}</div></div><div class="card"><div class="muted">第 11 筆導流</div><div class="metric">${redirect}</div></div><div class="card dashboard-payment-card" onclick="openPaymentNotifications()"><div class="muted">付款通知</div><div class="metric">${paymentCount}</div><p class="muted">待帳務確認 · 點擊查看付款清單</p></div></div><div class="section"><h2>經銷商健康狀態</h2><div class="table-wrap">${partnerTable()}</div></div><div class="grid cols-2"><div class="card"><h3>訂閱收入</h3><div class="metric">${money(state.partners.length*65)}</div><p class="muted">以每位 $65/月計算</p></div><div class="card"><h3>經銷商零售收入</h3><div class="metric">${money(rev)}</div><p class="muted">已完成與生成中的訂單估算</p></div></div>`}
 function partnerTable(){return `<table class="table"><thead><tr><th>Partner</th><th>狀態</th><th>付款</th><th>額度</th><th>第 11 筆</th><th>收入</th><th>操作</th></tr></thead><tbody>${state.partners.map(p=>`<tr><td><strong>${p.brand}</strong><br><span class="muted">${p.domain}</span></td><td>${pill(p.status)}</td><td>${p.nextBilling}</td><td>${p.used}/${p.limit}</td><td>${p.redirected}</td><td>${money(p.revenue)}</td><td><div class="row-actions"><button class="btn" onclick="openPartner('${p.id}')">查看</button><button class="btn ${p.enabled?'danger':'success'}" onclick="togglePartner('${p.id}')">${p.enabled?'停用':'恢復'}</button></div></td></tr>`).join('')}</tbody></table>`}
 function partnersPage(){return `<div class="page-title"><div><h1>經銷商管理</h1><p class="muted">查看付款狀態、使用額度與網站權限。</p></div><button class="btn primary" onclick="modal('<h2>新增經銷商</h2><p class=muted>建立 Partner 帳號、品牌與 10 支額度。</p><button class=\'btn primary\' onclick=\'closeModal()\'>建立</button>')">新增經銷商</button></div><div class="table-wrap">${partnerTable()}</div>`}
 function openPartner(id){state.currentPartner=id;go('admin-partner-detail')}
@@ -584,6 +588,121 @@ html{background:#080817}
 }
 .core3-alert b{color:#fff}
 
+.crm-queues{display:grid;grid-template-columns:1fr;gap:18px;margin:0 0 22px}
+.crm-queue-card{background:#0e0b24;border:1px solid rgba(255,255,255,.13);border-radius:18px;overflow:hidden}
+.crm-queue-card.new{border-color:#4b3f9c}
+.crm-queue-card.progress{border-color:#7d5a2c}
+.crm-queue-card.new{background:linear-gradient(145deg,rgba(82,61,174,.34),rgba(24,18,65,.92))}
+.crm-queue-card.payment{background:linear-gradient(145deg,rgba(112,79,24,.38),rgba(40,28,20,.94));border-color:#8a6827}
+.crm-queue-card.waiting{background:linear-gradient(145deg,rgba(63,54,122,.38),rgba(25,19,61,.94));border-color:#62579c}
+.crm-queue-card.converted{background:linear-gradient(145deg,rgba(24,94,78,.38),rgba(14,43,41,.94));border-color:#2a806a}
+.crm-queue-card.lost{background:linear-gradient(145deg,rgba(119,38,67,.38),rgba(48,19,38,.94));border-color:#93425e}
+.crm-queue-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:17px 18px 14px;background:#15112e}
+.crm-queue-title{font-size:16px;font-weight:700;color:#fff}
+.crm-queue-sub{font-size:12px;color:#a99cd0;margin-top:4px}
+.crm-queue-count{font-family:ui-monospace,monospace;font-size:12px;color:#cabcff;white-space:nowrap}
+.crm-queue-list{display:grid}
+.crm-queue-row{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;padding:13px 18px;border-top:1px solid rgba(255,255,255,.08);cursor:pointer;background:#0e0b24;color:#fff}
+.crm-queue-row:hover{background:#1d1743}
+.crm-queue-name{font-weight:600;font-size:14px}
+.crm-queue-id{font-family:ui-monospace,"SF Mono",Menlo,monospace;font-size:11px;color:#a99cd0;margin-top:3px}
+.crm-queue-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.crm-queue-empty{padding:20px 18px;color:#a99cd0;font-size:13px}
+.crm-status-table-wrap{overflow:auto;border-top:1px solid rgba(255,255,255,.1)}
+.crm-status-table{width:100%;min-width:900px;border-collapse:collapse;background:transparent}
+.crm-queue-card.new .crm-status-table{background:rgba(30,22,78,.32)}
+.crm-queue-card.new{border-color:rgba(255,73,126,.78);box-shadow:0 0 0 1px rgba(255,73,126,.16),0 14px 42px rgba(255,35,101,.14)}
+.crm-queue-card.new .crm-queue-head{background:linear-gradient(110deg,rgba(106,20,55,.92),rgba(45,17,61,.96));border-bottom-color:rgba(255,73,126,.5);position:relative}
+.crm-queue-card.new .crm-queue-head::before{content:'';position:absolute;left:0;top:0;bottom:0;width:6px;background:#ff3f78;box-shadow:0 0 18px rgba(255,63,120,.8)}
+.crm-new-alert{display:inline-flex;align-items:center;gap:6px;margin-left:10px;padding:4px 9px;border-radius:999px;background:#ff3f78;color:#fff;font-size:11px;font-weight:800;letter-spacing:.04em;box-shadow:0 0 14px rgba(255,63,120,.5)}
+.crm-status-table tbody tr.crm-new-row td{background:linear-gradient(90deg,rgba(255,50,112,.3),rgba(116,25,78,.22))!important;border-bottom-color:rgba(255,92,139,.42)!important}
+.crm-status-table tbody tr.crm-new-row td:first-child{box-shadow:inset 6px 0 0 #ff3f78}
+.crm-status-table tbody tr.crm-new-row:hover td{background:linear-gradient(90deg,rgba(255,50,112,.46),rgba(116,25,78,.32))!important}
+.order-queues{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin:18px 0 24px}
+.order-queue-card{overflow:hidden;border:1px solid rgba(255,255,255,.14);border-radius:18px;background:#100d2a}
+.order-queue-card.new{border-color:rgba(255,63,120,.8);box-shadow:0 0 0 1px rgba(255,63,120,.16),0 12px 34px rgba(255,35,101,.14)}
+.order-queue-card.active{border-color:rgba(129,243,211,.42)}
+.order-queue-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:18px;background:#17132f;border-bottom:1px solid rgba(255,255,255,.1)}
+.order-queue-card.new .order-queue-head{background:linear-gradient(110deg,rgba(106,20,55,.95),rgba(45,17,61,.96))}
+.order-queue-card.active .order-queue-head{background:linear-gradient(110deg,rgba(18,66,63,.7),rgba(30,24,68,.95))}
+.order-queue-title{font-size:18px;font-weight:800;color:#fff}.order-queue-sub{margin-top:5px;color:#b1a5d4;font-size:12px}.order-queue-count{color:#fff;font-size:13px;font-weight:800;white-space:nowrap}
+.order-queue-list{display:grid}.order-queue-row{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:15px 18px;border-bottom:1px solid rgba(255,255,255,.08);cursor:pointer}.order-queue-row:last-child{border-bottom:none}.order-queue-row:hover{background:rgba(255,255,255,.08)}
+.order-queue-card.new .order-queue-row{background:rgba(255,63,120,.13)}.order-queue-card.new .order-queue-row:hover{background:rgba(255,63,120,.25)}
+.order-queue-name{font-weight:750;color:#fff}.order-queue-id{margin-top:4px;color:#b2a5d4;font-family:ui-monospace,monospace;font-size:11px}.order-queue-meta{display:flex;gap:7px;align-items:center;justify-content:flex-end;flex-wrap:wrap}.order-queue-empty{padding:20px;color:#a99cd0;font-size:13px}
+@media(max-width:760px){.order-queues{grid-template-columns:1fr}}
+.order-category-card{margin:18px 0 24px;overflow:hidden;border:1px solid rgba(255,63,120,.78);border-radius:20px;background:#100d2a;box-shadow:0 0 0 1px rgba(255,63,120,.16),0 14px 42px rgba(255,35,101,.14)}
+.order-category-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;padding:20px 22px;background:linear-gradient(110deg,rgba(106,20,55,.95),rgba(45,17,61,.96));border-bottom:1px solid rgba(255,73,126,.5)}
+.order-category-title{font-size:21px;font-weight:850;color:#fff}.order-category-sub{margin-top:6px;color:#ffc4d5;font-size:13px}.order-category-count{color:#fff;font-weight:800;white-space:nowrap}.order-category-table{overflow:auto}.order-category-table table{min-width:900px;background:rgba(255,50,112,.12)}.order-category-table th{background:rgba(74,15,49,.82)!important}.order-category-table tbody tr{cursor:pointer}.order-category-table tbody tr:hover td{background:rgba(255,63,120,.22)!important}.order-category-empty{padding:24px;color:#ffc4d5}
+.crm-queue-card.payment .crm-status-table{background:rgba(54,35,17,.34)}
+.crm-queue-card.waiting .crm-status-table{background:rgba(28,22,70,.34)}
+.crm-queue-card.converted .crm-status-table{background:rgba(10,56,49,.34)}
+.crm-queue-card.lost .crm-status-table{background:rgba(61,19,41,.34)}
+.crm-status-table th{padding:13px 16px;text-align:left;background:#15112e;color:#c9b8ff;font-size:11px;letter-spacing:.1em;white-space:nowrap;border-bottom:1px solid rgba(255,255,255,.1)}
+.crm-status-table td{padding:15px 16px;border-bottom:1px solid rgba(255,255,255,.08);font-size:14px;vertical-align:middle;color:#f6f2ff}
+.crm-status-table tbody tr{cursor:pointer}.crm-status-table tbody tr:hover{background:#1d1743}.crm-status-table tbody tr:last-child td{border-bottom:none}
+.new-order-row td{background:rgba(255,78,122,.16)!important;border-bottom-color:rgba(255,126,157,.3)!important}
+.new-order-row:hover td{background:rgba(255,78,122,.25)!important}
+.payment-list{display:grid;gap:9px;margin-top:18px;max-height:420px;overflow:auto}
+.payment-list-row{display:grid;grid-template-columns:1fr auto;align-items:center;gap:10px 14px;width:100%;padding:13px 14px;text-align:left;color:#fff;background:#15112e;border:1px solid rgba(255,255,255,.12);border-radius:13px}
+.payment-list-row:hover{background:#1d1743;border-color:#7d5a2c}
+.payment-list-row strong,.payment-list-row small{display:block}
+.payment-list-row small{font-size:11px;color:#a99cd0;margin-top:4px}
+.payment-list-meta{text-align:right;flex:none}
+.payment-list-entry{display:flex;align-items:center;gap:7px;grid-column:1/-1}
+.payment-list-entry input{width:105px;padding:8px 10px;border-radius:10px;background:rgba(255,255,255,.06);border:1px solid var(--line);color:#fff}
+.payment-list-entry .btn{padding:8px 11px;font-size:12px}
+.payment-review-input{width:105px;padding:9px 10px;border-radius:10px;background:rgba(255,255,255,.06);border:1px solid var(--line);color:#fff}
+.payment-review-readonly{display:inline-flex;align-items:center;min-width:105px;min-height:42px;padding:0 12px;border-radius:10px;background:rgba(255,255,255,.06);border:1px solid var(--line);color:#fff;font-weight:700;letter-spacing:.08em}
+.payment-review-card,.payment-history-card{margin:18px 0 24px;overflow:hidden;border:1px solid rgba(255,190,86,.55);border-radius:20px;background:#100d2a}.payment-review-head,.payment-history-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;padding:20px 22px;background:linear-gradient(110deg,rgba(70,46,17,.92),rgba(35,24,55,.96));border-bottom:1px solid rgba(255,190,86,.35)}.payment-review-head h2,.payment-history-head h2{margin:0;color:#fff;font-size:21px}.payment-review-head p,.payment-history-head p{margin:7px 0 0;color:#d7c899;font-size:13px}.payment-history-card{border-color:rgba(129,243,211,.42)}.payment-history-head{background:linear-gradient(110deg,rgba(18,66,63,.7),rgba(30,24,68,.95));border-bottom-color:rgba(129,243,211,.3)}.payment-history-head p{color:#b8d9d3}.payment-history-empty{padding:26px;color:#b8d9d3}
+.order-process{margin-bottom:18px;padding:18px;border:1px solid rgba(129,243,211,.2);border-radius:16px;background:linear-gradient(145deg,rgba(129,243,211,.08),rgba(195,153,255,.06))}
+.order-process-title{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px;color:#fff;font-size:16px;font-weight:800}
+.order-process-sub{font-size:11px;color:#a99cd0;font-weight:500}
+.order-process-list{display:grid;gap:0}
+.order-process-item{display:grid;grid-template-columns:18px 1fr auto;gap:12px;position:relative;padding:0 0 16px;align-items:start}
+.order-process-item:last-child{padding-bottom:0}
+.order-process-item:not(:last-child)::before{content:'';position:absolute;left:7px;top:15px;bottom:0;width:2px;background:rgba(255,255,255,.14)}
+.order-process-item.done:not(:last-child)::before{background:rgba(129,243,211,.5)}
+.order-process-dot{width:16px;height:16px;border-radius:50%;border:3px solid #514870;background:#0e0b24;z-index:1}
+.order-process-item.done .order-process-dot{border-color:#81f3d3;background:#81f3d3;box-shadow:0 0 12px rgba(129,243,211,.55)}
+.order-process-item.current .order-process-dot{border-color:#ffb1c8;background:#ff5f8f;box-shadow:0 0 12px rgba(255,95,143,.55)}
+.order-process-name{color:#fff;font-weight:700;font-size:13px}.order-process-info{margin-top:4px;color:#a99cd0;font-size:11px}.order-process-date{color:#cabcff;font-family:ui-monospace,monospace;font-size:11px;white-space:nowrap}.order-process-item.current .order-process-date{color:#ffc4d5}
+.payment-review-readonly{display:inline-flex;align-items:center;min-width:105px;min-height:42px;padding:0 12px;border-radius:10px;background:rgba(255,255,255,.06);border:1px solid var(--line);color:#fff;font-weight:700;letter-spacing:.08em}
+.payment-list-empty{padding:24px 12px;text-align:center;color:#a99cd0}
+.dashboard-payment-card{cursor:pointer;border-color:rgba(255,111,158,.35)!important;background:linear-gradient(145deg,rgba(255,111,158,.13),rgba(195,153,255,.08))!important}
+.dashboard-payment-card:hover{transform:translateY(-2px);border-color:rgba(255,151,184,.65)!important}
+.followup-nav-link{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.followup-dot{display:inline-grid;place-items:center;min-width:20px;height:20px;padding:0 5px;border-radius:999px;background:#ff5f8f;color:#fff;font-size:11px;font-weight:800;line-height:1;box-shadow:0 0 0 3px rgba(255,95,143,.12)}
+.followup-calendar{display:grid;gap:18px}
+.followup-day{background:#0e0b24;border:1px solid rgba(255,255,255,.13);border-radius:18px;overflow:hidden}
+.followup-day-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 18px;background:#15112e;border-bottom:1px solid rgba(255,255,255,.1)}
+.followup-day-title{font-size:17px;font-weight:700;color:#fff}
+.followup-day-count{font-size:12px;color:#ffc0d2}
+.followup-item{display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center;padding:17px 18px;border-bottom:1px solid rgba(255,255,255,.08)}
+.followup-item:last-child{border-bottom:none}
+.followup-item-title{font-size:15px;font-weight:700;color:#fff}
+.followup-item-sub{font-size:12px;color:#a99cd0;margin-top:5px}
+.followup-item-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.followup-empty{padding:28px 20px;text-align:center;border:1px solid rgba(129,243,211,.2);background:rgba(76,219,181,.075);border-radius:18px;color:#caffef}
+.calendar-shell{background:rgba(14,11,36,.78);border:1px solid rgba(255,255,255,.13);border-radius:22px;overflow:hidden}
+.calendar-head{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:20px 22px;background:#15112e;border-bottom:1px solid rgba(255,255,255,.1)}
+.calendar-month{font-size:20px;font-weight:700;color:#fff}
+.calendar-nav{display:flex;gap:8px}.calendar-nav .btn{padding:8px 12px}
+.calendar-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr))}
+.calendar-weekday{padding:12px 10px;text-align:center;color:#a99cd0;font-size:11px;letter-spacing:.08em;border-bottom:1px solid rgba(255,255,255,.1)}
+.calendar-cell{min-height:116px;padding:10px;border-right:1px solid rgba(255,255,255,.07);border-bottom:1px solid rgba(255,255,255,.07);background:#0e0b24;cursor:pointer}
+.calendar-cell:nth-child(7n){border-right:none}.calendar-cell:hover{background:#17123a}.calendar-cell.muted{opacity:.32;cursor:default}
+.calendar-number{display:flex;align-items:center;justify-content:space-between;color:#c9b8ff;font-size:13px;font-weight:700}
+.calendar-today .calendar-number{color:#fff}.calendar-today .calendar-number::after{content:'';width:6px;height:6px;border-radius:50%;background:#81f3d3;box-shadow:0 0 10px #81f3d3}
+.calendar-event{display:block;margin-top:8px;padding:6px 7px;border-radius:8px;background:rgba(255,111,158,.14);border:1px solid rgba(255,111,158,.28);color:#ffc4d5;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.calendar-more{display:block;margin-top:5px;color:#cabcff;font-size:11px}
+.calendar-overdue{padding:14px 18px;color:#ffc4d5;background:rgba(255,111,158,.08);border-bottom:1px solid rgba(255,111,158,.2);font-size:13px}
+.calendar-overdue-list{display:flex;gap:8px;flex-wrap:wrap;padding:10px 18px;background:rgba(255,111,158,.05);border-bottom:1px solid rgba(255,111,158,.16)}
+.calendar-overdue-item{border:1px solid rgba(255,111,158,.28);background:rgba(255,111,158,.11);color:#ffc4d5;border-radius:9px;padding:7px 10px;font-size:12px;cursor:pointer}
+.calendar-overdue-item:hover{background:rgba(255,111,158,.2)}
+@media(max-width:760px){.calendar-cell{min-height:88px;padding:7px}.calendar-event{font-size:10px;padding:5px}.calendar-weekday{font-size:10px;padding:9px 2px}}
+@media(max-width:640px){.followup-item{grid-template-columns:1fr}.followup-item-actions{justify-content:flex-start}}
+@media(max-width:760px){.crm-queues{grid-template-columns:1fr}}
+
 /* 第二層抽屜 */
 .dw-scrim{position:fixed;inset:0;background:rgba(4,3,12,.82);z-index:90;display:none}
 .dw-scrim.on{display:block}
@@ -666,11 +785,22 @@ html{background:#080817}
 
 <script id="lumora-core3">
 /* ═══════════════════════════════════════════════════
-   三張核心表 — 全部 mock 資料，確認欄位後才改 Airtable
+   三張核心表 — Airtable 唯一資料來源；頁面不使用 mock 作為 fallback
    CRM（詢問漏斗）→ Orders（專案製作）→ Partners（歸屬額度）
    ═══════════════════════════════════════════════════ */
 
 const CORE_CRM = [
+  { id:"CRM-20260802-006", name:"Mock New Inquiry", status:"New", statusTag:"blue",
+    pay:"—", payTag:"mute", pri:"High", priTag:"bad", next:"—", nextCls:"", cs:"待分派",
+    tgId:"8919860892", tgUser:"@mock_customer", partner:"— 官方直客", partnerCode:"—",
+    inqDate:"2026-08-02 18:18", source:"Telegram Bot", service:"品牌企劃", lang:"中文", returning:false, prevCount:0,
+    summary:"Mock 新進詢問：希望製作一組自然、有質感的品牌形象素材。", files:null, budget:"待確認", hasFiles:false,
+    firstResp:null, touch:0, daysIn:0, lastContact:null, note:"新進件，等待客服接手。",
+    payStatus:"等待付款", quoted:null, method:null, last5:null, last5valid:null,
+    transferDate:null, proof:null, subBy:null, subAt:null, verBy:null, verAt:null, locked:false, verNote:null,
+    closeResult:null, closedAt:null, convOrder:null, lostReason:null, daysToClose:null,
+    botMsg:"mock-1801", botSync:"已接收", createdBy:"TG Bot", updated:"2026-08-02 18:18",
+    history:[{t:"新進件", d:"08-02 18:18 · Telegram Bot 自動建立", s:"now"}] },
   { id:"CRM-20260801-003", name:"Sreymom Chan", status:"待帳務確認", statusTag:"warn",
     pay:"待帳務確認", payTag:"warn", pri:"高", priTag:"bad", next:"08-02 10:00", nextCls:"today", cs:"Nita",
     tgId:"814255310", tgUser:"@sreymom_c", partner:"Phnom Penh Studio", partnerCode:"PTN-002",
@@ -751,6 +881,16 @@ const CORE_CRM = [
 ];
 
 const CORE_ORD = [
+  { id:"ORD-20260802-001", isNew:true, name:"Mock New Customer", prod:"新訂單", prodTag:"blue",
+    asset:"待素材", assetTag:"warn", promised:"08-05", promisedCls:"", producer:"待分派",
+    crm:"CRM-20260802-001", tgId:"8919860892", partner:"— 官方直客", partnerCode:"—",
+    orderDate:"2026-08-02 17:58", service:"個人形象", pkg:"基礎方案", qty:1,
+    amount:"$20.00", currency:"USD", payStatus:"已付款", payMethod:"銀行匯款",
+    last5:null, verAt:null, cost:"—", commission:"$0.00", margin:"—", marginPct:"—",
+    brief:"Mock 新訂單：等待 Telegram 客戶上傳素材。", style:"待確認", assetNote:"尚未收到素材",
+    rev:0, revLimit:2, promisedDate:"2026-08-05", deliveryDate:null, completion:null, daysLate:null,
+    link:null, orderStatus:"新進件", totalOrders:1, ltv:"$20.00", lastStyle:null,
+    consent:false, retention:null, purged:false, thread:"tg://mock-ord-0001", notify:"未通知" , prevOrders:[] },
   { id:"ORD-20260731-004", name:"Vanessa Liu", prod:"生成中", prodTag:"blue",
     asset:"素材齊全", assetTag:"ok", promised:"08-03", promisedCls:"", producer:"Chan",
     crm:"CRM-20260801-002", tgId:"552104883", partner:"Taiwan Studio", partnerCode:"PTN-001",
@@ -831,6 +971,10 @@ const CORE_PTN = [
     notes:"帶客量大但轉換率偏低（32%），多為低預算詢問。Onboarding 尚未完成，建議先補教學。" }
 ];
 
+// 保留既有流程示範資料；新詢問與新訂單不再以假編號出現在正式清單。
+CORE_CRM.splice(0, 1);
+CORE_ORD.splice(0, 1);
+
 /* ── 小工具 ── */
 const _esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const _fmt = v => {
@@ -841,6 +985,322 @@ const _fmt = v => {
   if (m) return `${m[2]}-${m[3]}${m[4] ? ' ' + m[4] + ':' + m[5] : ''}`;
   return v;
 };
+const _dateOnly = v => {
+  if (v === null || v === undefined || v === "") return "—";
+  if (typeof v !== "string") return String(v);
+  const iso = v.match(/^(\d{4}-\d{2}-\d{2})/);
+  if (iso) return iso[1];
+  const short = v.match(/^(\d{2}-\d{2})/);
+  return short ? short[1] : v;
+};
+const _inquiryLabel = r => {
+  return String(r?.id ?? "");
+};
+const _tagClass = (kind, value) => {
+  const v = String(value ?? "").trim().toLowerCase();
+  if (!v || v === "—" || v === "-") return "mute";
+  if (kind === "status") {
+    if (["converted", "won", "已轉單", "成交", "completed", "已完成"].includes(v)) return "ok";
+    if (["closed lost", "lost", "未成交", "closed_lost"].includes(v)) return "bad";
+    if (["waiting customer", "等客戶回覆", "new", "新進件"].includes(v)) return v === "new" || v === "新進件" ? "blue" : "mute";
+    if (["pending verification", "待帳務確認"].includes(v)) return "warn";
+    return "blue";
+  }
+  if (kind === "payment") {
+    if (["confirmed", "已確認", "paid", "已付款"].includes(v)) return "ok";
+    if (["locked", "已鎖定"].includes(v)) return "lock";
+    if (["pending verification", "待帳務確認", "awaiting payment", "等待付款", "未報價"].includes(v)) return "warn";
+    return "mute";
+  }
+  if (kind === "priority") {
+    if (["high", "高", "urgent", "緊急"].includes(v)) return "bad";
+    if (["normal", "一般"].includes(v)) return "blue";
+    return "mute";
+  }
+  return "mute";
+};
+function paymentPendingRows(){
+  if(typeof CORE_CRM === 'undefined') return [];
+  return CORE_CRM.map((r,i) => ({...r, _index:i})).filter(r => {
+    const payment = String(r.payStatus || r.pay || '').trim().toLowerCase();
+    const needsReview = ['pending verification','待帳務確認','paid','已付款','payment received','已付款待驗證','awaiting payment confirmation'].includes(payment);
+    return needsReview && !r.locked;
+  }).sort((a,b) => String(b.subAt || b.inqDate || '').localeCompare(String(a.subAt || a.inqDate || '')));
+}
+function paymentReadIds(){
+  try { return new Set(JSON.parse(localStorage.getItem('lumora:payments:read') || '[]')); }
+  catch { return new Set(); }
+}
+function paymentNotificationRows(){
+  const read = paymentReadIds();
+  return paymentPendingRows().filter(r => !read.has(r.id));
+}
+function paymentNotificationCount(){ return paymentNotificationRows().length; }
+function syncPaymentNotificationBadges(){
+  const count = paymentNotificationCount();
+  document.querySelectorAll('.payment-notify .payment-notify-badge').forEach(badge => {
+    badge.textContent = count;
+    badge.classList.toggle('empty', !count);
+  });
+  document.querySelectorAll('.followup-nav-link').forEach(link => {
+    if(link.textContent.includes('付款審核')){
+      const badge = link.querySelector('.followup-dot');
+      if(count && badge) badge.textContent = count;
+      if(!count && badge) badge.remove();
+    }
+  });
+  document.querySelectorAll('.dashboard-payment-card .metric').forEach(metric => metric.textContent = count);
+}
+function markPaymentRead(index){
+  const payment = CORE_CRM[index];
+  if(!payment) return;
+  try {
+    const read = paymentReadIds();
+    read.add(payment.id);
+    localStorage.setItem('lumora:payments:read', JSON.stringify([...read]));
+  } catch {}
+  syncPaymentNotificationBadges();
+}
+function newInquiryNotificationRows(){
+  if(typeof CORE_CRM === 'undefined') return [];
+  let read = [];
+  try { read = JSON.parse(localStorage.getItem('lumora:inquiries:read') || '[]'); } catch {}
+  return CORE_CRM.map((r,i) => ({...r, _index:i})).filter(r => ['new','新進件'].includes(String(r.status || '').trim().toLowerCase()) && !read.includes(r.id)).sort((a,b) => String(b.inqDate || '').localeCompare(String(a.inqDate || '')));
+}
+function newInquiryNotificationCount(){ return newInquiryNotificationRows().length; }
+function markInquiryRead(index){
+  const inquiry = CORE_CRM[index];
+  if(!inquiry) return;
+  try {
+    const read = new Set(JSON.parse(localStorage.getItem('lumora:inquiries:read') || '[]'));
+    read.add(inquiry.id);
+    localStorage.setItem('lumora:inquiries:read', JSON.stringify([...read]));
+  } catch {}
+  const count = newInquiryNotificationCount();
+  document.querySelectorAll('.inquiry-notify .payment-notify-badge').forEach(badge => {
+    badge.textContent = count;
+    badge.classList.toggle('empty', !count);
+  });
+  document.querySelectorAll('.followup-nav-link').forEach(link => {
+    if(link.textContent.includes('CRM 詢問')){
+      const badge = link.querySelector('.followup-dot');
+      if(count && badge) badge.textContent = count;
+      if(!count && badge) badge.remove();
+    }
+  });
+}
+function openNewInquiry(index){
+  const inquiry = CORE_CRM[index];
+  if(!inquiry) return;
+  markInquiryRead(index);
+  closeModal();
+  render();
+  setTimeout(() => core3Open('crm', index), 0);
+}
+function openNewInquiryNotifications(){
+  const rows = newInquiryNotificationRows();
+  const content = `<h2>新詢問通知</h2><p class="muted">尚未開始處理的新進件</p>
+    <div class="payment-list">${rows.length ? rows.map(r => `<div class="payment-list-row" role="button" tabindex="0" onclick="openNewInquiry(${r._index})">
+      <span><strong>${_esc(r.name)}</strong><small>${_esc(_inquiryLabel(r))}</small></span>
+      <span class="payment-list-meta"><span class="tag blue">${_esc(r.status)}</span><small>${_esc(_dateOnly(r.inqDate))}</small></span>
+    </div>`).join('') : '<div class="payment-list-empty">目前沒有新的詢問通知</div>'}</div>`;
+  modal(content);
+}
+async function savePaymentLast5(index, target='modal'){
+  const crm = CORE_CRM[index];
+  const input = document.getElementById(`payment-last5-${index}`);
+  const last5 = String(input?.value || '').replace(/\D/g,'').slice(-5);
+  if(last5.length !== 5){ toast('請輸入 5 位數後五碼'); return; }
+  if(input) input.disabled = true;
+  try{
+    if(crm.recordId){
+      const response = await fetch('/api/crm/update-payment', {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({recordId:crm.recordId,last5})
+      });
+      const result = await response.json();
+      if(!response.ok || !result.ok) throw new Error(result.error || `HTTP ${response.status}`);
+    }
+    crm.last5 = last5;
+    crm.last5valid = true;
+    crm.payStatus = '待帳務確認';
+    crm.pay = '待帳務確認';
+    crm.payTag = 'warn';
+    if(target === 'page') render();
+    else openPaymentNotifications();
+    toast(crm.recordId ? '後五碼已確認並寫入 Airtable' : '後五碼已確認');
+  }catch(error){
+    if(input) input.disabled = false;
+    toast(`確認失敗：${error.message}`);
+  }
+}
+function openPaymentNotifications(){
+  const rows = paymentNotificationRows();
+  const content = `<h2>付款清單</h2><p class="muted">待帳務確認的付款案件</p>
+    <div class="payment-list">${rows.length ? rows.map(r => `<div class="payment-list-row" role="button" tabindex="0" onclick="openPaymentInquiry(${r._index})">
+      <span><strong>${_esc(r.name)}</strong><small>${_esc(_inquiryLabel(r))}</small></span>
+      <span class="payment-list-meta"><span class="tag warn">${_esc(r.payStatus || r.pay)}</span><small>${_esc(r.subAt ? _dateOnly(r.subAt) : _dateOnly(r.inqDate))}</small></span>
+      <span class="payment-list-entry" onclick="event.stopPropagation()"><input id="payment-last5-${r._index}" inputmode="numeric" maxlength="5" value="${_esc(r.last5 || '')}" placeholder="後五碼"><button class="btn primary" onclick="savePaymentLast5(${r._index})">確認</button></span>
+    </div>`).join('') : '<div class="payment-list-empty">目前沒有新的付款通知</div>'}</div>`;
+  modal(content);
+}
+function openPaymentInquiry(index){
+  markPaymentRead(index);
+  closeModal();
+  render();
+  setTimeout(() => core3Open('crm', index), 0);
+}
+async function confirmPayment(index){
+  const crm = CORE_CRM[index];
+  if(!crm) return;
+  const last5 = String(crm.last5 || '').replace(/\D/g,'');
+  if(last5.length !== 5){ toast('尚未有完整的後五碼，無法確認付款'); return; }
+  try{
+    if(crm.recordId){
+      const response = await fetch('/api/crm/update-payment', {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({recordId:crm.recordId,last5,confirm:true})
+      });
+      const result = await response.json();
+      if(!response.ok || !result.ok) throw new Error(result.error || `HTTP ${response.status}`);
+    }
+    crm.payStatus = '已付款';
+    crm.pay = '已付款';
+    crm.payTag = 'ok';
+    crm.locked = true;
+    crm.verBy = '財務';
+    crm.verAt = new Date().toISOString().slice(0,16).replace('T',' ');
+    crm.history = Array.isArray(crm.history) ? crm.history : [];
+    crm.history.push({t:'已付款 · 財務確認',d:'後五碼核對完成 · 財務',s:'done'});
+    try{
+      const read = paymentReadIds();
+      read.add(crm.id);
+      localStorage.setItem('lumora:payments:read', JSON.stringify([...read]));
+    }catch{}
+    render();
+    toast('付款已確認');
+  }catch(error){
+    toast(`確認付款失敗：${error.message}`);
+  }
+}
+function followupDateForOrder(order){
+  const raw = String(order?.orderDate || '').trim();
+  if(!raw) return '—';
+  const date = new Date(`${raw.slice(0, 10)}T12:00:00`);
+  if(Number.isNaN(date.getTime())) return '—';
+  date.setDate(date.getDate() + 3);
+  return [date.getFullYear(),String(date.getMonth()+1).padStart(2,'0'),String(date.getDate()).padStart(2,'0')].join('-');
+}
+function followupCompletedIds(){
+  try { return JSON.parse(localStorage.getItem('lumora:followups:completed') || '[]'); }
+  catch { return []; }
+}
+function followupPendingRows(){
+  const completed = new Set(followupCompletedIds());
+  return (typeof CORE_ORD === 'undefined' ? [] : CORE_ORD.map((order,index) => ({order,index,followupDate:followupDateForOrder(order)})))
+    .filter(row => row.followupDate !== '—' && !completed.has(row.order.id))
+    .sort((a,b) => a.followupDate.localeCompare(b.followupDate));
+}
+function followupDueCount(){ return followupPendingRows().length; }
+function markFollowupCompleted(orderId){
+  const completed = new Set(followupCompletedIds());
+  completed.add(orderId);
+  try { localStorage.setItem('lumora:followups:completed', JSON.stringify([...completed])); } catch {}
+}
+function completeFollowup(index){
+  const order = CORE_ORD[index];
+  if(!order) return;
+  markFollowupCompleted(order.id);
+  render();
+  toast('已完成追蹤，通知已移除');
+}
+function moveFollowupToInquiry(index){
+  const order = CORE_ORD[index];
+  if(!order) return;
+  markFollowupCompleted(order.id);
+  const crm = CORE_CRM.find(row => row.id === order.crm || row.crm === order.crm);
+  if(crm){
+    crm.status = '未成交';
+    crm.statusTag = 'bad';
+    crm.next = '—';
+    crm.nextCls = '';
+    crm.note = '已追蹤一次，客戶無回應，標記為未成交。';
+    crm.closeResult = '未成交';
+    crm.lostReason = '追蹤後無回應';
+    crm.history = Array.isArray(crm.history) ? crm.history : [];
+    crm.history.push({t:'未成交 · 追蹤後無回應',d:'已移至 CRM 詢問分類',s:'now'});
+  }
+  go('admin-crm');
+  toast('已標記未成交並移至詢問案件分類');
+}
+function followupSideLink(r){
+  const count = typeof followupDueCount === 'function' ? followupDueCount() : 0;
+  return `<button class="side-link followup-nav-link ${r==='admin-followup-calendar'?'active':''}" onclick="go('admin-followup-calendar')">追蹤日曆${count ? `<span class="followup-dot">${count}</span>` : '<span></span>'}</button>`;
+}
+function crmNotifySideLink(r){
+  const count = typeof newInquiryNotificationCount === 'function' ? newInquiryNotificationCount() : 0;
+  return `<button class="side-link followup-nav-link ${r==='admin-crm'?'active':''}" onclick="go('admin-crm')">CRM 詢問${count ? `<span class="followup-dot">${count}</span>` : '<span></span>'}</button>`;
+}
+function paymentNotifySideLink(r){
+  const count = typeof paymentNotificationCount === 'function' ? paymentNotificationCount() : 0;
+  return `<button class="side-link followup-nav-link ${r==='admin-payments'?'active':''}" onclick="go('admin-payments')">付款審核${count ? `<span class="followup-dot">${count}</span>` : '<span></span>'}</button>`;
+}
+let followupCalendarCursor = new Date();
+function shiftFollowupMonth(delta){
+  followupCalendarCursor = new Date(followupCalendarCursor.getFullYear(), followupCalendarCursor.getMonth() + delta, 1);
+  render();
+}
+function openFollowupDay(date){
+  const rows = followupPendingRows().filter(row => row.followupDate === date);
+  if(!rows.length) return;
+  modal(`<h2>${_esc(date)} · 追蹤案件</h2><div class="payment-list">${rows.map(({order,index}) => `<div class="payment-list-row">
+    <span><strong>${_esc(order.name || '未命名客戶')}</strong><small>${_esc(order.id)} · ${_esc(order.service || '—')}</small></span>
+    <span class="followup-item-actions"><button class="btn success" onclick="closeModal();completeFollowup(${index})">完成追蹤</button><button class="btn danger" onclick="closeModal();moveFollowupToInquiry(${index})">未成交</button></span>
+  </div>`).join('')}</div>`);
+}
+function followupCalendarPage(){
+  const rows = followupPendingRows();
+  const year = followupCalendarCursor.getFullYear();
+  const month = followupCalendarCursor.getMonth();
+  const monthName = `${year} 年 ${month + 1} 月`;
+  const days = new Date(year, month + 1, 0).getDate();
+  const firstDay = new Date(year, month, 1).getDay();
+  const weekdays = ['日','一','二','三','四','五','六'];
+  const byDate = rows.reduce((map,row) => {
+    (map[row.followupDate] ||= []).push(row);
+    return map;
+  }, {});
+  const today = new Date();
+  const todayKey = [today.getFullYear(),String(today.getMonth()+1).padStart(2,'0'),String(today.getDate()).padStart(2,'0')].join('-');
+  const cells = [];
+  for(let i=0;i<firstDay;i++) cells.push('<div class="calendar-cell muted"></div>');
+  for(let day=1;day<=days;day++){
+    const date = `${year}-${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+    const events = byDate[date] || [];
+    cells.push(`<div class="calendar-cell ${date===todayKey?'calendar-today':''}" onclick="openFollowupDay('${date}')">
+      <div class="calendar-number">${day}</div>${events.slice(0,2).map(({order}) => `<span class="calendar-event">${_esc(order.name || order.id)}</span>`).join('')}${events.length>2?`<span class="calendar-more">+${events.length-2} 筆</span>`:''}
+    </div>`);
+  }
+  while(cells.length % 7) cells.push('<div class="calendar-cell muted"></div>');
+  const overdue = rows.filter(row => row.followupDate < todayKey);
+  return `<div class="page-title"><div><h1>追蹤日曆</h1><p style="color:#c3bce0">每筆訂單建立 3 天後追蹤一次；完成後不再提醒。</p></div><span class="tag ${rows.length?'bad':'ok'}">${rows.length} 筆待追蹤</span></div>
+    <div class="calendar-shell"><div class="calendar-head"><div class="calendar-month">${monthName}</div><div class="calendar-nav"><button class="btn" onclick="shiftFollowupMonth(-1)">‹</button><button class="btn" onclick="followupCalendarCursor=new Date();render()">今天</button><button class="btn" onclick="shiftFollowupMonth(1)">›</button></div></div>
+    ${overdue.length && month === today.getMonth() && year === today.getFullYear() ? `<div class="calendar-overdue">逾期 ${overdue.length} 筆待追蹤，請優先處理。</div><div class="calendar-overdue-list">${overdue.map(row => `<button class="calendar-overdue-item" onclick="openFollowupDay('${row.followupDate}')">${_esc(row.order.name || row.order.id)} · ${_esc(row.followupDate)}</button>`).join('')}</div>` : ''}<div class="calendar-grid">${weekdays.map(day => `<div class="calendar-weekday">${day}</div>`).join('')}${cells.join('')}</div></div>`;
+}
+function paymentReviewPage(){
+  const rows = paymentPendingRows().filter(r => ['pending verification','待帳務確認'].includes(String(r.payStatus || r.pay || '').trim().toLowerCase()));
+  const history = CORE_CRM.map((r,i) => ({...r,_index:i})).filter(r => r.locked || ['paid','已付款','confirmed','已確認'].includes(String(r.payStatus || r.pay || '').trim().toLowerCase())).sort((a,b) => String(b.verAt || b.subAt || b.inqDate || '').localeCompare(String(a.verAt || a.subAt || a.inqDate || '')));
+  const pendingMarkup = `<section class="payment-review-card"><div class="payment-review-head"><div><h2>付款審核</h2><p>財務確認後五碼與入帳狀態。</p></div><span class="tag ${rows.length?'bad':'ok'}">${rows.length} 筆</span></div>${rows.length ? `<div class="core3-wrap"><div class="table-wrap"><table class="table l1-table"><thead><tr><th>進件日期</th><th>詢問編號</th><th>客戶</th><th>付款狀態</th><th>帳戶後五碼</th><th>操作</th></tr></thead><tbody>${rows.map(r => `<tr>
+      <td class="cell-date">${_esc(_dateOnly(r.inqDate))}</td>
+      <td class="cell-id">${_esc(_inquiryLabel(r))}</td>
+      <td><div class="cell-name">${_esc(r.name)}</div><div class="cell-sub">${_esc(r.partnerCode || '—')}</div></td>
+      <td><span class="tag warn">${_esc(r.payStatus || r.pay)}</span></td>
+      <td><span class="payment-review-readonly">${_esc(r.last5 || '—')}</span></td>
+      <td><div class="row-actions"><button class="btn success" onclick="confirmPayment(${r._index})">確認付款</button><button class="btn" onclick="core3Open('crm',${r._index})">查看</button></div></td>
+    </tr>`).join('')}</tbody></table></div></div>` : '<div class="followup-empty">目前沒有待審核付款。</div>'}</section>`;
+  const historyMarkup = `<section class="payment-history-card"><div class="payment-history-head"><div><h2>付款紀錄</h2><p>已確認入帳的付款歷史，點擊查看完整案件紀錄。</p></div><span class="tag ok">${history.length} 筆</span></div>${history.length ? `<div class="table-wrap"><table class="table l1-table"><thead><tr><th>確認日期</th><th>詢問編號</th><th>客戶</th><th>付款方式</th><th>後五碼</th><th>付款狀態</th></tr></thead><tbody>${history.map(r => `<tr onclick="core3Open('crm',${r._index})"><td class="cell-date">${_esc(_dateOnly(r.verAt || r.subAt || r.inqDate))}</td><td class="cell-id">${_esc(_inquiryLabel(r))}</td><td><div class="cell-name">${_esc(r.name)}</div><div class="cell-sub">${_esc(r.partnerCode || '—')}</div></td><td>${_esc(r.method || '—')}</td><td><span class="payment-review-readonly">${_esc(r.last5 || '—')}</span></td><td><span class="tag ok">已付款</span></td></tr>`).join('')}</tbody></table></div>` : '<div class="payment-history-empty">目前沒有付款紀錄。</div>'}</section>`;
+  return `<div class="page-title"><div><h1>付款審核</h1><p style="color:#c3bce0">財務查看後五碼並核對入帳，確認後付款狀態變更為已付款。</p></div><span class="tag ${rows.length?'bad':'ok'}">${rows.length} 筆待審核</span></div>${pendingMarkup}${historyMarkup}`;
+}
 const _fi = (k,v,note,chip) => `<div class="fitem">
   <div class="fk">${_esc(k)}${chip?`<span class="chip ${chip[1]||'auto'}">${_esc(chip[0])}</span>`:""}</div>
   <div class="fv ${v?'':'none'}">${v?_esc(v):"—"}</div>
@@ -866,32 +1326,112 @@ function core3Flow(){
   </div>`;
 }
 
+function crmQueueRows(kind){
+  return CORE_CRM.map((r,i) => ({...r, _index:i})).filter(r => {
+    const status = String(r.status || '').trim().toLowerCase();
+    const isNew = ['new','新進件'].includes(status);
+    const isClosed = ['converted','已轉單','closed lost','未成交','completed','已完成'].includes(status);
+    return kind === 'new' ? isNew : !isNew && !isClosed;
+  }).sort((a,b) => String(b.inqDate || '').localeCompare(String(a.inqDate || '')));
+}
+
+function crmQueueCard(title, subtitle, rows, tone){
+  const shown = rows.slice(0,5);
+  return `<section class="crm-queue-card ${tone}">
+    <div class="crm-queue-head"><div><div class="crm-queue-title">${_esc(title)}</div><div class="crm-queue-sub">${_esc(subtitle)}</div></div>
+      <div class="crm-queue-count">${rows.length ? `顯示 ${shown.length} / ${rows.length}` : '0 筆'}</div></div>
+    <div class="crm-queue-list">${shown.length ? shown.map(r => `<div class="crm-queue-row" onclick="core3Open('crm',${r._index})">
+      <div><div class="crm-queue-name">${_esc(r.name)}</div><div class="crm-queue-id">${_esc(_inquiryLabel(r))}</div></div>
+      <div class="crm-queue-meta"><span class="tag ${r.statusTag}">${_esc(r.status)}</span><span class="tag ${r.priTag}">${_esc(r.pri)}</span></div>
+    </div>`).join('') : '<div class="crm-queue-empty">目前沒有案件</div>'}</div>
+  </section>`;
+}
+
+function crmStatusGroupKey(status){
+  const value = String(status || '').trim().toLowerCase();
+  if(['new','新進件'].includes(value)) return 'new';
+  if(['pending verification','待帳務確認','帳務確認'].includes(value)) return 'payment';
+  if(['waiting customer','等客戶回覆','awaiting customer'].includes(value)) return 'waiting';
+  if(['converted','已轉單','成交','won'].includes(value)) return 'converted';
+  if(['closed lost','未成交','lost'].includes(value)) return 'lost';
+  return value || 'other';
+}
+function crmStatusGroupTitle(key, fallback){
+  return ({new:'新進來的詢問單',payment:'待帳務確認',waiting:'等客戶回覆',converted:'已轉單',lost:'未成交'}[key] || fallback || '其他狀態');
+}
+function crmStatusCards(){
+  const groups = new Map();
+  CORE_CRM.forEach((r,i) => {
+    const key = crmStatusGroupKey(r.status);
+    if(!groups.has(key)) groups.set(key, {key,title:crmStatusGroupTitle(key,r.status),rows:[]});
+    groups.get(key).rows.push({...r,_index:i});
+  });
+  const order = ['new','payment','waiting','converted','lost'];
+  const sorted = [...groups.values()].sort((a,b) => {
+    const ai = order.indexOf(a.key), bi = order.indexOf(b.key);
+    return (ai < 0 ? 99 : ai) - (bi < 0 ? 99 : bi);
+  });
+  return sorted.map(group => `<section class="crm-queue-card ${group.key}">
+    <div class="crm-queue-head"><div><div class="crm-queue-title">${_esc(group.title)}${group.key === 'new' ? '<span class="crm-new-alert">● 新進件</span>' : ''}</div><div class="crm-queue-sub">同一狀態案件集中管理</div></div>
+      <div class="crm-queue-count">${group.rows.length} 筆</div></div>
+    <div class="crm-status-table-wrap"><table class="crm-status-table"><thead><tr>
+      <th>進件日期</th><th>詢問編號</th><th>客戶</th><th>詢問項目</th><th>負責人員</th><th>狀態</th><th>付款</th><th>優先</th><th>下次追蹤</th><th>負責客服</th>
+    </tr></thead><tbody>${group.rows.map(r => `<tr class="${group.key === 'new' ? 'crm-new-row' : ''}" onclick="core3Open('crm',${r._index})">
+      <td class="cell-date">${_esc(_fmt(r.inqDate))}</td>
+      <td class="cell-id">${_esc(_inquiryLabel(r))}</td>
+      <td><div class="cell-name">${_esc(r.name)}</div><div class="cell-sub">${_esc(r.partnerCode || '—')}</div></td>
+      <td>${_esc(r.service || '—')}</td>
+      <td>${_esc(r.cs || '—')}</td>
+      <td><span class="tag ${r.statusTag}">${_esc(r.status)}</span></td>
+      <td><span class="tag ${r.payTag}">${_esc(r.pay || r.payStatus || '—')}</span></td>
+      <td><span class="tag ${r.priTag}">${_esc(r.pri || '—')}</span></td>
+      <td class="cell-due ${r.nextCls || ''}">${_esc(_dateOnly(r.next))}</td>
+      <td>${_esc(r.cs || '—')}</td>
+    </tr>`).join('')}</tbody></table></div>
+  </section>`).join('');
+}
+function crmAllTable(){
+  return `<div class="core3-wrap"><div class="table-wrap"><table class="table l1-table"><thead><tr>
+    <th>進件日期</th><th>詢問編號</th><th>客戶</th><th>詢問項目</th><th>負責人員</th><th>狀態</th><th>付款</th><th>優先</th><th>下次追蹤</th><th>負責客服</th>
+  </tr></thead><tbody>${CORE_CRM.map((r,i)=>`<tr onclick="core3Open('crm',${i})">
+    <td class="cell-date">${_esc(_fmt(r.inqDate))}</td>
+    <td class="cell-id">${_esc(_inquiryLabel(r))}</td>
+    <td><div class="cell-name">${_esc(r.name)}</div><div class="cell-sub">${_esc(r.partnerCode || '—')}</div></td>
+    <td>${_esc(r.service || '—')}</td>
+    <td>${_esc(r.cs || '—')}</td>
+    <td><span class="tag ${r.statusTag}">${_esc(r.status)}</span></td>
+    <td><span class="tag ${r.payTag}">${_esc(r.pay || r.payStatus || '—')}</span></td>
+    <td><span class="tag ${r.priTag}">${_esc(r.pri || '—')}</span></td>
+    <td class="cell-due ${r.nextCls || ''}">${_esc(_dateOnly(r.next))}</td>
+    <td>${_esc(r.cs || '—')}</td></tr>`).join('')}</tbody></table></div></div>`;
+}
+
 /* ═══ 第一層列表 ═══ */
 function crmPage(){
   return `<div class="page-title"><div><h1>CRM</h1>
     <p style="color:#c3bce0">一筆 = 一次詢問。客服每天只需回答四件事：誰要追、追到哪、誰負責、什麼時候追。</p></div>
-    <button class="btn" onclick="toast('詢問由 TG Bot 自動進件')">＋ 手動建立詢問</button></div>
+    </div>
   ${core3Flow()}
-  <div class="core3-wrap"><div class="table-wrap"><table class="table l1-table"><thead><tr>
-    <th>進件日期</th><th>詢問編號</th><th>客戶</th><th>狀態</th><th>付款</th><th>優先</th><th>下次追蹤</th><th>負責客服</th>
-  </tr></thead><tbody>${CORE_CRM.map((r,i)=>`<tr onclick="core3Open('crm',${i})">
-    <td class="cell-date">${_fmt(r.inqDate)}</td>
-    <td class="cell-id">${_esc(r.id)}</td>
-    <td><div class="cell-name">${_esc(r.name)}</div><div class="cell-sub">${_esc(r.partnerCode)}</div></td>
-    <td><span class="tag ${r.statusTag}">${_esc(r.status)}</span></td>
-    <td><span class="tag ${r.payTag}">${_esc(r.pay)}</span></td>
-    <td><span class="tag ${r.priTag}">${_esc(r.pri)}</span></td>
-    <td class="cell-due ${r.nextCls}">${_esc(r.next)}</td>
-    <td>${_esc(r.cs)}</td></tr>`).join('')}</tbody></table></div></div>
-  <p style="margin-top:12px;font-size:12.5px;color:#a99cd0">點任一列展開第二層 · 六組資訊</p>`;
+  <div class="crm-queues">${crmStatusCards()}</div>
+  <p style="margin-top:12px;font-size:12.5px;color:#a99cd0">依狀態分組 · 點案件開啟詳細資料</p>`;
 }
 
+function orderCategoryCard(title, subtitle, rows){
+  return `<section class="order-category-card"><div class="order-category-head"><div><div class="order-category-title">${_esc(title)}</div><div class="order-category-sub">${_esc(subtitle)}</div></div><div class="order-category-count">${rows.length} 筆</div></div>${rows.length ? `<div class="order-category-table"><table class="table l1-table"><thead><tr><th>日期</th><th>訂單編號</th><th>客戶</th><th>製作狀態</th><th>素材</th><th>承諾交期</th><th>製作負責</th></tr></thead><tbody>${rows.map(({r,i}) => `<tr class="${r.isNew ? 'new-order-row' : ''}" onclick="core3Open('ord',${i})"><td class="cell-date">${_esc(_fmt(r.orderDate))}</td><td class="cell-id">${_esc(r.id)}</td><td><div class="cell-name">${_esc(r.name)}</div><div class="cell-sub">${_esc(r.service)}</div></td><td><span class="tag ${_esc(r.prodTag)}">${_esc(r.prod)}</span></td><td><span class="tag ${_esc(r.assetTag)}">${_esc(r.asset)}</span></td><td class="cell-due ${_esc(r.promisedCls || '')}">${_esc(r.promised)}</td><td>${_esc(r.producer)}</td></tr>`).join('')}</tbody></table></div>` : '<div class="order-category-empty">目前沒有新訂單</div>'}</section>`;
+}
+function orderCategoryCards(){
+  const rows = CORE_ORD.map((r,i) => ({r,i})).sort((a,b) => String(b.r.orderDate || '').localeCompare(String(a.r.orderDate || '')));
+  const newRows = rows.filter(({r}) => r.isNew || r.prod === '新訂單' || r.orderStatus === '新進件');
+  const activeRows = rows.filter(({r}) => !(r.isNew || r.prod === '新訂單' || r.orderStatus === '新進件'));
+  return orderCategoryCard('新訂單','付款確認後自動建立，等待安排製作',newRows) + orderCategoryCard('進行中','已分派製作人員，依狀態持續更新',activeRows);
+}
 function crmOrdersPage(){
+  const rows = CORE_ORD.map((r,i) => ({r,i})).sort((a,b) => String(b.r.orderDate || '').localeCompare(String(a.r.orderDate || '')));
   return `<div class="page-title"><div><h1>Orders</h1>
     <p style="color:#c3bce0">一筆 = 一次專案。付款欄位唯讀，從 CRM 帶入，不在這裡修改。</p></div></div>
-  <div class="core3-wrap"><div class="table-wrap"><table class="table l1-table"><thead><tr>
+  ${core3Flow()}${orderCategoryCards()}<div class="core3-wrap"><div class="table-wrap"><table class="table l1-table"><thead><tr>
     <th>日期</th><th>訂單編號</th><th>客戶</th><th>製作狀態</th><th>素材</th><th>承諾交期</th><th>製作負責</th>
-  </tr></thead><tbody>${CORE_ORD.map((r,i)=>`<tr onclick="core3Open('ord',${i})">
+  </tr></thead><tbody>${rows.map(({r,i})=>`<tr class="${r.isNew || r.prod === '新訂單' || r.orderStatus === '新進件' ? 'new-order-row' : ''}" onclick="core3Open('ord',${i})">
     <td class="cell-date">${_fmt(r.orderDate)}</td>
     <td class="cell-id">${_esc(r.id)}</td>
     <td><div class="cell-name">${_esc(r.name)}</div><div class="cell-sub">${_esc(r.service)}</div></td>
@@ -930,7 +1470,7 @@ function core3CrmCard(r){
   else if(r.payStatus === "待帳務確認") box = `<div class="infobox lock"><span class="ic">⏳</span><div><b>等待帳務確認</b> — 客服已填後五碼 ${_esc(r.last5)}，待帳務比對銀行入帳後鎖定。<br>核准人必須與填寫人（${_esc(r.subBy)}）不同，否則職責分離形同虛設。</div></div>`;
 
   return _gs(1,"詢問基本資料","",`<div class="fgrid">
-      ${_fi("詢問編號", r.id, null, ["自動"])}
+      ${_fi("詢問編號", _inquiryLabel(r), null, ["自動"])}
       ${_fi("進件時間", _fmt(r.inqDate), null, ["自動"])}
       ${_fi("客戶姓名", r.name)}
       ${_fi("服務類型", r.service)}
@@ -952,7 +1492,7 @@ function core3CrmCard(r){
       ${_fi("負責客服", r.cs)}
       ${_fi("目前狀態", r.status)}
       ${_fi("最近聯絡", _fmt(r.lastContact))}
-      ${_fi("下次追蹤", r.next === "—" ? null : _fmt(r.next))}
+      ${_fi("下次追蹤", r.next === "—" ? null : _dateOnly(r.next))}
       ${_fi("首次回應時間", r.firstResp, "最能預測成交率的單一指標", ["新增","new"])}
       ${_fi("已聯絡次數", `${r.touch} 次`, "分辨「還沒追」和「追五次沒回」", ["新增","new"])}
       ${_fi("卡在現狀態", `${r.daysIn} 天`, "撈爛尾案件", ["新增","new"])}
@@ -988,6 +1528,29 @@ function core3CrmCard(r){
     </div>`);
 }
 
+function orderProcessDate(raw, offset=0){
+  const value = String(raw || '').slice(0,10);
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(value)) return '待安排';
+  const date = new Date(`${value}T12:00:00`);
+  date.setDate(date.getDate() + offset);
+  return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
+}
+function orderProcessTimeline(r){
+  const production = String(r.prod || '').trim();
+  const paid = ['已付款','已確認','paid','confirmed'].includes(String(r.payStatus || '').trim().toLowerCase());
+  const assigned = r.producer && r.producer !== '待分派';
+  const finished = ['已完成','完成','closed','completed'].includes(String(r.orderStatus || '').trim().toLowerCase()) || Boolean(r.completion || r.deliveryDate);
+  const stage = production === '新訂單' ? 'schedule' : production === '等待素材' ? 'materials' : production === '生成中' ? 'production' : production === '審核中' ? 'review' : finished ? 'closed' : 'production';
+  const steps = [
+    {key:'payment', name:'付款確認', person:r.verBy || '財務', date:r.verAt ? _dateOnly(r.verAt) : _dateOnly(r.orderDate), state:paid?'done':'current', info:paid?'已核對入帳':'等待財務確認'},
+    {key:'schedule', name:'安排生成', person:r.producer || '待分派', date:r.scheduleDate ? _dateOnly(r.scheduleDate) : orderProcessDate(r.orderDate,1), state:assigned && stage !== 'schedule' ? 'done' : stage === 'schedule' ? 'current' : 'pending', info:assigned ? '已安排製作人員' : '等待分派人員'},
+    {key:'materials', name:'素材確認', person:r.producer || '製作人員', date:r.materialDate ? _dateOnly(r.materialDate) : orderProcessDate(r.orderDate,1), state:['materials','schedule'].includes(stage) ? (stage === 'materials' ? 'current' : 'pending') : 'done', info:r.asset || '待確認素材'},
+    {key:'production', name:'製作生成', person:r.producer || '待分派', date:r.productionDate ? _dateOnly(r.productionDate) : orderProcessDate(r.orderDate,2), state:stage === 'production' ? 'current' : ['review','closed'].includes(stage) ? 'done' : 'pending', info:production || '尚未開始'},
+    {key:'review', name:'審核與修改', person:r.producer || '製作人員', date:r.reviewDate ? _dateOnly(r.reviewDate) : _dateOnly(r.promisedDate), state:stage === 'review' ? 'current' : stage === 'closed' ? 'done' : 'pending', info:stage === 'review' ? '目前處理中' : '等待成品進入審核'},
+    {key:'closed', name:'交付結案', person:r.producer || '製作人員', date:r.deliveryDate || r.completion ? _dateOnly(r.deliveryDate || r.completion) : _dateOnly(r.promisedDate), state:stage === 'closed' ? 'done' : 'pending', info:stage === 'closed' ? '訂單已完成' : `承諾交期 ${_dateOnly(r.promisedDate)}`}
+  ];
+  return `<section class="order-process"><div class="order-process-title"><span>製作流程時程</span><span class="order-process-sub">付款後依狀態往後推進</span></div><div class="order-process-list">${steps.map(step => `<div class="order-process-item ${step.state}"><span class="order-process-dot"></span><div><div class="order-process-name">${_esc(step.name)}</div><div class="order-process-info">${_esc(step.info)} · ${_esc(step.person)}</div></div><span class="order-process-date">${_esc(step.date)}</span></div>`).join('')}</div></section>`;
+}
 function core3OrdCard(r){
   const prev = r.prevOrders.length
     ? `<table class="htable"><thead><tr><th>訂單</th><th>服務</th><th>金額</th><th>狀態</th></tr></thead><tbody>
@@ -995,7 +1558,7 @@ function core3OrdCard(r){
     : `<div class="fn" style="margin-top:10px">首次下單，無歷史訂單。</div>`;
   const late = r.daysLate ? `<div class="infobox bad"><span class="ic">⚠</span><div>已逾承諾交期 ${_esc(r.daysLate)}，且免費修改次數已用滿（${r.rev}/${r.revLimit}）。再改要加收或自行吸收成本。</div></div>` : "";
 
-  return _gs(1,"訂單來源","唯讀 · 由 CRM 帶入",`<div class="fgrid">
+  return orderProcessTimeline(r) + _gs(1,"訂單來源","唯讀 · 由 CRM 帶入",`<div class="fgrid">
       ${_fi("訂單編號", r.id, null, ["自動"])}
       ${_fi("成單時間", _fmt(r.orderDate), "付款鎖定後自動建立", ["自動"])}
       ${_fi("來源詢問", r.crm, null, ["連結"])}
@@ -1102,8 +1665,9 @@ function core3Open(kind, i){
   let kindTxt, color, title, meta, body;
   if(kind === "crm"){
     const r = CORE_CRM[i];
+    if(['new','新進件'].includes(String(r.status || '').trim().toLowerCase())) markInquiryRead(i);
     kindTxt = "CRM · 詢問案件"; color = "#c6b8ff";
-    title = `${r.name}　${r.id}`;
+    title = `${r.name}　${_inquiryLabel(r)}`;
     meta = `<span class="tag ${r.statusTag}">${_esc(r.status)}</span><span class="tag ${r.payTag}">${_esc(r.pay)}</span><span class="tag mute">${_esc(r.partnerCode)}</span>`;
     body = core3CrmCard(r);
   } else if(kind === "ord"){
@@ -1156,9 +1720,10 @@ document.addEventListener('keydown', e => { if(e.key === 'Escape') core3Close();
   adminShell = function(r){
     const html = _shell(r);
     const nav = `<div class="column-map" style="padding:18px 14px 8px">核心三表</div>`
-      + sideLink('admin-crm','CRM 詢問',r)
+      + crmNotifySideLink(r)
       + sideLink('admin-crm-orders','Orders 訂單',r)
-      + sideLink('admin-crm-partners','Partners 經銷商',r);
+      + sideLink('admin-crm-partners','Partners 經銷商',r)
+      + followupSideLink(r);
     return html.replace('<div class="column-map" style="padding:18px 14px 8px">Airtable Data</div>',
                         nav + '<div class="column-map" style="padding:18px 14px 8px">Airtable Data</div>');
   };
@@ -1167,6 +1732,8 @@ document.addEventListener('keydown', e => { if(e.key === 'Escape') core3Close();
     if(r === 'admin-crm') return crmPage();
     if(r === 'admin-crm-orders') return crmOrdersPage();
     if(r === 'admin-crm-partners') return crmPartnersPage();
+    if(r === 'admin-payments') return paymentReviewPage();
+    if(r === 'admin-followup-calendar') return followupCalendarPage();
     return _page(r);
   };
   if(typeof render === 'function' && location.hash.startsWith('#admin')) render();
@@ -1191,10 +1758,10 @@ function _airtableFieldMap(rows, kind){
   // 把 API 欄位（crm_id / inqDate / ...）對到 mock 抽屜的 r.* 欄位
   if(kind === 'crm'){
     return rows.map(r => ({
-      id: r.crm_id || r.id,
-      name: r.name, status: r.status, statusTag: r.status,
-      pay: r.payStatus || '—', payTag: r.payStatus || '—',
-      pri: r.pri || '—', priTag: r.pri || '—',
+      id: r.crm_id || r.id, recordId: r.id,
+      name: r.name, status: r.status, statusTag: _tagClass('status', r.status),
+      pay: r.payStatus || '—', payTag: _tagClass('payment', r.payStatus),
+      pri: r.pri || '—', priTag: _tagClass('priority', r.pri),
       next: r.next || '', nextCls: '',
       cs: r.cs || '',
       // 抽屜完整欄位
