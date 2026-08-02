@@ -856,17 +856,11 @@ function crmPage(){
     <p style="color:#c3bce0">一筆 = 一次詢問。客服每天只需回答四件事：誰要追、追到哪、誰負責、什麼時候追。</p></div>
     <button class="btn" onclick="toast('詢問由 TG Bot 自動進件')">＋ 手動建立詢問</button></div>
   ${core3Flow()}
-  <div class="core3-wrap"><div class="table-wrap"><table class="table l1-table"><thead><tr>
+  <div class="core3-wrap"><div class="table-wrap"><table class="table l1-table" id="crm-tbody-table"><thead><tr>
     <th>詢問編號</th><th>客戶</th><th>狀態</th><th>付款</th><th>優先</th><th>下次追蹤</th><th>負責客服</th>
-  </tr></thead><tbody>${CORE_CRM.map((r,i)=>`<tr onclick="core3Open('crm',${i})">
-    <td class="cell-id">${_esc(r.id)}</td>
-    <td><div class="cell-name">${_esc(r.name)}</div><div class="cell-sub">${_esc(r.partnerCode)}</div></td>
-    <td><span class="tag ${r.statusTag}">${_esc(r.status)}</span></td>
-    <td><span class="tag ${r.payTag}">${_esc(r.pay)}</span></td>
-    <td><span class="tag ${r.priTag}">${_esc(r.pri)}</span></td>
-    <td class="cell-due ${r.nextCls}">${_esc(r.next)}</td>
-    <td>${_esc(r.cs)}</td></tr>`).join('')}</tbody></table></div></div>
-  <p style="margin-top:12px;font-size:12.5px;color:#a99cd0">點任一列展開第二層 · 六組資訊</p>`;
+  </tr></thead><tbody id="crm-tbody"><tr><td colspan="7" class="muted">從 Airtable 載入中…</td></tr></tbody></table></div></div>
+  <p style="margin-top:12px;font-size:12.5px;color:#a99cd0">點任一列展開第二層 · 六組資訊</p>
+  <script>crmLoadTable();</script>`;
 }
 
 function crmOrdersPage(){
@@ -874,14 +868,9 @@ function crmOrdersPage(){
     <p style="color:#c3bce0">一筆 = 一次專案。付款欄位唯讀，從 CRM 帶入，不在這裡修改。</p></div></div>
   <div class="core3-wrap"><div class="table-wrap"><table class="table l1-table"><thead><tr>
     <th>訂單編號</th><th>客戶</th><th>製作狀態</th><th>素材</th><th>承諾交期</th><th>製作負責</th>
-  </tr></thead><tbody>${CORE_ORD.map((r,i)=>`<tr onclick="core3Open('ord',${i})">
-    <td class="cell-id">${_esc(r.id)}</td>
-    <td><div class="cell-name">${_esc(r.name)}</div><div class="cell-sub">${_esc(r.service)}</div></td>
-    <td><span class="tag ${r.prodTag}">${_esc(r.prod)}</span></td>
-    <td><span class="tag ${r.assetTag}">${_esc(r.asset)}</span></td>
-    <td class="cell-due ${r.promisedCls}">${_esc(r.promised)}</td>
-    <td>${_esc(r.producer)}</td></tr>`).join('')}</tbody></table></div></div>
-  <p style="margin-top:12px;font-size:12.5px;color:#a99cd0">點任一列展開第二層 · 六組資訊</p>`;
+  </tr></thead><tbody id="ord-tbody"><tr><td colspan="6" class="muted">從 Airtable 載入中…</td></tr></tbody></table></div></div>
+  <p style="margin-top:12px;font-size:12.5px;color:#a99cd0">點任一列展開第二層 · 六組資訊</p>
+  <script>ordLoadTable();</script>`;
 }
 
 function crmPartnersPage(){
@@ -889,18 +878,13 @@ function crmPartnersPage(){
     <p style="color:#c3bce0">一筆 = 一個經銷商。額度剩多少、有沒有漏單、還有多少在漏斗裡沒轉換。</p></div></div>
   <div class="core3-wrap"><div class="table-wrap"><table class="table l1-table"><thead><tr>
     <th>經銷商</th><th>剩餘額度</th><th>已使用</th><th>待轉換</th><th>同步狀態</th><th>最近同步</th>
-  </tr></thead><tbody>${CORE_PTN.map((r,i)=>`<tr onclick="core3Open('ptn',${i})">
-    <td><div class="cell-name">${_esc(r.name)}</div><div class="cell-sub">${_esc(r.code)}</div></td>
-    <td><span class="tag ${r.remain<=2?'bad':'ok'}">${r.remain} / ${r.limit}</span></td>
-    <td>${r.used}<div class="mini-bar"><i class="${r.pct>=100?'hot':''}" style="width:${r.pct}%"></i></div></td>
-    <td>${r.pending}</td>
-    <td><span class="tag ${r.syncTag}">${_esc(r.sync)}</span></td>
-    <td class="cell-due">${_esc(r.lastSync)}</td></tr>`).join('')}</tbody></table></div></div>
+  </tr></thead><tbody id="ptn-tbody"><tr><td colspan="6" class="muted">從 Airtable 載入中…</td></tr></tbody></table></div></div>
   <div class="openq"><h4>三個還沒定的問題（會影響欄位邏輯）</h4><ul style="margin:0;padding-left:18px">
     <li><b>方案週期未定</b> — 10 筆是總量制還是每月重置？這會改變剩餘額度、續約提醒、方案狀態的全部算法。</li>
     <li><b>缺單偵測目前無效</b> — 若「送出數」和「收到數」都來自官方 CRM 表，永遠對得起來。要抓漏單，Partner 端送出時必須先留一筆 log。PTN-002 的異常是手動塞的假資料。</li>
     <li><b>客戶終身價值沒有錨點</b> — CRM 和 Order 都是「一次事件」，沒有代表「一個人」的記錄，統計加不起來。建議加一張薄的 Customers 表（姓名／TG ID／Partner／訂單連結／累計次數／終身價值）。</li>
-  </ul></div>`;
+  </ul></div>
+  <script>ptnLoadTable();</script>`;
 }
 
 /* ═══ 第二層抽屜 ═══ */
@@ -1155,6 +1139,142 @@ document.addEventListener('keydown', e => { if(e.key === 'Escape') core3Close();
   };
   if(typeof render === 'function' && location.hash.startsWith('#admin')) render();
 })();
+
+/* ═══════════════════════════════════════════════════
+   動態載入三表資料 — 從 Airtable (bot_crm.py Flask API) 拉
+   寫進既有 CORE_CRM / CORE_ORD / CORE_PTN 後再 render
+   ═══════════════════════════════════════════════════ */
+const STAFF_API2 = "http://127.0.0.1:8765";
+
+function _statusTag(s){
+  if(!s) return 'mute';
+  s = String(s).toLowerCase();
+  if(s.includes('awaiting')||s.includes('pending')||s.includes('待')) return 'warn';
+  if(s.includes('confirmed')||s.includes('closed won')||s.includes('converted')) return 'ok';
+  if(s.includes('lost')||s.includes('failed')||s.includes('stuck')) return 'bad';
+  if(s.includes('in progress')||s.includes('review')||s.includes('generating')||s.includes('討論')) return 'blue';
+  return 'mute';
+}
+function _payTag(s){
+  if(!s) return 'mute';
+  s = String(s).toLowerCase();
+  if(s.includes('awaiting')) return 'warn';
+  if(s.includes('pending')) return 'lock';
+  if(s.includes('confirmed')) return 'ok';
+  if(s.includes('failed')||s.includes('refunded')) return 'bad';
+  return 'mute';
+}
+function _priTag(s){
+  if(!s) return 'mute';
+  s = String(s).toLowerCase();
+  if(s.includes('high')) return 'bad';
+  if(s.includes('normal')) return 'mute';
+  if(s.includes('low')) return 'mute';
+  return 'mute';
+}
+function _prodTag(s){
+  if(!s) return 'mute';
+  s = String(s).toLowerCase();
+  if(s.includes('completed')) return 'ok';
+  if(s.includes('generating')||s.includes('review')||s.includes('revision')) return 'blue';
+  if(s.includes('waiting')||s.includes('briefing')) return 'warn';
+  if(s.includes('ready')) return 'green';
+  return 'mute';
+}
+function _assetTag(s){
+  if(!s) return 'mute';
+  s = String(s).toLowerCase();
+  if(s.includes('complete')||s.includes('齊全')) return 'ok';
+  if(s.includes('partial')||s.includes('不全')) return 'warn';
+  if(s.includes('missing')||s.includes('尚未')) return 'bad';
+  return 'mute';
+}
+function _syncTag(s){
+  if(!s) return 'mute';
+  s = String(s).toLowerCase();
+  if(s.includes('正常')||s.includes('ok')||s.includes('synced')) return 'ok';
+  if(s.includes('缺')||s.includes('bad')||s.includes('error')) return 'bad';
+  if(s.includes('待')||s.includes('warn')) return 'warn';
+  return 'mute';
+}
+
+async function crmLoadTable(){
+  try {
+    const d = await fetch(STAFF_API2 + '/crm/full').then(r=>r.json());
+    if(d.ok && d.records){
+      // 寫回 CORE_CRM（後續抽屜用）
+      CORE_CRM.length = 0;
+      d.records.forEach(r => CORE_CRM.push(r));
+      const tb = document.getElementById('crm-tbody');
+      if(tb && CORE_CRM.length){
+        tb.innerHTML = CORE_CRM.map((r,i) => `<tr onclick="core3Open('crm',${i})">
+          <td class="cell-id">${_esc(r.crm_id)}</td>
+          <td><div class="cell-name">${_esc(r.name)}</div><div class="cell-sub">${_esc(r.partnerCode||'')}</div></td>
+          <td><span class="tag ${_statusTag(r.status)}">${_esc(r.status)}</span></td>
+          <td><span class="tag ${_payTag(r.payStatus)}">${_esc(r.payStatus||'—')}</span></td>
+          <td><span class="tag ${_priTag(r.pri)}">${_esc(r.pri)}</span></td>
+          <td class="cell-due">${_esc(r.next||'')}</td>
+          <td>${_esc(r.cs||'')}</td>
+        </tr>`).join('');
+      } else if (tb) {
+        tb.innerHTML = '<tr><td colspan="7" class="muted">無 CRM 紀錄</td></tr>';
+      }
+    }
+  } catch(e) {
+    const tb = document.getElementById('crm-tbody');
+    if(tb) tb.innerHTML = '<tr><td colspan="7" class="muted" style="color:#ffb0c6">⚠️ 連不到 Bot API（需先啟動 bot_crm.py）</td></tr>';
+  }
+}
+async function ordLoadTable(){
+  try {
+    const d = await fetch(STAFF_API2 + '/orders/full').then(r=>r.json());
+    if(d.ok && d.records){
+      CORE_ORD.length = 0;
+      d.records.forEach(r => CORE_ORD.push(r));
+      const tb = document.getElementById('ord-tbody');
+      if(tb && CORE_ORD.length){
+        tb.innerHTML = CORE_ORD.map((r,i) => `<tr onclick="core3Open('ord',${i})">
+          <td class="cell-id">${_esc(r.orderId)}</td>
+          <td><div class="cell-name">${_esc(r.name)}</div><div class="cell-sub">${_esc(r.service||'')}</div></td>
+          <td><span class="tag ${_prodTag(r.orderStatus)}">${_esc(r.orderStatus||'')}</span></td>
+          <td><span class="tag ${_assetTag(r.asset)}">${_esc(r.asset||'')}</span></td>
+          <td class="cell-due">${_esc(r.promisedDate||'')}</td>
+          <td>${_esc(r.producer||'')}</td>
+        </tr>`).join('');
+      } else if (tb) {
+        tb.innerHTML = '<tr><td colspan="6" class="muted">無 Order 紀錄</td></tr>';
+      }
+    }
+  } catch(e) {
+    const tb = document.getElementById('ord-tbody');
+    if(tb) tb.innerHTML = '<tr><td colspan="6" class="muted" style="color:#ffb0c6">⚠️ 連不到 Bot API</td></tr>';
+  }
+}
+async function ptnLoadTable(){
+  try {
+    const d = await fetch(STAFF_API2 + '/partners/full').then(r=>r.json());
+    if(d.ok && d.records){
+      CORE_PTN.length = 0;
+      d.records.forEach(r => CORE_PTN.push(r));
+      const tb = document.getElementById('ptn-tbody');
+      if(tb && CORE_PTN.length){
+        tb.innerHTML = CORE_PTN.map((r,i) => `<tr onclick="core3Open('ptn',${i})">
+          <td><div class="cell-name">${_esc(r.name)}</div><div class="cell-sub">${_esc(r.code||'')}</div></td>
+          <td><span class="tag ${(r.remain||0)<=2?'bad':'ok'}">${r.remain||0} / ${r.limit||0}</span></td>
+          <td>${r.used||0}<div class="mini-bar"><i class="${r.used>=r.limit?'hot':''}" style="width:${r.limit?Math.min(100,(r.used/r.limit*100)):0}%"></i></div></td>
+          <td>${r.submitted||0}</td>
+          <td><span class="tag ${_syncTag(r.sync)}">${_esc(r.sync||'')}</span></td>
+          <td class="cell-due">${_esc(r.lastSync||'')}</td>
+        </tr>`).join('');
+      } else if (tb) {
+        tb.innerHTML = '<tr><td colspan="6" class="muted">無 Partner 紀錄</td></tr>';
+      }
+    }
+  } catch(e) {
+    const tb = document.getElementById('ptn-tbody');
+    if(tb) tb.innerHTML = '<tr><td colspan="6" class="muted" style="color:#ffb0c6">⚠️ 連不到 Bot API</td></tr>';
+  }
+}
 
 /* ═══════════════════════════════════════════════════
    Staff / TG 觸發器 — 後台人工核帳/建單/交付
