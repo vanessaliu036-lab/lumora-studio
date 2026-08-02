@@ -641,13 +641,23 @@ html{background:#080817}
 .order-queue-name{font-weight:750;color:#fff}.order-queue-id{margin-top:4px;color:#b2a5d4;font-family:ui-monospace,monospace;font-size:11px}.order-queue-meta{display:flex;gap:7px;align-items:center;justify-content:flex-end;flex-wrap:wrap}.order-queue-empty{padding:20px;color:#a99cd0;font-size:13px}
 @media(max-width:760px){.order-queues{grid-template-columns:1fr}}
 .order-category-card{margin:18px 0 24px;overflow:hidden;border:1px solid rgba(255,63,120,.78);border-radius:20px;background:#100d2a;box-shadow:0 0 0 1px rgba(255,63,120,.16),0 14px 42px rgba(255,35,101,.14)}
-.order-category-card.process{border-color:rgba(151,126,255,.38);box-shadow:0 12px 30px rgba(7,5,22,.28)}
+.order-category-card.process{border-color:rgba(86,157,255,.58);box-shadow:0 12px 30px rgba(25,92,180,.2)}
 .order-category-card.assets{border-color:rgba(255,190,86,.5)}
 .order-category-card.review{border-color:rgba(129,243,211,.4)}
+.order-category-card.closed{border-color:rgba(92,214,190,.5);box-shadow:0 12px 30px rgba(12,76,69,.2)}
 .order-category-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;padding:20px 22px;background:linear-gradient(110deg,rgba(106,20,55,.95),rgba(45,17,61,.96));border-bottom:1px solid rgba(255,73,126,.5)}
-.order-category-card.process .order-category-head{background:linear-gradient(110deg,rgba(47,34,105,.95),rgba(31,24,68,.96));border-bottom-color:rgba(151,126,255,.35)}
+.order-category-card.process .order-category-head{background:linear-gradient(110deg,rgba(25,61,120,.95),rgba(24,35,78,.96));border-bottom-color:rgba(86,157,255,.4)}
 .order-category-card.assets .order-category-head{background:linear-gradient(110deg,rgba(74,49,18,.95),rgba(39,28,59,.96));border-bottom-color:rgba(255,190,86,.35)}
 .order-category-card.review .order-category-head{background:linear-gradient(110deg,rgba(18,66,63,.86),rgba(30,24,68,.96));border-bottom-color:rgba(129,243,211,.3)}
+.order-category-card.closed .order-category-head{background:linear-gradient(110deg,rgba(15,91,79,.9),rgba(24,49,68,.96));border-bottom-color:rgba(92,214,190,.35)}
+.order-category-card.process .order-category-table table{background:rgba(38,91,170,.16)}
+.order-category-card.process .order-category-table th{background:rgba(24,58,119,.82)!important}
+.order-category-card.assets .order-category-table table{background:rgba(160,103,24,.16)}
+.order-category-card.assets .order-category-table th{background:rgba(84,54,17,.82)!important}
+.order-category-card.review .order-category-table table{background:rgba(27,118,101,.15)}
+.order-category-card.review .order-category-table th{background:rgba(18,68,63,.82)!important}
+.order-category-card.closed .order-category-table table{background:rgba(24,105,93,.15)}
+.order-category-card.closed .order-category-table th{background:rgba(15,70,64,.82)!important}
 .order-category-title{font-size:21px;font-weight:850;color:#fff}.order-category-sub{margin-top:6px;color:#ffc4d5;font-size:13px}.order-category-count{color:#fff;font-weight:800;white-space:nowrap}.order-category-table{overflow:auto}.order-category-table table{min-width:900px;background:rgba(255,50,112,.12)}.order-category-table th{background:rgba(74,15,49,.82)!important}.order-category-table tbody tr{cursor:pointer}.order-category-table tbody tr:hover td{background:rgba(255,63,120,.22)!important}.order-category-empty{padding:24px;color:#ffc4d5}
 .crm-queue-card.payment .crm-status-table{background:rgba(54,35,17,.34)}
 .crm-queue-card.waiting .crm-status-table{background:rgba(28,22,70,.34)}
@@ -690,6 +700,8 @@ html{background:#080817}
 .payment-list-entry .btn{padding:8px 11px;font-size:12px}
 .payment-review-input{width:105px;padding:9px 10px;border-radius:10px;background:rgba(255,255,255,.06);border:1px solid var(--line);color:#fff}
 .payment-review-readonly{display:inline-flex;align-items:center;min-width:105px;min-height:42px;padding:0 12px;border-radius:10px;background:rgba(255,255,255,.06);border:1px solid var(--line);color:#fff;font-weight:700;letter-spacing:.08em}
+.payment-confirm-btn{background:rgba(255,255,255,.08)!important;border-color:rgba(255,255,255,.24)!important;color:#f5f0ff!important}
+.payment-confirm-btn:hover{background:rgba(255,255,255,.16)!important;border-color:rgba(255,255,255,.48)!important;color:#fff!important}
 .payment-review-card,.payment-history-card{margin:18px 0 24px;overflow:hidden;border:1px solid rgba(255,190,86,.55);border-radius:20px;background:#100d2a}.payment-review-head,.payment-history-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;padding:20px 22px;background:linear-gradient(110deg,rgba(70,46,17,.92),rgba(35,24,55,.96));border-bottom:1px solid rgba(255,190,86,.35)}.payment-review-head h2,.payment-history-head h2{margin:0;color:#fff;font-size:21px}.payment-review-head p,.payment-history-head p{margin:7px 0 0;color:#d7c899;font-size:13px}.payment-history-card{border-color:rgba(129,243,211,.42)}.payment-history-head{background:linear-gradient(110deg,rgba(18,66,63,.7),rgba(30,24,68,.95));border-bottom-color:rgba(129,243,211,.3)}.payment-history-head p{color:#b8d9d3}.payment-history-empty{padding:26px;color:#b8d9d3}
 .order-process{margin-bottom:18px;padding:18px;border:1px solid rgba(129,243,211,.2);border-radius:16px;background:linear-gradient(145deg,rgba(129,243,211,.08),rgba(195,153,255,.06))}
 .order-process-title{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px;color:#fff;font-size:16px;font-weight:800}
@@ -1063,6 +1075,14 @@ const _dateOnly = v => {
 const _inquiryLabel = r => {
   return String(r?.id ?? "");
 };
+const _paymentCaseLabel = r => {
+  const direct = String(r?.convOrder || r?.orderId || '').trim();
+  if(/^ord[-_]/i.test(direct)) return direct;
+  const linkedOrder = typeof CORE_ORD !== 'undefined'
+    ? CORE_ORD.find(order => String(order.crm || '') === String(r?.recordId || r?.id || ''))
+    : null;
+  return linkedOrder?.id || linkedOrder?.orderId || '尚未建立訂單';
+};
 const _tagClass = (kind, value) => {
   const v = String(value ?? "").trim().toLowerCase();
   if (!v || v === "—" || v === "-") return "mute";
@@ -1085,6 +1105,13 @@ const _tagClass = (kind, value) => {
     return "mute";
   }
   return "mute";
+};
+const _paymentStatusLabel = value => {
+  const status = String(value || '').trim().toLowerCase();
+  if(['pending verification','awaiting payment confirmation','待帳務確認'].includes(status)) return '待帳務確認';
+  if(['confirmed','paid','已確認','已付款'].includes(status)) return '已付款';
+  if(['awaiting payment','等待付款'].includes(status)) return '等待付款';
+  return value || '';
 };
 function paymentPendingRows(){
   if(typeof CORE_CRM === 'undefined') return [];
@@ -1367,15 +1394,17 @@ function paymentReviewPage(){
   if(airtableDataState !== 'ready') return airtableDataGate();
   const rows = paymentPendingRows().filter(r => ['pending verification','待帳務確認'].includes(String(r.payStatus || r.pay || '').trim().toLowerCase()));
   const history = CORE_CRM.map((r,i) => ({...r,_index:i})).filter(r => r.locked || ['paid','已付款','confirmed','已確認'].includes(String(r.payStatus || r.pay || '').trim().toLowerCase())).sort((a,b) => String(b.verAt || b.subAt || b.inqDate || '').localeCompare(String(a.verAt || a.subAt || a.inqDate || '')));
-  const pendingMarkup = `<section class="payment-review-card"><div class="payment-review-head"><div><h2>付款審核</h2><p>財務確認後五碼與入帳狀態。</p></div><span class="tag ${rows.length?'bad':'ok'}">${rows.length} 筆</span></div>${rows.length ? `<div class="core3-wrap"><div class="table-wrap"><table class="table l1-table"><thead><tr><th>進件日期</th><th>詢問編號</th><th>客戶</th><th>付款狀態</th><th>帳戶後五碼</th><th>操作</th></tr></thead><tbody>${rows.map(r => `<tr>
+  const pendingMarkup = `<section class="payment-review-card"><div class="payment-review-head"><div><h2>付款審核</h2><p>以 Order 編號對應付款；確認方案、金額與後五碼後才入帳。</p></div><span class="tag ${rows.length?'bad':'ok'}">${rows.length} 筆</span></div>${rows.length ? `<div class="core3-wrap"><div class="table-wrap"><table class="table l1-table"><thead><tr><th>進件日期</th><th>訂單編號</th><th>客戶</th><th>方案</th><th>金額</th><th>付款狀態</th><th>帳戶後五碼</th><th>操作</th></tr></thead><tbody>${rows.map(r => `<tr>
       <td class="cell-date">${_esc(_dateOnly(r.inqDate))}</td>
-      <td class="cell-id">${_esc(_inquiryLabel(r))}</td>
+      <td class="cell-id">${_esc(_paymentCaseLabel(r))}</td>
       <td><div class="cell-name">${_esc(r.name)}</div><div class="cell-sub">${_esc(r.partnerCode || '—')}</div></td>
+      <td>${_esc(r.service || '—')}</td>
+      <td class="payment-amount">${_esc(r.quoted || '—')}</td>
       <td><span class="tag warn">${_esc(r.payStatus || r.pay)}</span></td>
       <td><span class="payment-review-readonly">${_esc(r.last5 || '—')}</span></td>
-      <td><div class="row-actions"><button class="btn success" onclick="confirmPayment(${r._index})">確認付款</button><button class="btn" onclick="core3Open('crm',${r._index})">查看</button></div></td>
+      <td><div class="row-actions"><button class="btn payment-confirm-btn" onclick="confirmPayment(${r._index})">確認付款</button><button class="btn" onclick="core3Open('crm',${r._index})">查看</button></div></td>
     </tr>`).join('')}</tbody></table></div></div>` : '<div class="followup-empty">目前沒有待審核付款。</div>'}</section>`;
-  const historyMarkup = `<section class="payment-history-card"><div class="payment-history-head"><div><h2>付款紀錄</h2><p>已確認入帳的付款歷史，點擊查看完整案件紀錄。</p></div><span class="tag ok">${history.length} 筆</span></div>${history.length ? `<div class="table-wrap"><table class="table l1-table"><thead><tr><th>確認日期</th><th>詢問編號</th><th>客戶</th><th>付款方式</th><th>後五碼</th><th>付款狀態</th></tr></thead><tbody>${history.map(r => `<tr onclick="core3Open('crm',${r._index})"><td class="cell-date">${_esc(_dateOnly(r.verAt || r.subAt || r.inqDate))}</td><td class="cell-id">${_esc(_inquiryLabel(r))}</td><td><div class="cell-name">${_esc(r.name)}</div><div class="cell-sub">${_esc(r.partnerCode || '—')}</div></td><td>${_esc(r.method || '—')}</td><td><span class="payment-review-readonly">${_esc(r.last5 || '—')}</span></td><td><span class="tag ok">已付款</span></td></tr>`).join('')}</tbody></table></div>` : '<div class="payment-history-empty">目前沒有付款紀錄。</div>'}</section>`;
+  const historyMarkup = `<section class="payment-history-card"><div class="payment-history-head"><div><h2>付款紀錄</h2><p>確認付款後轉成 Order 編號，這裡保留付款歷史。</p></div><span class="tag ok">${history.length} 筆</span></div>${history.length ? `<div class="table-wrap"><table class="table l1-table"><thead><tr><th>確認日期</th><th>訂單編號</th><th>客戶</th><th>方案</th><th>金額</th><th>付款方式</th><th>後五碼</th><th>付款狀態</th></tr></thead><tbody>${history.map(r => `<tr onclick="core3Open('crm',${r._index})"><td class="cell-date">${_esc(_dateOnly(r.verAt || r.subAt || r.inqDate))}</td><td class="cell-id">${_esc(_paymentCaseLabel(r))}</td><td><div class="cell-name">${_esc(r.name)}</div><div class="cell-sub">${_esc(r.partnerCode || '—')}</div></td><td>${_esc(r.service || '—')}</td><td class="payment-amount">${_esc(r.quoted || '—')}</td><td>${_esc(r.method || '—')}</td><td><span class="payment-review-readonly">${_esc(r.last5 || '—')}</span></td><td><span class="tag ok">已付款</span></td></tr>`).join('')}</tbody></table></div>` : '<div class="payment-history-empty">目前沒有付款紀錄。</div>'}</section>`;
   return `<div class="page-title"><div><h1>付款審核</h1><p style="color:#c3bce0">財務查看後五碼並核對入帳，確認後付款狀態變更為已付款。</p></div><span class="tag ${rows.length?'bad':'ok'}">${rows.length} 筆待審核</span></div>${pendingMarkup}${historyMarkup}`;
 }
 const _fi = (k,v,note,chip) => `<div class="fitem">
@@ -1448,7 +1477,7 @@ function adminDashboardAirtable(){
   const pausedPartners = CORE_PTN.length - activePartners;
   const subscriptionRevenue = CORE_PTN.reduce((sum,r) => sum + Number(r.subscriptionRevenue || r.planAmount || 0),0);
   return `<div class="page-title"><div><h1>Admin Dashboard</h1><p style="color:#c3bce0">營運總覽 · 資料來自 Airtable</p></div><button class="btn" onclick="syncFromAirtable()">↻ 更新資料</button></div>
-    <div class="dashboard-revenue-grid"><div class="dashboard-revenue-card" onclick="go('admin-crm-partners')"><h3>訂閱收入</h3><div class="dashboard-revenue-value">${dashboardMoney(subscriptionRevenue)}</div><div class="dashboard-kpi-meta">Airtable 經銷商訂閱資料 · 查看詳情</div></div><div class="dashboard-revenue-card" onclick="go('admin-crm-orders')"><h3>經銷商零售收入</h3><div class="dashboard-revenue-value">${dashboardMoney(monthRevenue)}</div><div class="dashboard-kpi-meta">本月已付款訂單 · 查看詳情</div></div></div>
+    <div class="dashboard-revenue-grid"><div class="dashboard-revenue-card" onclick="go('admin-crm-partners')"><h3>訂閱收入</h3><div class="dashboard-revenue-value">${dashboardMoney(subscriptionRevenue)}</div><div class="dashboard-kpi-meta">Airtable 經銷商訂閱資料 · 查看詳情</div></div><div class="dashboard-revenue-card" onclick="go('admin-payments')"><h3>經銷商零售收入</h3><div class="dashboard-revenue-value">${dashboardMoney(monthRevenue)}</div><div class="dashboard-kpi-meta">本月已付款 · 查看付款紀錄</div></div></div>
     <h2 class="dashboard-section-title">CRM 與製作狀態</h2><div class="dashboard-kpi-grid"><div class="dashboard-kpi-card new" onclick="go('admin-crm')"><div class="dashboard-kpi-label">CRM · 新進詢問</div><div class="dashboard-kpi-value">${newCount}</div><div class="dashboard-kpi-meta">筆 · 查看新進件</div></div><div class="dashboard-kpi-card" onclick="go('admin-crm-orders')"><div class="dashboard-kpi-label">生成中</div><div class="dashboard-kpi-value">${generatingCount}</div><div class="dashboard-kpi-meta">筆 · 查看製作流程</div></div><div class="dashboard-kpi-card" onclick="go('admin-crm-orders')"><div class="dashboard-kpi-label">審核中</div><div class="dashboard-kpi-value">${reviewCount}</div><div class="dashboard-kpi-meta">筆 · 查看審核案件</div></div><div class="dashboard-kpi-card ok" onclick="go('admin-crm')"><div class="dashboard-kpi-label">已結案</div><div class="dashboard-kpi-value">${closedCount}</div><div class="dashboard-kpi-meta">筆 · 查看已結案案件</div></div></div>
     <h2 class="dashboard-section-title">付款與業績</h2><div class="dashboard-kpi-grid"><div class="dashboard-kpi-card payment" onclick="go('admin-payments')"><div class="dashboard-kpi-label">付款狀態 · 待審核</div><div class="dashboard-kpi-value">${pendingPayments}</div><div class="dashboard-kpi-meta">筆 · 前往付款審核</div></div><div class="dashboard-kpi-card"><div class="dashboard-kpi-label">本週業績</div><div class="dashboard-kpi-value">${dashboardMoney(weekRevenue)}</div><div class="dashboard-kpi-meta">${dashboardTrend(weekRevenue, previousWeekRevenue)}</div></div><div class="dashboard-kpi-card"><div class="dashboard-kpi-label">本月業績</div><div class="dashboard-kpi-value">${dashboardMoney(monthRevenue)}</div><div class="dashboard-kpi-meta">${dashboardTrend(monthRevenue, previousMonthRevenue)}</div></div></div>
     <h2 class="dashboard-section-title">經銷商管理</h2><div class="dashboard-kpi-grid"><div class="dashboard-kpi-card" onclick="go('admin-crm-partners')"><div class="dashboard-kpi-label">經銷商</div><div class="dashboard-kpi-value">${CORE_PTN.length}</div><div class="dashboard-kpi-meta">家 · 查看經銷商</div></div><div class="dashboard-kpi-card ok" onclick="go('admin-crm-partners')"><div class="dashboard-kpi-label">活躍</div><div class="dashboard-kpi-value">${activePartners}</div><div class="dashboard-kpi-meta">家 · 正常服務中</div></div><div class="dashboard-kpi-card payment" onclick="go('admin-crm-partners')"><div class="dashboard-kpi-label">暫停</div><div class="dashboard-kpi-value">${pausedPartners}</div><div class="dashboard-kpi-meta">家 · 查看管理狀態</div></div></div>`;
@@ -1543,22 +1572,30 @@ function orderCategoryCard(title, subtitle, rows, tone='new'){
 }
 function orderStatusGroupKey(value){
   const status = String(value || '').trim().toLowerCase();
-  if(['新訂單','new order','new','new_order'].includes(status)) return 'new';
-  if(['生成中','generating','in production','production'].includes(status)) return 'generating';
-  if(['等待素材','waiting assets','waiting_assets','待素材','素材不全'].includes(status)) return 'assets';
-  if(['審核中','review','reviewing','in review'].includes(status)) return 'review';
-  if(['已完成','完成','completed','closed','delivered'].includes(status)) return 'closed';
-  return 'other';
+  if(status.includes('新訂單') || status.includes('new order') || status === 'new' || status === 'new_order') return 'new';
+  if(status.includes('生成') || status.includes('generat') || status.includes('進行') || status.includes('in production') || status.includes('processing') || status.includes('queued')) return 'generating';
+  if(status.includes('等待素材') || status.includes('waiting asset') || status.includes('待素材') || status.includes('素材不全')) return 'assets';
+  if(status.includes('審核') || status.includes('review') || status.includes('revision') || status.includes('修改')) return 'review';
+  if(status.includes('已完成') || status.includes('完成') || status.includes('completed') || status.includes('closed') || status.includes('deliver')) return 'closed';
+  // 未來 Airtable 新增狀態時，先依素材狀態歸入可處理的製作分類，
+  // 不再產生無法操作的「其他待處理」總表。
+  return 'generating';
 }
 function orderCategoryCards(){
   const rows = CORE_ORD.map((r,i) => ({r,i})).sort((a,b) => String(b.r.orderDate || '').localeCompare(String(a.r.orderDate || '')));
-  const statusOf = r => orderStatusGroupKey(r.prod || r.orderStatus);
+  const statusOf = r => {
+    const productionGroup = orderStatusGroupKey(r.prod || r.orderStatus);
+    const assetStatus = String(r.asset || '').trim().toLowerCase();
+    const assetsIncomplete = ['待素材','素材不全','waiting assets','waiting_assets','missing assets','incomplete'].some(value => assetStatus.includes(value.toLowerCase()));
+    if(!['review','closed'].includes(productionGroup) && assetsIncomplete) return 'assets';
+    return productionGroup;
+  };
   const newRows = rows.filter(({r}) => r.isNew || statusOf(r) === 'new');
   const groups = [
     ['生成中','製作人員已開始生成，等待成品','process','generating'],
     ['等待素材','等待客戶補齊製作素材','assets','assets'],
     ['審核中','成品進入審核與修改流程','review','review'],
-    ['其他待處理','Airtable 尚未對應到既定製作分類','other','other'],
+    ['已完成','成品已完成並可交付或下載','closed','closed'],
   ];
   const cards = [orderCategoryCard('新訂單','付款確認後自動建立，等待安排製作',newRows)];
   groups.forEach(([title,subtitle,tone,key]) => {
@@ -1688,8 +1725,9 @@ function orderProcessTimeline(r){
   const production = String(r.prod || '').trim();
   const paid = ['已付款','已確認','paid','confirmed'].includes(String(r.payStatus || '').trim().toLowerCase());
   const assigned = r.producer && r.producer !== '待分派';
-  const finished = ['已完成','完成','closed','completed'].includes(String(r.orderStatus || '').trim().toLowerCase()) || Boolean(r.completion || r.deliveryDate);
-  const stage = production === '新訂單' ? 'schedule' : production === '等待素材' ? 'materials' : production === '生成中' ? 'production' : production === '審核中' ? 'review' : finished ? 'closed' : 'production';
+  const finished = orderStatusGroupKey(r.orderStatus) === 'closed' || Boolean(r.completion || r.deliveryDate);
+  const statusGroup = orderStatusGroupKey(production);
+  const stage = statusGroup === 'new' ? 'schedule' : statusGroup === 'assets' ? 'materials' : statusGroup === 'review' ? 'review' : statusGroup === 'closed' || finished ? 'closed' : 'production';
   const steps = [
     {key:'payment', name:'付款確認', person:r.verBy || '財務', date:r.verAt ? _dateOnly(r.verAt) : _dateOnly(r.orderDate), state:paid?'done':'current', info:paid?'已核對入帳':'等待財務確認'},
     {key:'schedule', name:'安排生成', person:r.producer || '待分派', date:r.scheduleDate ? _dateOnly(r.scheduleDate) : orderProcessDate(r.orderDate,1), state:assigned && stage !== 'schedule' ? 'done' : stage === 'schedule' ? 'current' : 'pending', info:assigned ? '已安排製作人員' : '等待分派人員'},
@@ -1901,11 +1939,13 @@ document.addEventListener('keydown', e => { if(e.key === 'Escape') core3Close();
    從 Vercel serverless (/api/crm/full 等) 拉真實資料，
    覆蓋 CORE_CRM / CORE_ORD / CORE_PTN 後自動 re-render 當前頁
    ═══════════════════════════════════════════════════ */
-const AIRTABLE_API = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
-  ? 'http://127.0.0.1:8765' : '/api';
+// Airtable is proxied through this site's serverless API. Keep the request
+// same-origin in local preview and in production so it uses the deployed API
+// routes instead of a local service that does not exist in this project.
+const AIRTABLE_API = '/api';
 
 async function _airtableGet(path){
-  const url = (AIRTABLE_API === '/api' ? '/api' : AIRTABLE_API) + path;
+  const url = AIRTABLE_API + path;
   let lastError;
   for(let attempt=0; attempt<3; attempt++){
     try{
@@ -1926,7 +1966,7 @@ function _airtableFieldMap(rows, kind){
     return rows.map(r => ({
       id: r.crm_id || r.id, recordId: r.id,
       name: r.name, status: r.status, statusTag: _tagClass('status', r.status),
-      pay: r.payStatus || '—', payTag: _tagClass('payment', r.payStatus),
+      pay: _paymentStatusLabel(r.payStatus) || '—', payTag: _tagClass('payment', r.payStatus),
       pri: r.pri || '—', priTag: _tagClass('priority', r.pri),
       next: r.next || '', nextCls: '',
       cs: r.cs || '',
@@ -1937,7 +1977,7 @@ function _airtableFieldMap(rows, kind){
       files: r.files, hasFiles: r.hasFiles, budget: r.budget, pri_d: r.pri,
       firstResp: r.firstResp, touch: r.touch, daysIn: r.daysIn,
       note: r.note, lastContact: r.lastContact,
-      payStatus: r.payStatus, quoted: r.quoted, method: r.method,
+      payStatus: _paymentStatusLabel(r.payStatus), quoted: r.quoted, method: r.method,
       transferDate: r.transferDate, last5: r.last5, last5valid: r.last5valid,
       proof: r.proof, locked: r.locked, subBy: r.subBy, subAt: r.subAt,
       verBy: r.verBy, verAt: r.verAt, verNote: r.verNote,
@@ -1951,9 +1991,11 @@ function _airtableFieldMap(rows, kind){
       id: r.orderId, name: r.name, prod: r.orderStatus, prodTag: r.orderStatus,
       asset: r.asset, assetTag: r.asset, promised: r.promisedDate, promisedCls: '',
       producer: r.producer, service: r.service, orderId: r.orderId,
+      scheduleDate: r.scheduleDate, materialDate: r.materialDate,
+      productionDate: r.productionDate, reviewDate: r.reviewDate,
       orderDate: r.orderDate, crm: r.crm, tgId: r.tgId, partner: r.partnerCode,
       pkg: r.pkg, amount: r.amount, currency: r.currency,
-      payStatus: r.payStatus, payMethod: r.payMethod, last5: r.last5, verAt: r.verAt,
+      payStatus: _paymentStatusLabel(r.payStatus), payMethod: r.payMethod, last5: r.last5, verAt: r.verAt,
       cost: r.cost, commission: r.commission, margin: r.margin, marginPct: r.marginPct,
       brief: r.brief, style: r.style, assetNote: r.assetNote, rev: r.rev, revLimit: r.revLimit,
       promisedDate: r.promisedDate, deliveryDate: r.deliveryDate, daysLate: r.daysLate,
@@ -2014,10 +2056,16 @@ async function syncFromAirtable(){
 }
 
 // 浮動同步按鈕（所有 admin 頁右下角）
-document.addEventListener('DOMContentLoaded', () => {
-  // 第一次進入自動背景同步（不阻擋 render）
-  syncFromAirtable();
-});
+let airtableSyncStarted = false;
+function syncWhenEnteringAdmin(){
+  const isAdminPage = location.hash.startsWith('#admin-') && location.hash !== '#admin-login';
+  if(isAdminPage && !airtableSyncStarted){
+    airtableSyncStarted = true;
+    syncFromAirtable();
+  }
+}
+document.addEventListener('DOMContentLoaded', syncWhenEnteringAdmin);
+window.addEventListener('hashchange', syncWhenEnteringAdmin);
 // 也支援手動按按鈕
 window.syncFromAirtable = syncFromAirtable;
 
