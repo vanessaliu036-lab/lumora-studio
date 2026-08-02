@@ -1455,7 +1455,7 @@ function crmStatusCards(){
   });
   return sorted.map(group => `<section class="crm-queue-card ${group.key}">
     <div class="crm-queue-head"><div><div class="crm-queue-title">${_esc(group.title)}${group.key === 'new' ? '<span class="crm-new-alert">● 新進件</span>' : ''}</div><div class="crm-queue-sub">同一狀態案件集中管理</div></div>
-      <div class="crm-queue-count">${group.rows.length} 筆</div></div>
+      <div class="crm-queue-count">${group.key === 'new' ? `${group.rows.length} 筆 · ${newInquiryNotificationCount()} 未讀` : `${group.rows.length} 筆`}</div></div>
     <div class="crm-status-table-wrap"><table class="crm-status-table"><thead><tr>
       <th>進件日期</th><th>詢問編號</th><th>客戶</th><th>詢問項目</th><th>負責人員</th><th>狀態</th><th>付款</th><th>優先</th><th>下次追蹤</th><th>負責客服</th>
     </tr></thead><tbody>${group.rows.map(r => `<tr class="${group.key === 'new' ? 'crm-new-row' : ''}" onclick="core3Open('crm',${r._index})">
