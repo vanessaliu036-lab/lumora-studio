@@ -1939,10 +1939,10 @@ document.addEventListener('keydown', e => { if(e.key === 'Escape') core3Close();
    從 Vercel serverless (/api/crm/full 等) 拉真實資料，
    覆蓋 CORE_CRM / CORE_ORD / CORE_PTN 後自動 re-render 當前頁
    ═══════════════════════════════════════════════════ */
-// Airtable is proxied through this site's serverless API. Keep the request
-// same-origin in local preview and in production so it uses the deployed API
-// routes instead of a local service that does not exist in this project.
-const AIRTABLE_API = '/api';
+// Airtable is proxied through this site's serverless API. A file:// preview
+// has no same-origin host, so point it at the deployed API instead.
+const AIRTABLE_API = location.protocol === 'file:'
+  ? 'https://lumora-studiokh.vercel.app/api' : '/api';
 
 async function _airtableGet(path){
   const url = AIRTABLE_API + path;
