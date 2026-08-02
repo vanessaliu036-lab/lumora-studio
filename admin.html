@@ -207,8 +207,15 @@ function tgSelect(n){qs('#tg-area').innerHTML+=`<div class="tg-bubble me">我選
 function successPage(){return `<main><div class="container center" style="max-width:760px;padding-top:80px"><div class="card"><span class="pill green">COMPLETED</span><h1>影片已完成</h1><p class="muted">成品已同步回傳 Telegram，並儲存在訂單紀錄。</p><div class="mock-video" style="max-width:360px;margin:24px auto"><h3>FINAL VIDEO</h3></div><button class="btn primary">下載影片</button> </div></div></main>`}
 function officialPaymentPage(){return `<main><div class="container center" style="max-width:760px;padding-top:70px"><div class="card"><span class="pill yellow">OFFICIAL CHECKOUT</span><h1>Partner 額度已使用完畢</h1><p class="muted">這是第 11 筆訂單，已由 Partner 網站自動導向官方付款頁。</p><div class="notice warn">來源 Partner：Muse Motion Lab｜Referral ID：PT-0002</div><button class="btn primary" style="margin-top:18px" onclick="openStripe()">由官方接單付款</button></div></div></main>`}
 function loginPage(type){const admin=type==='admin-login';return `<div class="login-shell"><div class="login-card"><div class="center"><div class="logo" style="margin:auto">${admin?'A':'P'}</div><h1>${admin?'Admin Login':'Partner Login'}</h1><p class="muted">${admin?'管理所有經銷商、付款與額度':'查看訂單、收入與生成額度'}</p></div><div class="stack"><div class="field"><label>Email</label><input value="${admin?'admin@whitelabel.ai':'amy@example.com'}"></div><div class="field"><label>Password</label><input type="password" value="12345678"></div><button class="btn primary" onclick="go('${admin?'admin-dashboard':'partner-dashboard'}')">登入</button></div></div></div>`}
+function _floatingSync(){
+  return `<div id="sync-fab" style="position:fixed;right:22px;bottom:22px;z-index:99;display:flex;gap:10px;align-items:center">
+    <div id="sync-banner" style="font-size:12px;color:rgba(255,255,255,.65);background:rgba(15,12,30,.6);padding:6px 12px;border-radius:99px;backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.1)">🔄 待同步</div>
+    <button class="btn primary" onclick="syncFromAirtable()" style="border-radius:99px;padding:10px 18px;font-size:13px">🔄 同步 Airtable</button>
+  </div>`;
+}
+
 function adminShell(r){
-  return navTop()+`<div class="layout"><aside class="sidebar">
+  return _floatingSync() + navTop() + `<div class="layout"><aside class="sidebar">
     ${sideLink('admin-dashboard','Dashboard',r)}
     <div class="column-map" style="padding:18px 14px 8px">Airtable Data</div>
     ${sideLink('admin-orders','Orders',r)}
@@ -310,7 +317,7 @@ const airtableCustomers = [
 ];
 
 function adminShell(r){
-  return navTop()+`<div class="layout"><aside class="sidebar">
+  return _floatingSync() + navTop() + `<div class="layout"><aside class="sidebar">
     ${sideLink('admin-dashboard','Dashboard',r)}
     <div class="column-map" style="padding:18px 14px 8px">Airtable Data</div>
     ${sideLink('admin-orders','Orders',r)}
@@ -1152,6 +1159,118 @@ document.addEventListener('keydown', e => { if(e.key === 'Escape') core3Close();
   };
   if(typeof render === 'function' && location.hash.startsWith('#admin')) render();
 })();
+
+/* ═══════════════════════════════════════════════════
+   同步 Airtable — 按右下角「🔄 同步 Airtable」按鈕觸發
+   從 Vercel serverless (/api/crm/full 等) 拉真實資料，
+   覆蓋 CORE_CRM / CORE_ORD / CORE_PTN 後自動 re-render 當前頁
+   ═══════════════════════════════════════════════════ */
+const AIRTABLE_API = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+  ? 'http://127.0.0.1:8765' : '/api';
+
+async function _airtableGet(path){
+  const url = (AIRTABLE_API === '/api' ? '/api' : AIRTABLE_API) + path;
+  const r = await fetch(url, { headers: { 'Accept': 'application/json' } });
+  if(!r.ok) throw new Error('HTTP ' + r.status);
+  return r.json();
+}
+
+function _airtableFieldMap(rows, kind){
+  // 把 API 欄位（crm_id / inqDate / ...）對到 mock 抽屜的 r.* 欄位
+  if(kind === 'crm'){
+    return rows.map(r => ({
+      id: r.crm_id || r.id,
+      name: r.name, status: r.status, statusTag: r.status,
+      pay: r.payStatus || '—', payTag: r.payStatus || '—',
+      pri: r.pri || '—', priTag: r.pri || '—',
+      next: r.next || '', nextCls: '',
+      cs: r.cs || '',
+      // 抽屜完整欄位
+      inqDate: r.inqDate, service: r.service, tgId: r.tgId, tgUser: r.tgUser,
+      partner: r.partnerCode || r.partner, partnerCode: r.partnerCode,
+      lang: r.lang, returning: r.returning, summary: r.summary,
+      files: r.files, hasFiles: r.hasFiles, budget: r.budget, pri_d: r.pri,
+      firstResp: r.firstResp, touch: r.touch, daysIn: r.daysIn,
+      note: r.note, lastContact: r.lastContact,
+      payStatus: r.payStatus, quoted: r.quoted, method: r.method,
+      transferDate: r.transferDate, last5: r.last5, last5valid: r.last5valid,
+      proof: r.proof, locked: r.locked, subBy: r.subBy, subAt: r.subAt,
+      verBy: r.verBy, verAt: r.verAt, verNote: r.verNote,
+      closeResult: r.closeResult, closedAt: r.closedAt,
+      convOrder: r.convOrder, lostReason: r.lostReason,
+      daysToClose: r.daysToClose, botMsg: r.botMsg, botSync: r.botSync,
+      createdBy: r.createdBy, updated: r.updated, history: r.history || [],
+    }));
+  } else if(kind === 'ord'){
+    return rows.map(r => ({
+      id: r.orderId, name: r.name, prod: r.orderStatus, prodTag: r.orderStatus,
+      asset: r.asset, assetTag: r.asset, promised: r.promisedDate, promisedCls: '',
+      producer: r.producer, service: r.service, orderId: r.orderId,
+      orderDate: r.orderDate, crm: r.crm, tgId: r.tgId, partner: r.partnerCode,
+      pkg: r.pkg, amount: r.amount, currency: r.currency,
+      payStatus: r.payStatus, payMethod: r.payMethod, last5: r.last5, verAt: r.verAt,
+      cost: r.cost, commission: r.commission, margin: r.margin, marginPct: r.marginPct,
+      brief: r.brief, style: r.style, assetNote: r.assetNote, rev: r.rev, revLimit: r.revLimit,
+      promisedDate: r.promisedDate, deliveryDate: r.deliveryDate, daysLate: r.daysLate,
+      completion: r.completion, link: r.link, orderStatus: r.orderStatus,
+      totalOrders: r.totalOrders, ltv: r.ltv, lastStyle: r.lastStyle,
+      consent: r.consent, retention: r.retention, purged: r.purged,
+      thread: r.thread, notify: r.notify, prevOrders: r.prevOrders || [],
+    }));
+  } else if(kind === 'ptn'){
+    return rows.map(r => ({
+      name: r.name, code: r.code,
+      remain: r.remain, limit: r.limit, used: r.used, pct: r.limit ? Math.min(100, r.used/r.limit*100) : 0,
+      pending: r.submitted || 0, sync: r.sync, syncTag: r.sync,
+      lastSync: r.lastSync,
+      contact: r.contact, brand: r.brand, tgUser: r.tgUser, onboard: r.onboard,
+      team: r.team, plan: r.plan, period: r.period,
+      planStart: r.planStart, planExpiry: r.planExpiry, planStatus: r.planStatus,
+      renewal: r.renewal, partnerPaid: r.partnerPaid,
+      submitted: r.submitted, received: r.received, diff: r.diff,
+      webhook: r.webhook, lastAlert: r.lastAlert,
+      converted: r.converted, convRate: r.convRate, revenue: r.revenue, aov: r.aov,
+      commRate: r.commRate, commEarned: r.commEarned, commUnpaid: r.commUnpaid,
+      lastOrder: r.lastOrder, notes: r.notes,
+    }));
+  }
+  return rows;
+}
+
+async function syncFromAirtable(){
+  const banner = document.getElementById('sync-banner');
+  if(banner) banner.textContent = '🔄 同步中…';
+  try {
+    const [c, o, p] = await Promise.all([
+      _airtableGet('/crm/full'),
+      _airtableGet('/orders/full'),
+      _airtableGet('/partners/full'),
+    ]);
+    if(c.ok) CORE_CRM = _airtableFieldMap(c.records, 'crm');
+    if(o.ok) CORE_ORD = _airtableFieldMap(o.records, 'ord');
+    if(p.ok) CORE_PTN = _airtableFieldMap(p.records, 'ptn');
+    if(banner){
+      const ts = new Date().toLocaleTimeString();
+      banner.innerHTML = `✅ 已同步 Airtable · ${ts} · CRM ${CORE_CRM.length} / Orders ${CORE_ORD.length} / Partners ${CORE_PTN.length}`;
+      banner.style.color = '#aaffea';
+    }
+    if(typeof render === 'function') render();
+  } catch (e) {
+    if(banner){
+      banner.innerHTML = `⚠️ 同步失敗：${e.message}（Airtable serverless 尚未部署或路徑錯）`;
+      banner.style.color = '#ffc0d2';
+    }
+  }
+}
+
+// 浮動同步按鈕（所有 admin 頁右下角）
+document.addEventListener('DOMContentLoaded', () => {
+  // 第一次進入自動背景同步（不阻擋 render）
+  syncFromAirtable();
+});
+// 也支援手動按按鈕
+window.syncFromAirtable = syncFromAirtable;
+
 </script>
 
 </body>
