@@ -2200,11 +2200,11 @@ function orderProcessAction(step, index){
 }
 function orderProcessFormMarkup(step,index,order){
   const copy = {
-    photos:{title:'確認客戶提交照片',description:'請先確認素材數量與完整性；送出後才會進入生成個人照。',fields:`<div class="order-process-field"><label for="order-photo-count-${index}">收到照片張數 *</label><input id="order-photo-count-${index}" type="number" min="1" value="${_esc(order.photoCount || '')}" placeholder="例如 5" required></div><div class="order-process-field"><label for="order-photo-check-${index}">素材確認 *</label><select id="order-photo-check-${index}" required><option value="">請選擇</option><option value="素材齊全">素材齊全，可開始製作</option><option value="素材不全">素材不全，退回補件</option></select></div><div class="order-process-field full"><label for="order-photo-note-${index}">備註</label><textarea id="order-photo-note-${index}" placeholder="記錄收到的照片內容或缺件原因">${_esc(order.processNote || '')}</textarea></div>`,note:'送出後狀態會更新為「生成個人照」，本確認按鈕會消失。'},
+    photos:{title:'確認客戶提交照片',description:'請先確認素材數量與完整性；送出後才會進入生成個人照。',fields:`<div class="order-process-field"><label for="order-photo-count-${index}">收到照片張數 *</label><input id="order-photo-count-${index}" type="number" min="1" value="${_esc(order.photoCount || '')}" placeholder="例如 5" required></div><div class="order-process-field"><label for="order-photo-check-${index}">素材確認 *</label><select id="order-photo-check-${index}" required><option value="">請選擇</option><option value="素材齊全">素材齊全，可開始製作</option><option value="素材不全">素材不全，退回補件</option></select></div><div class="order-process-field full"><label for="order-photo-note-${index}">備註</label><textarea id="order-photo-note-${index}" placeholder="記錄收到的照片內容或缺件原因">${_esc(order.assetNote || '')}</textarea></div>`,note:'送出後狀態會更新為「生成個人照」，本確認按鈕會消失。'},
     identity:{title:'確認個人照完成',description:'素材已確認齊全；這一步只記錄客戶對個人照的確認結果，不需要手寫備註。',fields:`<div class="order-process-field full"><label for="order-identity-check-${index}">確認狀態 *</label><select id="order-identity-check-${index}" required><option value="">請選擇</option><option value="客戶已確認" ${order.customerConfirmation==='客戶已確認'?'selected':''}>客戶已確認</option><option value="客人不滿意" ${order.customerConfirmation==='客人不滿意'?'selected':''}>客人不滿意</option></select></div>`,note:'選「客戶已確認」才會推進；選「客人不滿意」會停留在此步驟。'},
-    template:{title:'確認模板照片已提交',description:'請確認模板成品已整理完成，並留下可供後續驗收的連結。',fields:`<div class="order-process-field full"><label for="order-template-preview-${index}">模板照片預覽連結 *</label><input id="order-template-preview-${index}" type="url" value="${_esc(order.templatePreview || '')}" placeholder="貼上模板成品預覽連結" required></div><div class="order-process-field"><label for="order-template-check-${index}">提交確認 *</label><select id="order-template-check-${index}" required><option value="">請選擇</option><option value="已完成">已完成，可交客戶驗收</option><option value="需修改">需修改，暫不交付</option></select></div><div class="order-process-field"><label for="order-template-note-${index}">確認備註</label><input id="order-template-note-${index}" value="${_esc(order.processNote || '')}" placeholder="例如：已檢查尺寸與文字"></div>`,note:'送出後狀態會更新為「客戶驗收」，提交模板按鈕會消失。'},
-    acceptance:{title:'完成客戶驗收／交付',description:'請先記錄客戶是否確認，以及實際交付位置。',fields:`<div class="order-process-field"><label for="order-acceptance-check-${index}">客戶確認結果 *</label><select id="order-acceptance-check-${index}" required><option value="">請選擇</option><option value="已確認">客戶已確認</option><option value="需修改">客戶要求修改</option></select></div><div class="order-process-field"><label for="order-delivery-link-${index}">交付連結 *</label><input id="order-delivery-link-${index}" type="url" value="${_esc(order.link || '')}" placeholder="貼上 Telegram／雲端交付連結" required></div><div class="order-process-field full"><label for="order-acceptance-note-${index}">驗收備註</label><textarea id="order-acceptance-note-${index}" placeholder="記錄客戶回覆或修改內容">${_esc(order.processNote || '')}</textarea></div>`,note:'送出後狀態會更新為「已交付」，驗收按鈕會消失。'},
-    close:{title:'完成結案確認',description:'確認交付資料與客戶驗收紀錄完整後，才能正式結案。',fields:`<div class="order-process-field"><label for="order-close-check-${index}">結案確認 *</label><select id="order-close-check-${index}" required><option value="">請選擇</option><option value="已確認">資料完整，確認結案</option></select></div><div class="order-process-field"><label for="order-close-note-${index}">結案備註</label><input id="order-close-note-${index}" value="${_esc(order.processNote || '')}" placeholder="可留空"></div>`,note:'送出後訂單會移至結案紀錄，這顆按鈕會消失。'}
+    template:{title:'確認模板照片已提交',description:'請確認模板成品已整理完成，並留下可供後續驗收的連結。',fields:`<div class="order-process-field full"><label for="order-template-preview-${index}">模板照片預覽連結 *</label><input id="order-template-preview-${index}" type="url" value="${_esc(order.templatePreview || '')}" placeholder="貼上模板成品預覽連結" required></div><div class="order-process-field"><label for="order-template-check-${index}">提交確認 *</label><select id="order-template-check-${index}" required><option value="">請選擇</option><option value="已完成">已完成，可交客戶驗收</option><option value="需修改">需修改，暫不交付</option></select></div><div class="order-process-field"><label for="order-template-note-${index}">確認備註</label><input id="order-template-note-${index}" value="${_esc(order.productionNote || '')}" placeholder="例如：已檢查尺寸與文字"></div>`,note:'送出後狀態會更新為「客戶驗收」，提交模板按鈕會消失。'},
+    acceptance:{title:'完成客戶驗收／交付',description:'請先記錄客戶是否確認，以及實際交付位置。',fields:`<div class="order-process-field"><label for="order-acceptance-check-${index}">客戶確認結果 *</label><select id="order-acceptance-check-${index}" required><option value="">請選擇</option><option value="已確認">客戶已確認</option><option value="需修改">客戶要求修改</option></select></div><div class="order-process-field"><label for="order-delivery-link-${index}">交付連結 *</label><input id="order-delivery-link-${index}" type="url" value="${_esc(order.link || '')}" placeholder="貼上 Telegram／雲端交付連結" required></div><div class="order-process-field full"><label for="order-acceptance-note-${index}">驗收備註</label><textarea id="order-acceptance-note-${index}" placeholder="記錄客戶回覆或修改內容">${_esc(order.acceptanceNote || '')}</textarea></div>`,note:'送出後狀態會更新為「已交付」，驗收按鈕會消失。'},
+    close:{title:'完成結案確認',description:'確認交付資料與客戶驗收紀錄完整後，才能正式結案。',fields:`<div class="order-process-field"><label for="order-close-check-${index}">結案確認 *</label><select id="order-close-check-${index}" required><option value="">請選擇</option><option value="已確認">資料完整，確認結案</option></select></div><div class="order-process-field"><label for="order-close-note-${index}">結案備註</label><input id="order-close-note-${index}" value="${_esc(order.closeNote || '')}" placeholder="可留空"></div>`,note:'送出後訂單會移至結案紀錄，這顆按鈕會消失。'}
   }[step];
   if(!copy) return '';
   return `<div class="order-process-form" id="order-process-form-${index}" data-action="${step}"><h4>${copy.title}</h4><p>${copy.description}</p><div class="order-process-form-grid">${copy.fields}</div><div class="order-process-form-actions"><button type="button" class="btn primary" onclick="submitOrderProcess(${index},'${step}')">送出確認</button><button type="button" class="btn" onclick="closeOrderProcessForm(${index})">取消</button><span class="order-process-form-note">${copy.note}</span></div></div>`;
@@ -2233,8 +2233,15 @@ async function submitOrderProcess(index, action){
   if(action === 'photos') order.photoCount = form.querySelector(`#order-photo-count-${index}`).value;
   if(action === 'identity') order.customerConfirmation = form.querySelector(`#order-identity-check-${index}`).value;
   if(action === 'template') order.templatePreview = form.querySelector(`#order-template-preview-${index}`).value;
-  if(action === 'acceptance') order.link = form.querySelector(`#order-delivery-link-${index}`).value;
-  order.processNote = form.querySelector('textarea, input[id$="-note-' + index + '"]')?.value || '';
+  if(action === 'acceptance'){
+    order.link = form.querySelector(`#order-delivery-link-${index}`).value;
+    order.customerConfirmation = form.querySelector(`#order-acceptance-check-${index}`).value;
+  }
+  const note = form.querySelector('textarea, input[id$="-note-' + index + '"]')?.value || '';
+  if(action === 'photos') order.assetNote = note;
+  if(action === 'template') order.productionNote = note;
+  if(action === 'acceptance') order.acceptanceNote = note;
+  if(action === 'close') order.closeNote = note;
   await advanceOrderProcess(index, action);
 }
 function orderProcessToday(){
@@ -2242,7 +2249,7 @@ function orderProcessToday(){
   return `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
 }
 function orderDeliveryEditor(r,index){
-  return `<div class="order-delivery-editor"><label for="order-delivery-link-${index}">交付連結</label><input id="order-delivery-link-${index}" type="url" value="${_esc(r.link || '')}" placeholder="貼上 Telegram／雲端交付連結"><button type="button" class="btn primary" style="margin-top:10px" onclick="saveOrderDeliveryDetails(${index})">儲存交付資料</button><span>填寫交付連結後，才能完成結案。</span></div>`;
+  return `<div class="order-delivery-editor"><label>交付連結</label><div style="color:#fff;word-break:break-all">${r.link ? _esc(r.link) : '尚未填寫'}</div><span>交付連結請在「客戶驗收／交付」表單填寫，送出確認時會一併儲存。</span></div>`;
 }
 async function saveOrderDeliveryDetails(index){
   const order = CORE_ORD[index];
@@ -2301,6 +2308,7 @@ async function advanceOrderProcess(index, action){
     order.orderStatus = '已交付';
     order.prod = order.productionStatus;
     fields.deliveryDate = today;
+    fields.link = order.link;
     fields.productionStatus = order.productionStatus;
     fields.orderStatus = order.orderStatus;
   } else if(action === 'close'){
@@ -2312,7 +2320,7 @@ async function advanceOrderProcess(index, action){
     fields.productionStatus = order.productionStatus;
     fields.orderStatus = order.orderStatus;
   }
-  if(order.processNote) fields.assetNote = order.processNote;
+  if(order.assetNote) fields.assetNote = order.assetNote;
   try{
     if(order.recordId){
       const endpoint = location.protocol === 'file:' ? 'https://lumora-studiokh.vercel.app/api/orders/update-fields' : '/api/orders/update-fields';
@@ -2383,16 +2391,21 @@ function core3OrdCard(r){
       ${_fi("風格 / 企劃", r.style)}
       ${_fi("製作負責人", r.producer)}
       ${_fi("素材狀態", r.asset)}
+      ${_fi("個人照確認狀態", r.customerConfirmation)}
+      ${_fi("模板照片預覽連結", r.templatePreview)}
       ${_fi("修改次數", `${r.rev} / ${r.revLimit}`, "超過上限要加收", ["新增","new"])}
       ${_fiw("缺少素材說明", r.assetNote, "素材不全時要知道缺什麼才催得動", ["新增","new"])}
+      ${_fiw("製作確認備註", r.productionNote)}
     </div>`)
   + _gs(4,"交付","",`<div class="fgrid">
       ${_fi("承諾交期", r.promisedDate, "沒有這欄就算不出延遲率", ["新增","new"])}
       ${_fi("交付日期", _fmt(r.deliveryDate))}
       ${_fi("延遲天數", r.daysLate, null, ["新增","new"])}
-      ${_fi("完成日期", _fmt(r.completion))}
+      ${_fi("完成日期", _fmt(r.completion || r.deliveryDate))}
       ${_fi("交付連結", r.link)}
       ${_fi("訂單狀態", r.orderStatus)}
+      ${_fi("客戶確認結果", r.customerConfirmation)}
+      ${_fiw("驗收備註", r.acceptanceNote)}
     </div>${orderDeliveryEditor(r, CORE_ORD.indexOf(r))}${late}`)
   + _gs(5,"客戶歷史","需要 Customers 錨點表才算得出來",`<div class="fgrid">
       ${_fi("累計訂單數", String(r.totalOrders), null, ["統計"])}
