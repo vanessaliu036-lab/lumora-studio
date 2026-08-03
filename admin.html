@@ -222,9 +222,8 @@ function adminShell(r){
   return _floatingSync() + navTop() + `<div class="layout"><aside class="sidebar">
     ${sideLink('admin-dashboard','Dashboard',r)}
     <div class="column-map" style="padding:18px 14px 8px">Airtable Data</div>
-    ${sideLink('admin-crm-orders','Production 製作',r)}
-    ${sideLink('admin-partners','Partners',r)}
     ${sideLink('admin-customers','Customers',r)}
+    ${typeof followupSideLink==='function' ? followupSideLink(r) : ''}
     <div class="column-map" style="padding:18px 14px 8px">Operations</div>
     ${typeof paymentNotifySideLink==='function' ? paymentNotifySideLink(r) : sideLink('admin-payments','Payments',r)}
     ${sideLink('admin-credits','Credits',r)}
@@ -794,9 +793,9 @@ html{background:#080817}
 .crm-workflow-step span:last-child{min-width:0}
 .crm-workflow-step b,.crm-workflow-step small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .crm-workflow-step b{font-size:12px}.crm-workflow-step small{font-size:10px;margin-top:3px;color:#9e94c5}
-.crm-workflow-gate{display:flex;flex-wrap:wrap;gap:8px 14px;margin-top:14px;padding-top:12px;border-top:1px solid rgba(255,255,255,.1);color:#c9c0e8;font-size:12px}
-.crm-workflow-gate span{color:#ffcf9a}.crm-workflow-gate span.done{color:#a8f0c8}
+.crm-workflow-history{margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,.1)}.crm-workflow-history-title{color:#c9c0e8;font-size:12px;font-weight:700;margin-bottom:12px}.crm-workflow-history-list{display:flex;gap:0;overflow-x:auto;padding:2px 0 6px}.crm-workflow-history-item{position:relative;min-width:150px;padding:0 16px 0 28px;color:#a99cd0;font-size:11px;line-height:1.4}.crm-workflow-history-item:first-child{padding-left:0}.crm-workflow-history-item:not(:last-child)::after{content:"";position:absolute;left:calc(100% - 8px);top:7px;width:16px;border-top:1px solid rgba(151,126,255,.45)}.crm-workflow-history-dot{position:absolute;left:8px;top:2px;width:8px;height:8px;border-radius:50%;background:#ffb870;box-shadow:0 0 0 4px rgba(255,184,112,.13)}.crm-workflow-history-item:first-child .crm-workflow-history-dot{left:0}.crm-workflow-history-item strong{display:block;color:#fff;font-size:12px;margin-bottom:3px}.crm-workflow-history-item small{display:block;color:#9e94c5;font-size:10px;white-space:normal}
 .crm-edit-panel{margin:0 0 22px;padding:16px;border:1px solid rgba(205,173,255,.28);border-radius:18px;background:rgba(37,28,76,.32)}
+.crm-followup-note{display:block;width:min(100%,680px);min-height:92px;box-sizing:border-box;margin-top:9px;padding:12px 14px;border:1px solid rgba(151,126,255,.45);border-radius:12px;background:#0e0b24;color:#fff;line-height:1.55;resize:vertical}.crm-followup-note::placeholder{color:#8d83b1}.crm-followup-note:focus{outline:none;border-color:#cbb6ff;box-shadow:0 0 0 3px rgba(154,121,255,.12)}
 .crm-edit-head{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:12px}.crm-edit-head b{color:#fff}.crm-edit-head span{color:#a99cd0;font-size:12px}
 .crm-edit-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.crm-edit-field{display:flex;flex-direction:column;gap:6px;color:#bdb0e5;font-size:12px}.crm-edit-field.full{grid-column:1/-1}.crm-edit-field input,.crm-edit-field textarea{width:100%;box-sizing:border-box;background:#0e0b24;border:1px solid rgba(151,126,255,.45);border-radius:10px;padding:10px;color:#fff}.crm-edit-field textarea{min-height:72px;resize:vertical}.crm-edit-field input:disabled,.crm-edit-field textarea:disabled{opacity:.45;cursor:not-allowed;border-style:dashed}.crm-edit-label{display:flex;justify-content:space-between;gap:8px}.crm-edit-lock{color:#8d83b1;font-size:10px}
 @media(max-width:900px){.crm-workflow-steps{grid-template-columns:repeat(3,minmax(0,1fr))}}
@@ -1070,12 +1069,12 @@ if(MOCK_ONLY_MODE){
   // 保留一筆未處理新詢問 + 一筆已付款轉單，讓通知、付款與 Order 連動可完整驗證。
   CORE_CRM.unshift({
     id:"CRM-20260802-007", name:"Mock New Inquiry", status:"New", statusTag:"blue",
-    pay:"等待付款", payTag:"warn", pri:"High", priTag:"bad", next:"—", nextCls:"", cs:"待分派",
+    pay:"未報價", payTag:"mute", pri:"High", priTag:"bad", next:"—", nextCls:"", cs:"待分派",
     tgId:"8919860893", tgUser:"@mock_customer", partner:"— 官方直客", partnerCode:"—",
     inqDate:"2026-08-02 20:10", source:"Telegram Bot", service:"Personal Identity", lang:"中文", returning:false, prevCount:0,
     summary:"新進詢問：希望製作一組自然、有質感的個人形象素材。", files:null, budget:"待確認", hasFiles:false,
     firstResp:null, touch:0, daysIn:0, lastContact:null, note:"新進件，等待客服接手。",
-    payStatus:"等待付款", quoted:null, method:null, last5:null, last5valid:null,
+    payStatus:"未報價", quoted:null, method:null, last5:null, last5valid:null,
     transferDate:null, proof:null, subBy:null, subAt:null, verBy:null, verAt:null, locked:false, verNote:null,
     closeResult:null, closedAt:null, convOrder:null, lostReason:null, daysToClose:null,
     botMsg:"mock-1802", botSync:"已接收", createdBy:"TG Bot", updated:"2026-08-02 20:10",
@@ -1619,8 +1618,8 @@ const _gs = (n,title,right,inner) => `<div class="gsec" id="detail-section-${n}"
 function core3Flow(){
   return `<div class="flowbar">
     <div class="flow-node"><div class="fk">Partners</div><div class="fv">經銷商帶客</div><div class="fd">Partner Code 由 Bot 自動寫入</div></div>
-    <div class="flow-node"><div class="fk">CRM</div><div class="fv">詢問進件</div><div class="fd">Bot 只建 CRM，不建 Order</div></div>
-    <div class="flow-node"><div class="fk">CRM</div><div class="fv">客服追蹤談成</div><div class="fd">談成不代表錢到帳</div></div>
+    <div class="flow-node"><div class="fk">CRM</div><div class="fv">詢問進件</div><div class="fd">Bot 建立 CRM 後直接交客服</div></div>
+    <div class="flow-node"><div class="fk">真人客服</div><div class="fv">客服接手處理</div><div class="fd">直接確認需求、報價與付款</div></div>
     <div class="flow-node gate"><div class="fk">CRM · 付款驗證</div><div class="fv">🔒 帳務確認並鎖定</div><div class="fd">客服填後五碼 → 帳務比對 → 鎖定</div></div>
     <div class="flow-node"><div class="fk">Orders</div><div class="fv">系統自動建立</div><div class="fd">開始製作</div></div>
     <div class="flow-node"><div class="fk">真人客服 · Telegram</div><div class="fv">品檢、裁切、回傳</div><div class="fd">客戶確認或修改後才結案</div></div>
@@ -1860,10 +1859,10 @@ function orderDemoPreviewCard(){
 function crmOrdersPage(){
   if(airtableDataState !== 'ready') return airtableDataGate();
   const rows = CORE_ORD.map((r,i) => ({r,i})).sort((a,b) => String(b.r.orderDate || '').localeCompare(String(a.r.orderDate || '')));
-  return `<div class="page-title"><div><h1>Production</h1>
-    <p style="color:#c3bce0">生產總表 · 只顯示付款完成並鎖定後建立的 Order。洽談、等待客戶回覆、待付款一律留在 CRM。</p></div><button class="btn" onclick="openOrderFlowDemo()">查看流程預覽 Demo</button></div>
-  ${flowSimulationCard()}${orderCategoryCards()}${orderDemoPreviewCard()}
-  <p style="margin-top:12px;font-size:12.5px;color:#a99cd0">依製作狀態分類 · 點任一列展開第二層製作時程</p>`;
+  return `<div class="page-title"><div><h1>Orders 訂單</h1>
+    <p style="color:#c3bce0">訂單總表 · 只顯示付款完成並鎖定後建立的 Order；製作細節請在訂單內查看。</p></div><button class="btn" onclick="document.getElementById('order-status')?.scrollIntoView({behavior:'smooth',block:'start'})">訂單狀態</button></div>
+  <div id="order-status">${orderCategoryCards()}</div>
+  <p style="margin-top:12px;font-size:12.5px;color:#a99cd0">依訂單狀態分類 · 點任一列展開訂單詳細資料</p>`;
 }
 function productionBroadKey(order){
   const status = String(order?.prod || order?.orderStatus || '').trim().toLowerCase();
@@ -1911,41 +1910,41 @@ function normalizeCrmWorkflowStatus(value){
   const key = String(value || '').trim().toLowerCase();
   const aliases = {
     '新進件':'new', '新進來的詢問單':'new', 'new':'new', 'contacted':'new', '已聯絡':'new',
-    '洽談中':'discussing',
-    '等客戶回覆':'waiting customer',
-    '準備成交':'ready to close',
+    '洽談中':'new', '資料':'new',
+    '等客戶回覆':'new',
+    '準備成交':'new',
     '待帳務確認':'payment verified', '付款待確認':'payment verified',
     '成交':'converted', '已轉單':'converted', 'closed won':'converted'
   };
   return aliases[key] || key;
 }
 const CRM_WORKFLOW_STAGES = [
-  { status:'New', label:'客服追蹤', section:3, task:'TG／客服自動追蹤需求與回覆', systemOnly:true, fields:[] },
-  { status:'Data', label:'客戶資料／照片', section:2, task:'TG 自動判定是否已收到客戶資料', systemOnly:true, fields:[] },
-  { status:'Discussing', label:'洽談中', section:2, task:'TG 自動化持續確認需求與方案', systemOnly:true, fields:[] },
-  { status:'Waiting Customer', label:'等客戶回覆', section:3, task:'TG 自動化等待客戶回覆或補件', systemOnly:true, fields:[] },
-  { status:'Ready to Close', label:'準備成交', section:4, task:'TG 自動化提供付款方式並等待付款', systemOnly:true, fields:[] },
-  { status:'Payment Submitted', label:'收到付款後五碼', section:4, task:'收到付款證明與後五碼，轉入帳務查詢', systemOnly:true, fields:[] },
-  { status:'Payment Verified', label:'帳務查帳／付款鎖定', section:4, task:'財務人工核對入帳，確認後由系統鎖定付款', systemOnly:true, fields:[] },
+  { status:'New', label:'客服處理', section:3, task:'CRM 進件後直接交由真人客服接手', systemOnly:true, fields:[] },
+  { status:'Payment Submitted', label:'付款資料', section:4, task:'收到付款證明與後五碼，轉入帳務查詢', systemOnly:true, fields:[] },
+  { status:'Payment Verified', label:'帳務確認／付款鎖定', section:4, task:'財務人工核對入帳，確認後由系統鎖定付款', systemOnly:true, fields:[] },
   { status:'Converted', label:'已轉入 Order', section:5, task:'付款完成且已鎖定，Order 已建立；後續由 Production 接手', systemOnly:true, fields:[] },
 ];
+function crmWorkflowHistory(r){
+  const events = [{t:'客服接手',d:`${_dateOnly(r.inqDate)} · CRM 進件後直接交客服`}, ...(Array.isArray(r.history) ? r.history.filter(h => !String(h.t || '').startsWith('新進件') && !String(h.t || '').includes('洽談')) : [])];
+  return `<div class="crm-workflow-history"><div class="crm-workflow-history-title">狀態歷程</div><div class="crm-workflow-history-list">${events.map(event => `<div class="crm-workflow-history-item"><i class="crm-workflow-history-dot"></i><strong>${_esc(event.t)}</strong><small>${_esc(event.d)}</small></div>`).join('')}</div></div>`;
+}
 function crmWorkflow(status, index, r){
   const normalizedKey = normalizeCrmWorkflowStatus(status || 'New');
   const pay = String(r.payStatus || r.pay || '').trim().toLowerCase();
   if(normalizedKey === 'lost'){
-    return `<section class="crm-workflow" aria-label="詢問與成交流程"><div class="crm-workflow-head"><div><div class="fk">CRM 詢問／成交流程</div><div class="crm-workflow-current">目前在：客服追蹤</div><div class="crm-workflow-task">案件已關案：未成交，不再進入付款、Order 或 Production。</div></div><span class="tag bad">已關案 · 流程停止</span></div><div class="crm-workflow-steps">${CRM_WORKFLOW_STAGES.map((stage, stepIndex) => { const active = stepIndex === 0; return `<button type="button" class="crm-workflow-step ${active?'active':''} locked" onclick="crmJumpToSection(${stage.section})"><span class="crm-workflow-dot">${active?'●':stepIndex+1}</span><span><b>${_esc(stage.label)}</b><small>${active?'目前步驟':'不再執行'}</small></span></button>`; }).join('')}</div></section>`;
+    return `<section class="crm-workflow" aria-label="詢問與成交流程"><div class="crm-workflow-head"><div><div class="fk">CRM 詢問／成交流程</div><div class="crm-workflow-current">目前在：客服處理</div><div class="crm-workflow-task">案件已關案：未成交，不再進入付款、Order 或 Production。</div></div><span class="tag bad">已關案 · 流程停止</span></div><div class="crm-workflow-steps">${CRM_WORKFLOW_STAGES.map((stage, stepIndex) => { const active = stepIndex === 0; return `<button type="button" class="crm-workflow-step ${active?'active':''} locked" onclick="crmJumpToSection(${stage.section})"><span class="crm-workflow-dot">${active?'●':stepIndex+1}</span><span><b>${_esc(stage.label)}</b><small>${active?'目前步驟':'不再執行'}</small></span></button>`; }).join('')}</div></section>`;
   }
-  let currentIndex = normalizedKey === 'waiting customer' ? 3 : normalizedKey === 'ready to close' ? 4 : normalizedKey === 'discussing' ? 2 : 0;
-  if(r.hasFiles) currentIndex = Math.max(currentIndex, 2);
-  if(['pending verification','待帳務確認','payment received','已付款待驗證'].includes(pay) || r.last5) currentIndex = 6;
-  else if(['paid','已付款','confirmed','已確認'].includes(pay) && !r.locked) currentIndex = 6;
-  else if(normalizedKey === 'payment verified') currentIndex = 6;
-  else if(normalizedKey === 'converted' || r.locked) currentIndex = 7;
+  let currentIndex = 0;
+  if(normalizedKey === 'payment submitted') currentIndex = 1;
+  if(['pending verification','待帳務確認','payment received','已付款待驗證'].includes(pay) || r.last5) currentIndex = 2;
+  else if(['paid','已付款','confirmed','已確認'].includes(pay) && !r.locked) currentIndex = 2;
+  else if(normalizedKey === 'payment verified') currentIndex = 2;
+  else if(normalizedKey === 'converted' || r.locked) currentIndex = 3;
   const next = CRM_WORKFLOW_STAGES[currentIndex + 1];
   const nextChecks = next ? next.fields.map(([label, get]) => ({label, done:Boolean(get(r))})) : [];
   const missing = nextChecks.filter(check => !check.done);
   const canAdvance = Boolean(next && missing.length === 0);
-  const isConverted = currentIndex === 7;
+  const isConverted = currentIndex === 3;
   const headTask = next ? `<div class="crm-workflow-task">下一步：${_esc(next.task)}</div>` : (isConverted ? '<div class="crm-workflow-task">已進入 Production；請在 Order 分頁追蹤生產與交付</div>' : '<div class="crm-workflow-task">等待自動化流程或帳務介入</div>');
   const headAction = next?.systemOnly
     ? '<span class="tag warn">付款完成並鎖定後自動轉單</span>'
@@ -1953,13 +1952,17 @@ function crmWorkflow(status, index, r){
     : (isConverted ? '<span class="tag blue">已轉入 Order</span>' : '<span class="tag ok">流程完成</span>');
   return `<section class="crm-workflow" aria-label="詢問與成交流程"><div class="crm-workflow-head"><div><div class="fk">CRM 詢問／成交流程</div><div class="crm-workflow-current">目前在：${_esc(CRM_WORKFLOW_STAGES[currentIndex].label)}</div>${headTask}</div>${headAction}</div><div class="crm-workflow-steps">${CRM_WORKFLOW_STAGES.map((stage, stepIndex) => { const active = stepIndex === currentIndex; const done = stepIndex < currentIndex; return `<button type="button" class="crm-workflow-step ${active?'active':''} ${done?'done':''}" onclick="crmJumpToSection(${stage.section})"><span class="crm-workflow-dot">${done?'✓':stepIndex+1}</span><span><b>${_esc(stage.label)}</b><small>${active?'目前步驟':done?'已完成':'點擊查看資料'}</small></span></button>`; }).join('')}</div>${next ? `<div class="crm-workflow-gate"><b>進入下一步前需完成：</b>${nextChecks.map(check => `<span class="${check.done?'done':''}">${check.done?'✓':'○'} ${_esc(check.label)}`).join('')}</div>` : ''}</section>`;
 }
+const _crmWorkflowWithHistory = crmWorkflow;
+crmWorkflow = function(status, index, r){
+  return _crmWorkflowWithHistory(status, index, r).replace(/<div class="crm-workflow-gate">[\s\S]*?<\/div><\/section>$/, `${crmWorkflowHistory(r)}</section>`);
+};
 function crmJumpToSection(section){
   const target = document.getElementById(`detail-section-${section}`);
   if(target) target.scrollIntoView({behavior:'smooth', block:'start'});
 }
 const CRM_EDIT_FIELDS = [];
 function crmEditPanel(r, index){
-  return `<section class="crm-edit-panel"><div class="crm-edit-head"><b>客服追蹤紀錄</b><span>進件時間、聯絡次數與 TG 資料狀態固定自動產生；只有卡點與備註可人工補充</span></div><div style="color:#a99cd0;font-size:12px;line-height:1.6;margin-bottom:14px">洽談、等待回覆、客戶資料狀態由 TG 自動化處理。收到付款後五碼後，請到「帳務／Payment」進行人工查帳與付款鎖定。</div><label class="crm-edit-field full"><span class="crm-edit-label"><span>追蹤備註</span><span class="crm-edit-lock">人工輸入</span></span><textarea id="crm-followup-note-${index}" placeholder="例如：客戶說明週末補傳正面照">${_esc(r.note || '')}</textarea></label><div style="display:flex;align-items:center;gap:12px;margin-top:14px"><button class="btn primary" onclick="saveCrmFollowup(${index})">儲存追蹤備註</button><span style="color:#a99cd0;font-size:12px">不修改詢問時間與主流程狀態</span></div></section>`;
+  return `<section class="crm-edit-panel"><div class="crm-edit-head"><b>客服處理紀錄</b><span>CRM 進件後直接由客服接手；進件時間與 TG 資料狀態固定自動產生</span></div><div style="color:#a99cd0;font-size:12px;line-height:1.6;margin-bottom:14px">客服直接確認需求、報價與付款。收到付款後五碼後，請到「帳務／Payment」進行人工查帳與付款鎖定。</div><label class="crm-edit-field full"><span class="crm-edit-label"><span>客服備註</span><span class="crm-edit-lock">人工輸入</span></span><textarea id="crm-followup-note-${index}" placeholder="例如：客戶說明週末補傳正面照">${_esc(r.note || '')}</textarea></label><div style="display:flex;align-items:center;gap:12px;margin-top:14px"><button class="btn primary" onclick="saveCrmFollowup(${index})">儲存客服備註</button><span style="color:#a99cd0;font-size:12px">不修改詢問時間與主流程狀態</span></div></section>`;
 }
 const CRM_ASSIGNEES = ['Nina','Sunny','Cat'];
 const CRM_BLOCKERS = ['等客戶回傳照片','客戶無回應'];
@@ -2048,14 +2051,14 @@ function setCrmStatus(index, status){
   saveCrmStatus(index, status);
 }
 function core3CrmCard(r){
-  const history = [{t:'客服追蹤開始',d:`${_dateOnly(r.inqDate)} · 自動進入客服追蹤`,s:'now'}, {t:r.hasFiles ? 'TG 已收到客戶資料／照片' : 'TG 尚未收到客戶資料／照片',d:'由 Telegram 附件狀態自動判定',s:r.hasFiles ? 'done' : 'now'}, ...(Array.isArray(r.history) ? r.history.filter(h => !String(h.t || '').startsWith('新進件')) : [])];
-  const tl = `<div class="tl">${history.map(h=>`<div class="tl-i ${h.s}"><div class="tl-t">${_esc(h.t)}</div><div class="tl-d">${_esc(h.d)}</div></div>`).join('')}</div>`;
+  const history = [{t:'客服接手',d:`${_dateOnly(r.inqDate)} · CRM 進件後直接交客服`,s:'now'}, ...(Array.isArray(r.history) ? r.history.filter(h => !String(h.t || '').startsWith('新進件') && !String(h.t || '').includes('洽談') && !String(h.t || '').includes('等客戶')) : [])];
+  const tl = '';
   const crmStatusEditor = `<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 18px;padding:12px 16px;border:1px solid rgba(151,126,255,.3);border-radius:14px;background:rgba(50,37,104,.18)"><span class="tag">目前狀態：${_esc(r.status || 'New')}</span><span style="color:#a99cd0;font-size:12px">狀態只能透過上方流程主操作更新，完成必要資料後才會同步 Airtable</span></div>`;
   let box = "";
   if(r.locked) box = `<div class="infobox lock"><span class="ic">🔒</span><div><b>付款已鎖定</b> — ${_esc(r.verBy)} 於 ${_esc(r.verAt)} 確認入帳，欄位不可再修改。<br>系統已自動建立 <b>${_esc(r.convOrder)}</b>，Partner 額度 +1。</div></div>`;
   else if(r.payStatus === "待帳務確認") box = `<div class="infobox lock"><span class="ic">⏳</span><div><b>等待帳務確認</b> — 客服已填後五碼 ${_esc(r.last5)}，待帳務比對銀行入帳後鎖定。<br>核准人必須與填寫人（${_esc(r.subBy)}）不同，否則職責分離形同虛設。</div></div>`;
 
-  return crmWorkflow(r.status, CORE_CRM.indexOf(r), r) + crmEditPanel(r, CORE_CRM.indexOf(r)) + crmStatusEditor + _gs(1,"詢問基本資料","",`<div class="fgrid">
+  return crmWorkflow(r.status, CORE_CRM.indexOf(r), r) + crmStatusEditor + _gs(1,"詢問基本資料","",`<div class="fgrid">
       ${_fi("詢問編號", _inquiryLabel(r), null, ["自動"])}
       ${_fi("進件時間（固定）", _fmt(r.inqDate), "CRM 建立時寫入的事件時間，不可修改", ["自動"])}
       ${_fi("客戶姓名", r.name)}
@@ -2075,17 +2078,16 @@ function core3CrmCard(r){
       ${_fi("預算區間", r.budget)}
       ${_fi("優先度", r.pri)}
     </div>`)
-  + _gs(3,"客服追蹤","",`<div class="fgrid">
+  + _gs(3,"客服處理","",`<div class="fgrid">
       ${crmAssigneeSelect(r, CORE_CRM.indexOf(r))}
       ${_fi("目前狀態", r.status)}
       ${_fi("最近聯絡", _fmt(r.lastContact))}
       ${_fi("下次追蹤", r.next === "—" ? null : _dateOnly(r.next))}
       ${_fi("首次回應時間", r.firstResp, "最能預測成交率的單一指標", ["新增","new"])}
-      ${_fi("已聯絡次數", `${r.touch || 0} 次`, "由 TG／CRM 自動累計，客服不可手改")}
+      ${_fi("客服處理次數", `${r.touch || 0} 次`, "由 CRM 自動累計，客服不可手改")}
       ${crmBlockerSelect(r, CORE_CRM.indexOf(r))}
       ${_fi("卡在現狀態天數", `${r.daysIn || 0} 天`, "系統依狀態時間自動計算")}
-      ${_fi("追蹤備註", r.note)}
-    </div><div style="margin-top:16px"><div class="fk">未成交原因／客服關案</div>${r.status === '未成交' ? `<div class="fv">${_esc(r.lostReason || '—')}</div><div class="fn">已提早結案；後續付款與生產流程不再執行</div>` : `<textarea id="crm-lost-reason-${CORE_CRM.indexOf(r)}" class="payment-verification-note" placeholder="例如：預算不符、客戶無回應、需求取消"></textarea><div style="margin-top:10px"><button class="btn danger" onclick="closeCrmAsLost(${CORE_CRM.indexOf(r)})">未成交並提早結案</button></div>`}</div><div style="margin-top:16px"><div class="fk">狀態歷程</div>${tl}</div>`)
+    </div><div style="margin-top:16px"><div class="fk">追蹤備註</div><textarea id="crm-followup-note-${CORE_CRM.indexOf(r)}" class="crm-followup-note" placeholder="例如：客戶說明週末補傳正面照">${_esc(r.note || '')}</textarea><div style="margin-top:10px"><button class="btn primary" onclick="saveCrmFollowup(${CORE_CRM.indexOf(r)})">儲存追蹤備註</button><span class="fn" style="display:inline-block;margin-left:10px">人工輸入；不修改案件主流程狀態</span></div></div><div style="margin-top:16px"><div class="fk">未成交原因／客服關案</div>${r.status === '未成交' ? `<div class="fv">${_esc(r.lostReason || '—')}</div><div class="fn">已提早結案；後續付款與生產流程不再執行</div>` : `<textarea id="crm-lost-reason-${CORE_CRM.indexOf(r)}" class="payment-verification-note" placeholder="例如：預算不符、客戶無回應、需求取消"></textarea><div style="margin-top:10px"><button class="btn danger" onclick="closeCrmAsLost(${CORE_CRM.indexOf(r)})">未成交並提早結案</button></div>`}</div><div style="margin-top:16px"><div class="fk">狀態歷程</div>${tl}</div>`)
   + _gs(4,"付款驗證","客服填寫 → 帳務核准 → 鎖定",`<div class="fgrid">
       ${_fi("付款狀態", r.payStatus)}
       ${_fi("報價金額", r.quoted, "由客戶選定方案自動帶入", ["自動","auto"])}
@@ -2374,8 +2376,7 @@ document.addEventListener('keydown', e => { if(e.key === 'Escape') core3Close();
 /* ── 掛進既有側邊欄與路由 ── */
 (function(){
   const SOP_STEPS = [
-    {label:'經銷商帶客', sub:'Partner／TG 進件', route:'admin-crm-partners'},
-    {label:'客服追蹤', sub:'諮詢／資料／洽談', route:'admin-crm'},
+    {label:'客服處理', sub:'CRM 進件後直接接手', route:'admin-crm'},
     {label:'付款驗證', sub:'後五碼／人工查帳', route:'admin-payments'},
     {label:'Orders 訂單', sub:'查看完整流程', route:'admin-orders'},
     {label:'Production 生產', sub:'生成／收件／結案', route:'admin-crm-orders'},
@@ -2383,12 +2384,12 @@ document.addEventListener('keydown', e => { if(e.key === 'Escape') core3Close();
     {label:'經銷商結算', sub:'額度／分潤同步', route:'admin-crm-partners'}
   ];
   function sopActiveIndex(r){
-    if(r === 'admin-crm') return 1;
-    if(r === 'admin-payments') return 2;
-    if(r === 'admin-orders') return 3;
-    if(r === 'admin-crm-orders') return 4;
-    if(r === 'admin-closed-records') return 5;
-    if(r === 'admin-crm-partners' || r === 'admin-partners' || r === 'admin-customers') return 6;
+    if(r === 'admin-crm') return 0;
+    if(r === 'admin-payments') return 1;
+    if(r === 'admin-orders') return 2;
+    if(r === 'admin-crm-orders') return 3;
+    if(r === 'admin-closed-records') return 4;
+    if(r === 'admin-crm-partners' || r === 'admin-partners' || r === 'admin-customers') return 5;
     return -1;
   }
   function adminSop(r){
@@ -2399,12 +2400,14 @@ document.addEventListener('keydown', e => { if(e.key === 'Escape') core3Close();
   adminDashboard = adminDashboardAirtable;
   adminShell = function(r){
     const html = _shell(r);
-    const nav = `<div class="column-map" style="padding:18px 14px 8px">核心三表</div>`
+    const nav = `<div class="column-map" style="padding:18px 14px 8px">SOP 流程</div>`
       + crmNotifySideLink(r)
+      + (typeof paymentNotifySideLink === 'function' ? paymentNotifySideLink(r) : sideLink('admin-payments','付款審核',r))
       + sideLink('admin-orders','Orders 訂單',r)
+      + sideLink('admin-crm-orders','Production 製作',r)
       + sideLink('admin-closed-records','結案紀錄',r)
       + sideLink('admin-crm-partners','Partners 經銷商',r)
-      + followupSideLink(r);
+      ;
     const withNav = html.replace('<div class="column-map" style="padding:18px 14px 8px">Airtable Data</div>',
                         nav + '<div class="column-map" style="padding:18px 14px 8px">Airtable Data</div>');
     return withNav.replace('<main class="main">','<main class="main">' + adminSop(r));
