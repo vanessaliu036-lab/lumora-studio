@@ -59,6 +59,26 @@ export default async function handler(req, res) {
         const orderPayload = await orderResponse.json();
         if (!orderResponse.ok) return res.status(orderResponse.status).json({ ok: false, error: orderPayload?.error?.message || 'Airtable Order create failed' });
       }
+      if (orderId) {
+        const linkedAt = new Date().toISOString();
+        const linkResponse = await fetch(`${API}/${CRM}/${encodeURIComponent(recordId)}`, {
+          method: 'PATCH',
+          headers: { Authorization: `Bearer ${PAT}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            fields: {
+              'Payment Locked': true,
+              'CRM Status': 'Converted',
+              'Converted Order': orderId,
+              'Close Result': '成交',
+              'Closed At': linkedAt,
+              'Verified At': linkedAt,
+            },
+            typecast: true,
+          }),
+        });
+        const linkPayload = await linkResponse.json();
+        if (!linkResponse.ok) return res.status(linkResponse.status).json({ ok: false, error: linkPayload?.error?.message || 'CRM order link update failed' });
+      }
     }
     return res.status(200).json({ ok: true, recordId: payload.id, orderId });
   } catch (error) {

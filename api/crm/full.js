@@ -68,6 +68,7 @@ export default async function handler(req, res) {
         firstResp: f['First Response Hours'] ?? '',
         touch: f['Touch Count'] ?? 0, daysIn: f['Days in Status'] ?? '',
         note: f['Follow-up Note'] || '', history,
+        blockerStatus: f['Follow-up Blocker'] || '',
         payStatus: f['Payment Status'] || '', quoted: f['Quoted Amount'] ?? '',
         method: f['Payment Method'] || '', transferDate: f['Transfer Date'] || '',
         last5: f['Account Last 5'] || '',

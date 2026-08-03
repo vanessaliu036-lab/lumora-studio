@@ -10,6 +10,13 @@ const FIELD_MAP = {
   lastContact: 'Last Contact',
   nextFollowUp: 'Next Follow-up',
   followupNote: 'Follow-up Note',
+  blockerStatus: 'Follow-up Blocker',
+  lostReason: 'Lost Reason',
+  closeResult: 'Close Result',
+  closedAt: 'Closed At',
+  verificationNote: 'Verification Note',
+  submittedBy: 'Submitted By',
+  submittedAt: 'Submitted At',
   quoted: 'Quoted Amount',
   method: 'Payment Method',
 };

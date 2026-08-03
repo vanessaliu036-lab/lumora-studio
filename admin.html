@@ -222,7 +222,7 @@ function adminShell(r){
   return _floatingSync() + navTop() + `<div class="layout"><aside class="sidebar">
     ${sideLink('admin-dashboard','Dashboard',r)}
     <div class="column-map" style="padding:18px 14px 8px">Airtable Data</div>
-    ${sideLink('admin-orders','Production',r)}
+    ${sideLink('admin-crm-orders','Production 製作',r)}
     ${sideLink('admin-partners','Partners',r)}
     ${sideLink('admin-customers','Customers',r)}
     <div class="column-map" style="padding:18px 14px 8px">Operations</div>
@@ -328,7 +328,7 @@ function adminShell(r){
   return _floatingSync() + navTop() + `<div class="layout"><aside class="sidebar">
     ${sideLink('admin-dashboard','Dashboard',r)}
     <div class="column-map" style="padding:18px 14px 8px">Airtable Data</div>
-    ${sideLink('admin-orders','Production',r)}
+    ${sideLink('admin-crm-orders','Production 製作',r)}
     ${sideLink('admin-partners','Partners',r)}
     ${sideLink('admin-customers','Customers',r)}
     <div class="column-map" style="padding:18px 14px 8px">Operations</div>
@@ -585,6 +585,7 @@ html{background:#080817}
 .flow-node.gate .fv{color:#ffe0a3}
 .flow-node.gate .fk{color:#d4b671}
 .flow-node.gate .fd{color:#d9c393}
+.sop-flow{display:grid;grid-template-columns:repeat(7,minmax(128px,1fr));gap:10px;margin:0 0 24px;padding:2px 0 4px;overflow-x:auto}.sop-step{min-height:96px;padding:14px 15px;text-align:left;border:1px solid rgba(255,255,255,.13);border-radius:16px;background:linear-gradient(145deg,#17112f,#100c24);color:#a99cd0;cursor:pointer;transition:.18s}.sop-step:hover{border-color:rgba(203,182,255,.65);transform:translateY(-1px)}.sop-step.active{border-color:#d8b45d;background:linear-gradient(145deg,#3a3118,#251d16);color:#fff4d1;box-shadow:0 0 0 1px rgba(216,180,93,.2),0 10px 28px rgba(0,0,0,.18)}.sop-step-num{display:block;font-size:10px;letter-spacing:.12em;color:#a99cd0}.sop-step.active .sop-step-num{color:#e3c77f}.sop-step-title{display:block;margin-top:9px;font-size:14px;font-weight:800;white-space:nowrap}.sop-step-sub{display:block;margin-top:6px;font-size:11px;line-height:1.35;color:#a99cd0}.sop-step.active .sop-step-sub{color:#e4d3a0}.sop-heading{margin:0 0 10px;color:#d7c5ff;font-size:12px;letter-spacing:.12em;text-transform:uppercase}
 
 .core3-alert{
   border-radius:14px;padding:14px 17px;margin-bottom:22px;font-size:13.5px;line-height:1.6;
@@ -814,6 +815,7 @@ html{background:#080817}
 .fitem.full{grid-column:1/-1}
 .fk{font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;color:#b5a4e8;font-weight:700;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 .fv{font-size:14px;margin-top:4px;word-break:break-word;line-height:1.5;color:#f6f2ff}
+.fitem .fv input,.fitem .fv select,.fitem .fv textarea{width:100%;box-sizing:border-box;background:#0e0b24;border:1px solid rgba(151,126,255,.45);border-radius:10px;padding:9px 10px;color:#fff}.fitem .fv textarea{min-height:70px;resize:vertical}.fitem .fv input:focus,.fitem .fv select:focus,.fitem .fv textarea:focus{outline:none;border-color:#cbb6ff;box-shadow:0 0 0 3px rgba(154,121,255,.12)}.fitem .fv input:disabled,.fitem .fv select:disabled,.fitem .fv textarea:disabled{opacity:.48;cursor:not-allowed;border-style:dashed}
 .fv.none{color:#7d7499;font-style:italic}
 .fn{font-size:11.5px;color:#a99cd0;margin-top:4px;line-height:1.45}
 @media(max-width:620px){.fgrid{grid-template-columns:1fr}}
@@ -855,6 +857,8 @@ html{background:#080817}
   .flow-node{min-width:100%}
   .l1-table{min-width:700px}
 }
+.flow-sim{margin:28px 0 34px;padding:22px;border:1px solid rgba(161,133,255,.28);border-radius:22px;background:linear-gradient(135deg,rgba(90,63,170,.18),rgba(255,255,255,.035));box-shadow:0 18px 60px rgba(0,0,0,.18)}
+.flow-sim-head{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;margin-bottom:18px}.flow-sim-title{font-size:18px;font-weight:600}.flow-sim-sub{margin-top:5px;color:#a99cd0;font-size:12px;line-height:1.5}.flow-sim-actions{display:flex;gap:8px;flex-wrap:wrap}.flow-sim-steps{display:grid;grid-template-columns:repeat(7,minmax(110px,1fr));gap:8px;overflow:auto;padding-bottom:4px}.flow-sim-step{min-height:94px;padding:12px;border:1px solid rgba(255,255,255,.13);border-radius:15px;background:rgba(255,255,255,.035);color:#a99cd0}.flow-sim-step.done{border-color:rgba(139,244,220,.45);background:rgba(87,194,165,.10);color:#dffef6}.flow-sim-step.current{border-color:rgba(255,190,227,.65);background:rgba(190,137,255,.16);color:#fff;box-shadow:0 0 22px rgba(180,127,255,.16)}.flow-sim-step.locked{opacity:.48}.flow-sim-num{font-size:10px;letter-spacing:.12em}.flow-sim-label{display:block;margin-top:8px;font-size:12px;font-weight:600;white-space:nowrap}.flow-sim-state{display:block;margin-top:6px;font-size:10px;line-height:1.35}.flow-sim-detail{display:grid;grid-template-columns:1fr auto;gap:16px;align-items:center;margin-top:18px;padding-top:16px;border-top:1px solid rgba(255,255,255,.11)}.flow-sim-detail p{margin:0;color:#c5bddf;font-size:12px;line-height:1.55}.flow-sim-detail strong{color:#fff}.flow-sim-rule{margin-top:10px;color:#a99cd0;font-size:11px}.flow-sim-ok{color:#aaffea}.flow-sim-warn{color:#ffd1a5}@media(max-width:760px){.flow-sim-head,.flow-sim-detail{grid-template-columns:1fr;display:grid}.flow-sim-actions{justify-content:flex-start}.flow-sim-steps{grid-template-columns:repeat(7,130px)}}
 </style>
 
 <script id="lumora-core3">
@@ -866,17 +870,17 @@ html{background:#080817}
 const MOCK_ONLY_MODE = true;
 
 const CORE_CRM = [
-  { id:"CRM-20260802-006", name:"Mock New Inquiry", status:"New", statusTag:"blue",
-    pay:"—", payTag:"mute", pri:"High", priTag:"bad", next:"—", nextCls:"", cs:"待分派",
-    tgId:"8919860892", tgUser:"@mock_customer", partner:"— 官方直客", partnerCode:"—",
-    inqDate:"2026-08-02 18:18", source:"Telegram Bot", service:"品牌企劃", lang:"中文", returning:false, prevCount:0,
-    summary:"Mock 新進詢問：希望製作一組自然、有質感的品牌形象素材。", files:null, budget:"待確認", hasFiles:false,
-    firstResp:null, touch:0, daysIn:0, lastContact:null, note:"新進件，等待客服接手。",
-    payStatus:"等待付款", quoted:null, method:null, last5:null, last5valid:null,
-    transferDate:null, proof:null, subBy:null, subAt:null, verBy:null, verAt:null, locked:false, verNote:null,
-    closeResult:null, closedAt:null, convOrder:null, lostReason:null, daysToClose:null,
-    botMsg:"mock-1801", botSync:"已接收", createdBy:"TG Bot", updated:"2026-08-02 18:18",
-    history:[{t:"新進件", d:"08-02 18:18 · Telegram Bot 自動建立", s:"now"}] },
+  { id:"CRM-20260802-006", name:"Vanessa Liu", status:"已轉單", statusTag:"ok",
+    pay:"已付款", payTag:"ok", pri:"一般", priTag:"mute", next:"—", nextCls:"", cs:"Nita",
+    tgId:"8919860892", tgUser:"@vanessa_liu", partner:"— 官方直客", partnerCode:"—",
+    inqDate:"2026-08-02 18:18", source:"Telegram Bot", service:"Personal Identity", lang:"中文", returning:false, prevCount:0,
+    summary:"個人形象照，韓系自然風格，提供於社群個人頁使用。", files:"5 張參考照", budget:"$25–50", hasFiles:true,
+    firstResp:"0.5 小時", touch:3, daysIn:0, lastContact:"2026-08-02 19:32", note:"付款已核對，Order 已自動建立。",
+    payStatus:"已付款", quoted:"$28.00", method:"Bank", last5:"12345", last5valid:true,
+    transferDate:"2026-08-02", proof:"匯款截圖 1 張", subBy:"Nita（客服）", subAt:"2026-08-02 19:30", verBy:"Rithy（帳務）", verAt:"2026-08-02 19:34", locked:true, verNote:"入帳金額與後五碼核對相符",
+    closeResult:"成交", closedAt:"2026-08-02 19:35", convOrder:"ORD-20260802-006", lostReason:null, daysToClose:"1 小時",
+    botMsg:"mock-1801", botSync:"已同步", createdBy:"TG Bot", updated:"2026-08-02 19:35",
+    history:[{t:"新進件", d:"08-02 18:18 · Telegram Bot 自動建立", s:"done"},{t:"成交 · 報價 $28", d:"08-02 19:12 · Nita", s:"done"},{t:"付款已確認並鎖定", d:"08-02 19:34 · Rithy（帳務）", s:"done"},{t:"已轉單 · Order 自動建立", d:"08-02 19:35 · ORD-20260802-006", s:"done"}] },
   { id:"CRM-20260801-003", name:"Sreymom Chan", status:"待帳務確認", statusTag:"warn",
     pay:"待帳務確認", payTag:"warn", pri:"高", priTag:"bad", next:"08-02 10:00", nextCls:"today", cs:"Nita",
     tgId:"814255310", tgUser:"@sreymom_c", partner:"Phnom Penh Studio", partnerCode:"PTN-002",
@@ -957,13 +961,13 @@ const CORE_CRM = [
 ];
 
 const CORE_ORD = [
-  { id:"ORD-20260802-001", isNew:true, name:"Mock New Customer", prod:"新訂單", prodTag:"blue",
+  { id:"ORD-20260802-006", orderId:"ORD-20260802-006", isNew:true, name:"Vanessa Liu", prod:"新訂單", prodTag:"blue",
     asset:"待素材", assetTag:"warn", promised:"08-05", promisedCls:"", producer:"待分派",
-    crm:"CRM-20260802-001", tgId:"8919860892", partner:"— 官方直客", partnerCode:"—",
-    orderDate:"2026-08-02 17:58", service:"個人形象", pkg:"基礎方案", qty:1,
-    amount:"$20.00", currency:"USD", payStatus:"已付款", payMethod:"銀行匯款",
-    last5:null, verAt:null, cost:"—", commission:"$0.00", margin:"—", marginPct:"—",
-    brief:"Mock 新訂單：等待 Telegram 客戶上傳素材。", style:"待確認", assetNote:"尚未收到素材",
+    crm:"CRM-20260802-006", tgId:"8919860892", partner:"— 官方直客", partnerCode:"—",
+    orderDate:"2026-08-02 19:35", service:"Personal Identity", pkg:"基礎方案", qty:1,
+    amount:"$28.00", currency:"USD", payStatus:"已付款", payMethod:"Bank",
+    last5:"12345", verAt:"2026-08-02 19:34", cost:"—", commission:"$0.00", margin:"—", marginPct:"—",
+    brief:"個人形象照，韓系自然風格，提供於社群個人頁使用。", style:"韓系自然", assetNote:"等待製作排程",
     rev:0, revLimit:2, promisedDate:"2026-08-05", deliveryDate:null, completion:null, daysLate:null,
     link:null, orderStatus:"新進件", totalOrders:1, ltv:"$20.00", lastStyle:null,
     consent:false, retention:null, purged:false, thread:"tg://mock-ord-0001", notify:"未通知" , prevOrders:[] },
@@ -1061,10 +1065,23 @@ const CORE_PTN = [
     notes:"帶客量大但轉換率偏低（32%），多為低預算詢問。Onboarding 尚未完成，建議先補教學。" }
 ];
 
-// 保留既有流程示範資料；新詢問與新訂單不再以假編號出現在正式清單。
+// Mock 預覽只保留可驗證完整資料流的案件；正式模式則完全以 Airtable API 覆蓋。
 if(MOCK_ONLY_MODE){
-  // 保留單一 mock 入口；其餘舊展示資料不進入正式清單。
-  CORE_CRM.splice(1);
+  // 保留一筆未處理新詢問 + 一筆已付款轉單，讓通知、付款與 Order 連動可完整驗證。
+  CORE_CRM.unshift({
+    id:"CRM-20260802-007", name:"Mock New Inquiry", status:"New", statusTag:"blue",
+    pay:"等待付款", payTag:"warn", pri:"High", priTag:"bad", next:"—", nextCls:"", cs:"待分派",
+    tgId:"8919860893", tgUser:"@mock_customer", partner:"— 官方直客", partnerCode:"—",
+    inqDate:"2026-08-02 20:10", source:"Telegram Bot", service:"Personal Identity", lang:"中文", returning:false, prevCount:0,
+    summary:"新進詢問：希望製作一組自然、有質感的個人形象素材。", files:null, budget:"待確認", hasFiles:false,
+    firstResp:null, touch:0, daysIn:0, lastContact:null, note:"新進件，等待客服接手。",
+    payStatus:"等待付款", quoted:null, method:null, last5:null, last5valid:null,
+    transferDate:null, proof:null, subBy:null, subAt:null, verBy:null, verAt:null, locked:false, verNote:null,
+    closeResult:null, closedAt:null, convOrder:null, lostReason:null, daysToClose:null,
+    botMsg:"mock-1802", botSync:"已接收", createdBy:"TG Bot", updated:"2026-08-02 20:10",
+    history:[{t:"新進件", d:"08-02 20:10 · Telegram Bot 自動建立", s:"now"}]
+  });
+  CORE_CRM.splice(2);
   CORE_ORD.splice(1);
 } else {
   CORE_CRM.splice(0, 1);
@@ -1162,7 +1179,7 @@ function paymentHistoryRows(){
   return CORE_ORD.map((order, orderIndex) => {
     const crmIndex = typeof CORE_CRM === 'undefined' ? -1 : CORE_CRM.findIndex(crm => String(crm.recordId || crm.id || '') === String(order.crm || '') || String(crm.id || '') === String(order.crm || ''));
     return {...order, _orderIndex:orderIndex, _crmIndex:crmIndex};
-  }).filter(order => ['paid','已付款','confirmed','已確認'].includes(String(order.payStatus || '').trim().toLowerCase()))
+  }).filter(order => Boolean(order.orderId || order.id) && ['paid','已付款','confirmed','已確認'].includes(String(order.payStatus || '').trim().toLowerCase()))
     .sort((a,b) => String(b.verAt || b.orderDate || '').localeCompare(String(a.verAt || a.orderDate || '')));
 }
 function paymentReadIds(){
@@ -1219,9 +1236,32 @@ function readInquiryIds(){
   catch { return new Set(); }
 }
 function newInquiryNotificationCount(){ return newInquiryNotificationRows().length; }
+function localDateTimeValue(date=new Date()){
+  return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')} ${String(date.getHours()).padStart(2,'0')}:${String(date.getMinutes()).padStart(2,'0')}`;
+}
+function addDaysDateTime(raw, days=3){
+  const base = new Date(String(raw || '').replace(' ','T'));
+  if(Number.isNaN(base.getTime())) return '';
+  base.setDate(base.getDate() + days);
+  return localDateTimeValue(base);
+}
+function autoStampInquiry(index){
+  const inquiry = CORE_CRM[index];
+  if(!inquiry) return;
+  const fields = {};
+  if(!inquiry.lastContact){ inquiry.lastContact = localDateTimeValue(); fields.lastContact = inquiry.lastContact; }
+  if(!inquiry.next || inquiry.next === '—'){
+    inquiry.next = addDaysDateTime(inquiry.lastContact, 3);
+    fields.nextFollowUp = inquiry.next;
+  }
+  if(inquiry.recordId && Object.keys(fields).length){
+    fetch('/api/crm/update-fields',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({recordId:inquiry.recordId,fields})}).catch(()=>{});
+  }
+}
 function markInquiryRead(index){
   const inquiry = CORE_CRM[index];
   if(!inquiry) return;
+  autoStampInquiry(index);
   try {
     const read = new Set(JSON.parse(localStorage.getItem('lumora:inquiries:read') || '[]'));
     read.add(inquiry.id);
@@ -1233,7 +1273,7 @@ function markInquiryRead(index){
     badge.classList.toggle('empty', !count);
   });
   document.querySelectorAll('.followup-nav-link').forEach(link => {
-    if(link.textContent.includes('CRM 詢問')){
+    if(link.textContent.includes('諮詢案件') || link.textContent.includes('CRM 詢問')){
       const badge = link.querySelector('.followup-dot');
       if(count && badge) badge.textContent = count;
       if(!count && badge) badge.remove();
@@ -1289,6 +1329,43 @@ async function savePaymentLast5(index, target='modal'){
     toast(`確認失敗：${error.message}`);
   }
 }
+function paymentAutoDate(r){
+  return _fmt(r.transferDate || (r.subAt ? String(r.subAt).slice(0,10) : ''));
+}
+function paymentSubmitterOptions(current){
+  const names = ['Nina','Sunny','Cat'];
+  return [...new Set([String(current || '').replace(/（客服）$/,'').trim(), ...names].filter(Boolean))];
+}
+async function savePaymentDetail(index){
+  const crm = CORE_CRM[index];
+  if(!crm || crm.locked) return;
+  const last5Input = document.getElementById(`payment-last5-detail-${index}`);
+  const submitterInput = document.getElementById(`payment-submitter-${index}`);
+  const noteInput = document.getElementById(`payment-verification-note-${index}`);
+  const last5 = String(last5Input?.value || crm.last5 || '').replace(/\D/g,'');
+  const submittedBy = String(submitterInput?.value || '').trim();
+  const verificationNote = String(noteInput?.value || '').trim();
+  if(last5 && last5.length !== 5){ toast('付款後五碼必須是 5 位數'); return; }
+  try{
+    if(crm.recordId && last5){
+      const response = await fetch('/api/crm/update-payment',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({recordId:crm.recordId,last5})});
+      const result = await response.json();
+      if(!response.ok || !result.ok) throw new Error(result.error || `HTTP ${response.status}`);
+    }
+    const submittedAt = last5 ? (crm.subAt || localDateTimeValue()) : crm.subAt;
+    if(crm.recordId){
+      const response = await fetch('/api/crm/update-fields',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({recordId:crm.recordId,fields:{...(submittedBy?{submittedBy}:{}),...(submittedAt?{submittedAt}:{}),verificationNote}})});
+      const result = await response.json();
+      if(!response.ok || !result.ok) throw new Error(result.error || `HTTP ${response.status}`);
+    }
+    if(last5){ crm.last5=last5; crm.last5valid=true; crm.payStatus='待帳務確認'; crm.pay='待帳務確認'; crm.payTag='warn'; }
+    if(submittedBy) crm.subBy=submittedBy;
+    if(submittedAt) crm.subAt=submittedAt;
+    crm.verNote=verificationNote;
+    render();
+    toast('付款資料已儲存；等待帳務查帳');
+  }catch(error){ toast(`付款資料儲存失敗：${error.message}`); }
+}
 function openPaymentNotifications(){
   // 紅點只代表未讀；清單本身仍顯示所有尚未完成的付款，避免已讀案件消失。
   const rows = paymentPendingRows();
@@ -1309,26 +1386,62 @@ function openPaymentInquiry(index){
   render();
   setTimeout(() => core3Open('crm', index), 0);
 }
+function nextLocalOrderId(){
+  const day = new Date().toISOString().slice(0,10).replace(/-/g,'');
+  const prefix = `ORD-${day}-`;
+  const used = CORE_ORD.map(order => String(order.id || order.orderId || ''))
+    .filter(id => id.startsWith(prefix))
+    .map(id => Number(id.slice(prefix.length)))
+    .filter(Number.isFinite);
+  return `${prefix}${String((used.length ? Math.max(...used) : 0) + 1).padStart(3,'0')}`;
+}
+function upsertLocalOrderForPayment(crm, orderId){
+  const resolvedId = String(orderId || crm.convOrder || '').trim();
+  if(!resolvedId) throw new Error('付款已確認，但 API 沒有回傳 Order ID');
+  const crmKeys = new Set([crm.id, crm.recordId].filter(Boolean).map(String));
+  const existing = CORE_ORD.find(order => crmKeys.has(String(order.crm || '')));
+  const values = {
+    id: resolvedId, orderId: resolvedId, isNew: !existing,
+    name: crm.name, prod: '新訂單', prodTag: 'blue', asset: '待素材', assetTag: 'warn',
+    promised: '待安排', promisedCls: '', producer: '待分派',
+    crm: crm.recordId || crm.id, tgId: crm.tgId, partner: crm.partner, partnerCode: crm.partnerCode,
+    orderDate: new Date().toISOString(), service: crm.service, pkg: crm.service || '未指定方案', qty: 1,
+    amount: crm.quoted, currency: 'USD', payStatus: '已付款', payMethod: crm.method,
+    last5: crm.last5, verAt: crm.verAt || new Date().toISOString(), cost: '—', commission: '$0.00', margin: '—', marginPct: '—',
+    brief: crm.summary, style: crm.service, assetNote: '尚未收到素材', rev: 0, revLimit: 2,
+    promisedDate: null, deliveryDate: null, completion: null, daysLate: null, link: null,
+    orderStatus: '新訂單', totalOrders: 1, ltv: crm.quoted, lastStyle: null,
+    consent: false, retention: null, purged: false, thread: '', notify: '未通知', prevOrders: []
+  };
+  if(existing) Object.assign(existing, values);
+  else CORE_ORD.unshift(values);
+  crm.convOrder = resolvedId;
+  return resolvedId;
+}
 async function confirmPayment(index){
   const crm = CORE_CRM[index];
   if(!crm) return;
   const last5 = String(crm.last5 || '').replace(/\D/g,'');
   if(last5.length !== 5){ toast('尚未有完整的後五碼，無法確認付款'); return; }
   try{
+    let result = { orderId: crm.convOrder || nextLocalOrderId() };
     if(crm.recordId){
       const response = await fetch('/api/crm/update-payment', {
         method:'POST', headers:{'Content-Type':'application/json'},
         body:JSON.stringify({recordId:crm.recordId,last5,confirm:true})
       });
-      const result = await response.json();
+      result = await response.json();
       if(!response.ok || !result.ok) throw new Error(result.error || `HTTP ${response.status}`);
     }
     crm.payStatus = '已付款';
     crm.pay = '已付款';
     crm.payTag = 'ok';
     crm.locked = true;
+    crm.status = '已轉單';
+    crm.statusTag = 'ok';
     crm.verBy = '財務';
     crm.verAt = new Date().toISOString().slice(0,16).replace('T',' ');
+    upsertLocalOrderForPayment(crm, result.orderId);
     crm.history = Array.isArray(crm.history) ? crm.history : [];
     crm.history.push({t:'已付款 · 財務確認',d:'後五碼核對完成 · 財務',s:'done'});
     try{
@@ -1350,13 +1463,21 @@ function followupDateForOrder(order){
   date.setDate(date.getDate() + 3);
   return [date.getFullYear(),String(date.getMonth()+1).padStart(2,'0'),String(date.getDate()).padStart(2,'0')].join('-');
 }
+function followupDateForCrm(crm){
+  const raw = String(crm?.next || '').trim();
+  if(!raw || raw === '—') return '—';
+  const match = raw.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  return match ? `${match[1]}-${match[2]}-${match[3]}` : '—';
+}
 function followupCompletedIds(){
   try { return JSON.parse(localStorage.getItem('lumora:followups:completed') || '[]'); }
   catch { return []; }
 }
 function followupPendingRows(){
   const completed = new Set(followupCompletedIds());
-  return (typeof CORE_ORD === 'undefined' ? [] : CORE_ORD.map((order,index) => ({order,index,followupDate:followupDateForOrder(order)})))
+  const crmRows = typeof CORE_CRM === 'undefined' ? [] : CORE_CRM.map((crm,index) => ({crm,index})).filter(({crm}) => crmStatusGroupKey(crm.status, true, crm.payStatus || crm.pay) === 'consulting').map(({crm,index}) => ({kind:'crm', crmIndex:index, index, order:{id:crm.id,name:crm.name,service:crm.service,prod:crm.status,orderStatus:crm.status,producer:crm.cs,partnerCode:crm.partnerCode,partner:crm.partner}, followupDate:followupDateForCrm(crm)}));
+  const orderRows = typeof CORE_ORD === 'undefined' ? [] : CORE_ORD.map((order,index) => ({kind:'ord', index, order, followupDate:followupDateForOrder(order)}));
+  return [...crmRows,...orderRows]
     .filter(row => row.followupDate !== '—' && !completed.has(row.order.id))
     .sort((a,b) => a.followupDate.localeCompare(b.followupDate));
 }
@@ -1366,14 +1487,23 @@ function markFollowupCompleted(orderId){
   completed.add(orderId);
   try { localStorage.setItem('lumora:followups:completed', JSON.stringify([...completed])); } catch {}
 }
-function completeFollowup(index){
-  const order = CORE_ORD[index];
-  if(!order) return;
-  markFollowupCompleted(order.id);
+function completeFollowup(kind,index){
+  const item = kind === 'crm' ? CORE_CRM[index] : CORE_ORD[index];
+  if(!item) return;
+  markFollowupCompleted(item.id);
   render();
   toast('已完成追蹤，通知已移除');
 }
-function moveFollowupToInquiry(index){
+function moveFollowupToInquiry(kind,index){
+  if(kind === 'crm'){
+    const crm = CORE_CRM[index];
+    if(!crm) return;
+    crm.next = '—';
+    markFollowupCompleted(crm.id);
+    render();
+    toast('已完成本次諮詢追蹤');
+    return;
+  }
   const order = CORE_ORD[index];
   if(!order) return;
   markFollowupCompleted(order.id);
@@ -1398,7 +1528,7 @@ function followupSideLink(r){
 }
 function crmNotifySideLink(r){
   const count = typeof newInquiryNotificationCount === 'function' ? newInquiryNotificationCount() : 0;
-  return `<button class="side-link followup-nav-link ${r==='admin-crm'?'active':''}" onclick="go('admin-crm')">CRM 詢問${count ? `<span class="followup-dot">${count}</span>` : '<span></span>'}</button>`;
+  return `<button class="side-link followup-nav-link ${r==='admin-crm'?'active':''}" onclick="go('admin-crm')">諮詢案件${count ? `<span class="followup-dot">${count}</span>` : '<span></span>'}</button>`;
 }
 function paymentNotifySideLink(r){
   const count = typeof paymentNotificationCount === 'function' ? paymentNotificationCount() : 0;
@@ -1412,10 +1542,10 @@ function shiftFollowupMonth(delta){
 function openFollowupDay(date){
   const rows = followupPendingRows().filter(row => row.followupDate === date);
   if(!rows.length) return;
-  modal(`<h2>${_esc(date)} · 追蹤案件</h2><div class="payment-list">${rows.map(({order,index}) => `<div class="payment-list-row followup-detail-row">
+  modal(`<h2>${_esc(date)} · 追蹤案件</h2><div class="payment-list">${rows.map(row => { const {order,index,kind,crmIndex}=row; const targetKind=kind==='crm'?'crm':'ord'; const targetIndex=kind==='crm'?crmIndex:index; return `<div class="payment-list-row followup-detail-row">
     <span><strong>${_esc(order.name || 'Airtable 未提供客戶姓名')}</strong><small>${_esc(order.id)} · ${_esc(order.service || '未提供服務項目')}</small><small>製作狀態：${_esc(order.prod || order.orderStatus || '—')} · 負責人：${_esc(order.producer || '待分派')}</small><small>經銷商：${_esc(order.partnerCode || order.partner || '—')} · 追蹤日：${_esc(date)}</small></span>
-    <span class="followup-item-actions"><button class="btn" onclick="closeModal();core3Open('ord',${index})">查看訂單</button><button class="btn success" onclick="closeModal();completeFollowup(${index})">完成追蹤</button><button class="btn danger" onclick="closeModal();moveFollowupToInquiry(${index})">未成交</button></span>
-  </div>`).join('')}</div>`);
+    <span class="followup-item-actions"><button class="btn" onclick="closeModal();core3Open('${targetKind}',${targetIndex})">查看${kind==='crm'?'諮詢':'訂單'}</button><button class="btn success" onclick="closeModal();completeFollowup('${kind}',${index})">完成追蹤</button>${kind==='ord'?`<button class="btn danger" onclick="closeModal();moveFollowupToInquiry('ord',${index})">未成交</button>`:''}</span>
+  </div>`; }).join('')}</div>`);
 }
 function followupCalendarPage(){
   if(airtableDataState !== 'ready') return airtableDataGate();
@@ -1461,7 +1591,7 @@ function paymentReviewPage(){
       <td><span class="payment-review-readonly">${_esc(r.last5 || '—')}</span></td>
       <td><div class="row-actions"><button class="btn payment-confirm-btn" onclick="confirmPayment(${r._index})">確認付款</button><button class="btn" onclick="core3Open('crm',${r._index})">查看</button></div></td>
     </tr>`).join('')}</tbody></table></div></div>` : '<div class="followup-empty">目前沒有待審核付款。</div>'}</section>`;
-  const historyMarkup = `<section class="payment-history-card"><div class="payment-history-head"><div><h2>付款紀錄</h2><p>確認付款後轉成 Order 編號，這裡保留付款歷史。</p></div><span class="tag ok">${history.length} 筆</span></div>${history.length ? `<div class="table-wrap"><table class="table l1-table"><thead><tr><th>確認日期</th><th>訂單編號</th><th>客戶</th><th>方案</th><th>金額</th><th>付款方式</th><th>後五碼</th><th>付款狀態</th></tr></thead><tbody>${history.map(r => `<tr ${r._crmIndex >= 0 ? `onclick="core3Open('crm',${r._crmIndex})"` : ''}><td class="cell-date">${_esc(_dateOnly(r.verAt || r.orderDate))}</td><td class="cell-id">${_esc(r.orderId || r.id || '—')}</td><td><div class="cell-name">${_esc(r.name || '—')}</div><div class="cell-sub">${_esc(r.partnerCode || '—')}</div></td><td>${_esc(r.pkg || r.service || '—')}</td><td class="payment-amount">${_esc(r.amount || '—')}</td><td>${_esc(r.payMethod || '—')}</td><td><span class="payment-review-readonly">${_esc(r.last5 || '—')}</span></td><td><span class="tag ok">已付款</span></td></tr>`).join('')}</tbody></table></div>` : '<div class="payment-history-empty">目前沒有付款紀錄。</div>'}</section>`;
+  const historyMarkup = `<section class="payment-history-card"><div class="payment-history-head"><div><h2>付款紀錄</h2><p>只有已完成付款且已建立 Order 的資料會出現在這裡。</p></div><span class="tag ok">${history.length} 筆</span></div>${history.length ? `<div class="table-wrap"><table class="table l1-table"><thead><tr><th>確認日期</th><th>訂單編號</th><th>客戶</th><th>方案</th><th>金額</th><th>付款方式</th><th>後五碼</th><th>付款狀態</th></tr></thead><tbody>${history.map(r => `<tr ${r._crmIndex >= 0 ? `onclick="core3Open('crm',${r._crmIndex})"` : ''}><td class="cell-date">${_esc(_dateOnly(r.verAt || r.orderDate))}</td><td class="cell-id">${_esc(r.orderId || r.id)}</td><td><div class="cell-name">${_esc(r.name || '—')}</div><div class="cell-sub">${_esc(r.partnerCode || '—')}</div></td><td>${_esc(r.pkg || r.service || '—')}</td><td class="payment-amount">${_esc(r.amount || '—')}</td><td>${_esc(r.payMethod || '—')}</td><td><span class="payment-review-readonly">${_esc(r.last5 || '—')}</span></td><td><span class="tag ok">已付款</span></td></tr>`).join('')}</tbody></table></div>` : '<div class="payment-history-empty">目前沒有已完成付款訂單。</div>'}</section>`;
   return `<div class="page-title"><div><h1>付款審核</h1><p style="color:#c3bce0">財務查看後五碼並核對入帳，確認後付款狀態變更為已付款。</p></div><span class="tag ${rows.length?'bad':'ok'}">${rows.length} 筆待審核</span></div>${pendingMarkup}${historyMarkup}`;
 }
 const _fi = (k,v,note,chip) => `<div class="fitem">
@@ -1493,11 +1623,8 @@ function core3Flow(){
     <div class="flow-node"><div class="fk">CRM</div><div class="fv">客服追蹤談成</div><div class="fd">談成不代表錢到帳</div></div>
     <div class="flow-node gate"><div class="fk">CRM · 付款驗證</div><div class="fv">🔒 帳務確認並鎖定</div><div class="fd">客服填後五碼 → 帳務比對 → 鎖定</div></div>
     <div class="flow-node"><div class="fk">Orders</div><div class="fv">系統自動建立</div><div class="fd">開始製作</div></div>
-    <div class="flow-node"><div class="fk">Partners</div><div class="fv">額度 +1</div><div class="fd">此時才扣額度</div></div>
-  </div>
-  <div class="core3-alert">
-    <b>建立 Order 的觸發條件：</b>付款狀態 = 已確認 <b>且</b> 已鎖定 —— 不是「客服談成」。
-    否則帳務還沒對到帳，Order 就開了、Partner 額度也扣了。
+    <div class="flow-node"><div class="fk">真人客服 · Telegram</div><div class="fv">品檢、裁切、回傳</div><div class="fd">客戶確認或修改後才結案</div></div>
+    <div class="flow-node"><div class="fk">Partners</div><div class="fv">使用額度 +1</div><div class="fd">可用額度此時才 -1；導流單不扣 Partner 額度</div></div>
   </div>`;
 }
 
@@ -1520,6 +1647,33 @@ function dashboardTrend(current, previous){
   const pct = Math.round(((current - previous) / previous) * 100);
   return `<span class="dashboard-trend ${pct >= 0 ? 'up':'down'}">${pct >= 0 ? '↑':'↓'} ${Math.abs(pct)}%</span>`;
 }
+const FLOW_SIM_STEPS = [
+  {key:'inquiry', label:'詢問進件', owner:'CRM', rule:'Bot 建立 CRM；帶入 Partner Code，尚不建立 Order。'},
+  {key:'deal', label:'成交／報價接受', owner:'客服', rule:'客戶接受方案，但成交不等於付款。'},
+  {key:'submitted', label:'付款送出', owner:'客戶／CRM', rule:'收到付款證明與後五碼，狀態為待帳務確認。'},
+  {key:'verified', label:'查帳確認', owner:'財務', rule:'核對金額、後五碼與入帳；通過後才鎖定付款。'},
+  {key:'order', label:'建立 Order', owner:'系統', rule:'付款鎖定後以 CRM ID 去重，自動建立一次 Order。'},
+  {key:'production', label:'執行製作', owner:'製作', rule:'安排人員 → 素材確認 → 生成／審核，狀態寫回 Order。'},
+  {key:'partner', label:'經銷商結算', owner:'Partners', rule:'Order 成功後才扣用量、歸屬收入與分潤；導流單不扣額度。'}
+];
+let flowSimIndex = 0;
+let flowSimOrderId = '';
+function resetFlowSimulation(){ flowSimIndex = 0; flowSimOrderId = ''; if(typeof render === 'function') render(); }
+function advanceFlowSimulation(){
+  if(flowSimIndex >= FLOW_SIM_STEPS.length - 1) return;
+  flowSimIndex += 1;
+  if(FLOW_SIM_STEPS[flowSimIndex].key === 'order') flowSimOrderId = 'ORD-SIM-20260802-001';
+  if(typeof render === 'function') render();
+}
+function flowSimulationCard(){
+  const current = FLOW_SIM_STEPS[flowSimIndex];
+  const complete = flowSimIndex === FLOW_SIM_STEPS.length - 1;
+  return `<section class="flow-sim" aria-label="訂單資訊流模擬器">
+    <div class="flow-sim-head"><div><div class="flow-sim-title">端到端資訊流模擬</div><div class="flow-sim-sub">Mock only · 不寫入 Airtable、不扣真實額度，用來驗證 CRM → 查帳 → Order → 製作 → Partner 的先後關係。</div></div><div class="flow-sim-actions"><button class="btn primary" ${complete?'disabled':''} onclick="advanceFlowSimulation()">${complete?'流程已完成':'執行下一步 →'}</button><button class="btn" onclick="resetFlowSimulation()">重設</button></div></div>
+    <div class="flow-sim-steps">${FLOW_SIM_STEPS.map((step,i)=>{const state=i<flowSimIndex?'done':i===flowSimIndex?'current':'locked';return `<div class="flow-sim-step ${state}"><span class="flow-sim-num">0${i+1} · ${_esc(step.owner)}</span><b class="flow-sim-label">${_esc(step.label)}</b><span class="flow-sim-state">${i<flowSimIndex?'✓ 已完成':i===flowSimIndex?'● 目前步驟':'○ 尚未觸發'}</span></div>`}).join('')}</div>
+    <div class="flow-sim-detail"><p><strong>目前檢查：</strong>${_esc(current.rule)}${flowSimOrderId?`<br><strong>模擬 Order ID：</strong>${_esc(flowSimOrderId)}`:''}<br><span class="flow-sim-rule">${complete?'<span class="flow-sim-ok">✓ 全流程通過：Order 建立與 Partner 結算都發生在查帳鎖定之後。</span>':'下一個節點：'+_esc(FLOW_SIM_STEPS[flowSimIndex+1]?.label || '—')}</span></p><span class="tag ${complete?'ok':'blue'}">${complete?'PASS':'RUNNING'}</span></div>
+  </section>`;
+}
 function adminDashboardAirtable(){
   if(airtableDataState !== 'ready') return airtableDataGate();
   const now = new Date();
@@ -1537,10 +1691,10 @@ function adminDashboardAirtable(){
   const monthRevenue = sumBetween(monthStart, currentMonthEnd);
   const previousMonthRevenue = sumBetween(prevMonthStart, monthStart);
   const status = value => String(value || '').trim().toLowerCase();
-  const newCount = CORE_CRM.filter(r => ['new','新進件'].includes(status(r.status))).length;
+  const newCount = newInquiryNotificationCount();
   const generatingCount = CORE_ORD.filter(r => ['生成中','generating'].includes(status(r.prod || r.orderStatus)) || status(r.prod || r.orderStatus).includes('generating')).length;
   const reviewCount = CORE_ORD.filter(r => ['審核中','review'].includes(status(r.prod || r.orderStatus)) || status(r.prod || r.orderStatus).includes('review')).length;
-  const closedCount = CORE_CRM.filter(r => ['converted','已轉單','closed lost','未成交','closed won','成交'].includes(status(r.status))).length + CORE_ORD.filter(r => ['completed','已完成','closed'].includes(status(r.orderStatus))).length;
+  const closedCount = CORE_ORD.filter(r => Boolean(r.completion || r.deliveryDate) || ['completed','已完成','closed'].includes(status(r.orderStatus))).length;
   const pendingPayments = CORE_CRM.filter(r => ['pending verification','待帳務確認'].includes(status(r.payStatus || r.pay))).length;
   const activePartners = CORE_PTN.filter(r => !['suspended','paused','停用','暫停'].includes(status(r.partnerPaid || r.planStatus))).length;
   const pausedPartners = CORE_PTN.length - activePartners;
@@ -1564,34 +1718,36 @@ function crmQueueCard(title, subtitle, rows, tone){
   </section>`;
 }
 
-function crmStatusGroupKey(status){
+function crmStatusGroupKey(status, read=false, paymentStatus=''){
   const value = String(status || '').trim().toLowerCase();
-  if(['new','新進件'].includes(value)) return 'new';
-  if(['pending verification','待帳務確認','帳務確認'].includes(value)) return 'payment';
-  if(['waiting customer','等客戶回覆','awaiting customer'].includes(value)) return 'waiting';
+  const payment = String(paymentStatus || '').trim().toLowerCase();
+  if(['pending verification','待帳務確認','帳務確認','paid','已付款','confirmed','已確認'].includes(payment) || ['pending verification','待帳務確認','帳務確認'].includes(value)) return 'payment';
   if(['converted','已轉單','成交','won'].includes(value)) return 'converted';
   if(['closed lost','未成交','lost'].includes(value)) return 'lost';
-  return value || 'other';
+  if(['new','新進件'].includes(value)) return read ? 'consulting' : 'new';
+  return 'consulting';
 }
 function crmStatusGroupTitle(key, fallback){
-  return ({new:'新進來的詢問單',payment:'待帳務確認',waiting:'等客戶回覆',converted:'已轉單',lost:'未成交'}[key] || fallback || '其他狀態');
+  return ({new:'新詢問通知',consulting:'諮詢中',payment:'已進入帳務',converted:'已轉入 Production',lost:'未成交'}[key] || fallback || '其他狀態');
 }
 function crmStatusCards(){
   const groups = new Map();
   const readSet = new Set(readInquiryIds());
   CORE_CRM.forEach((r,i) => {
-    const key = crmStatusGroupKey(r.status);
+    const key = crmStatusGroupKey(r.status, readSet.has(r.id), r.payStatus || r.pay);
+    // Payment / Order records have their own modules; keep CRM focused on consultation.
+    if(['payment','converted','lost'].includes(key)) return;
     if(!groups.has(key)) groups.set(key, {key,title:crmStatusGroupTitle(key,r.status),rows:[]});
     groups.get(key).rows.push({...r,_index:i});
   });
   groups.forEach(group => group.rows.sort((a,b) => String(b.inqDate || '').localeCompare(String(a.inqDate || ''))));
-  const order = ['new','payment','waiting','converted','lost'];
+  const order = ['new','consulting','lost'];
   const sorted = [...groups.values()].sort((a,b) => {
     const ai = order.indexOf(a.key), bi = order.indexOf(b.key);
     return (ai < 0 ? 99 : ai) - (bi < 0 ? 99 : bi);
   });
   return sorted.map(group => `<section class="crm-queue-card ${group.key}">
-    <div class="crm-queue-head"><div><div class="crm-queue-title">${_esc(group.title)}${group.key === 'new' ? '<span class="crm-new-alert">● 新進件</span>' : ''}</div><div class="crm-queue-sub">同一狀態案件集中管理</div></div>
+    <div class="crm-queue-head"><div><div class="crm-queue-title">${_esc(group.title)}${group.key === 'new' ? '<span class="crm-new-alert">● 未讀通知</span>' : ''}</div><div class="crm-queue-sub">${group.key === 'new' ? '點開後通知消失，同一筆案件保留在諮詢中' : '同一類型案件集中查詢'}</div></div>
       <div class="crm-queue-count">${group.key === 'new' ? `${newInquiryNotificationCount()} 筆未讀 · ${group.rows.length} 筆總計` : `${group.rows.length} 筆`}</div></div>
     <div class="crm-status-table-wrap"><table class="crm-status-table"><thead><tr>
       <th>進件日期</th><th>詢問編號</th><th>客戶</th><th>詢問項目</th><th>負責人員</th><th>狀態</th><th>付款</th><th>優先</th><th>下次追蹤</th><th>負責客服</th>
@@ -1629,9 +1785,8 @@ function crmAllTable(){
 function crmPage(){
   if(airtableDataState !== 'ready') return airtableDataGate();
   return `<div class="page-title"><div><h1>CRM</h1>
-    <p style="color:#c3bce0">一筆 = 一次詢問。客服每天只需回答四件事：誰要追、追到哪、誰負責、什麼時候追。</p></div>
+    <p style="color:#c3bce0">詢問／成交總表 · 只處理客戶需求、報價、追蹤與付款前狀態；付款鎖定後轉入 Orders 生產總表。</p></div>
     </div>
-  ${core3Flow()}
   <div class="crm-queues">${crmStatusCards()}</div>
   <p style="margin-top:12px;font-size:12.5px;color:#a99cd0">依狀態分組 · 點案件開啟詳細資料</p>`;
 }
@@ -1641,14 +1796,13 @@ function orderCategoryCard(title, subtitle, rows, tone='new'){
 }
 function orderStatusGroupKey(value){
   const status = String(value || '').trim().toLowerCase();
+  if(['洽談中','洽中','等客戶回覆','等待客戶回覆','待付款','等待付款','new inquiry','contacted','discussing','waiting customer','ready to close'].some(value => status.includes(value))) return 'preorder';
   if(status.includes('新訂單') || status.includes('new order') || status === 'new' || status === 'new_order') return 'new';
   if(status.includes('生成') || status.includes('generat') || status.includes('進行') || status.includes('in production') || status.includes('processing') || status.includes('queued')) return 'generating';
   if(status.includes('等待素材') || status.includes('waiting asset') || status.includes('待素材') || status.includes('素材不全')) return 'assets';
   if(status.includes('審核') || status.includes('review') || status.includes('revision') || status.includes('修改')) return 'review';
   if(status.includes('已完成') || status.includes('完成') || status.includes('completed') || status.includes('closed') || status.includes('deliver')) return 'closed';
-  // 未來 Airtable 新增狀態時，先依素材狀態歸入可處理的製作分類，
-  // 不再產生無法操作的「其他待處理」總表。
-  return 'generating';
+  return 'unknown';
 }
 function orderCategoryCards(){
   const rows = CORE_ORD.map((r,i) => ({r,i})).sort((a,b) => String(b.r.orderDate || '').localeCompare(String(a.r.orderDate || '')));
@@ -1659,19 +1813,38 @@ function orderCategoryCards(){
     if(!['review','closed'].includes(productionGroup) && assetsIncomplete) return 'assets';
     return productionGroup;
   };
-  const newRows = rows.filter(({r}) => r.isNew || statusOf(r) === 'new');
+  const activeRows = rows.filter(({r}) => statusOf(r) !== 'closed');
+  const preOrderRows = activeRows.filter(({r}) => statusOf(r) === 'preorder');
+  const unknownRows = activeRows.filter(({r}) => statusOf(r) === 'unknown');
+  const newRows = activeRows.filter(({r}) => r.isNew || statusOf(r) === 'new');
   const groups = [
     ['生成中','製作人員已開始生成，等待成品','process','generating'],
     ['等待素材','等待客戶補齊製作素材','assets','assets'],
     ['審核中','成品進入審核與修改流程','review','review'],
     ['已完成','成品已完成並可交付或下載','closed','closed'],
   ];
-  const cards = [orderCategoryCard('新訂單','付款確認後自動建立，等待安排製作',newRows)];
+  const cards = [
+    preOrderRows.length ? `<div class="notice warn" style="margin-bottom:14px">${preOrderRows.length} 筆前置詢問狀態未進入 Orders：請回 CRM 處理「洽談／等客戶回覆／待付款」，付款鎖定後才會建立 Order。</div>` : '',
+    unknownRows.length ? `<div class="notice warn" style="margin-bottom:14px">${unknownRows.length} 筆 Order 狀態無法判定，已暫停分類，請補上正式生產狀態。</div>` : '',
+    orderCategoryCard('新訂單','付款完成並鎖定後由系統自動建立，等待安排製作',newRows)
+  ];
   groups.forEach(([title,subtitle,tone,key]) => {
-    const groupRows = rows.filter(({r}) => !r.isNew && statusOf(r) === key);
+    const groupRows = activeRows.filter(({r}) => !r.isNew && statusOf(r) === key);
     if(groupRows.length) cards.push(orderCategoryCard(title,subtitle,groupRows,tone));
   });
   return cards.join('');
+}
+function closedRecordsPage(){
+  if(airtableDataState !== 'ready') return airtableDataGate();
+  const orderRows = CORE_ORD.filter(r => {
+    const status = String(r.orderStatus || '').toLowerCase();
+    return Boolean(r.completion || r.deliveryDate) || ['已完成','完成','completed','closed'].some(value => status.includes(value));
+  });
+  const crmRows = CORE_CRM.map((r,i) => ({...r,_index:i})).filter(r => normalizeCrmWorkflowStatus(r.status) === 'lost');
+  return `<div class="page-title"><div><h1>結案紀錄</h1><p style="color:#c3bce0">唯讀歷史視圖 · 提早未成交與 Order 完成交付都在這裡查詢，原始資料不搬移。</p></div><span class="tag ok">${orderRows.length + crmRows.length} 筆</span></div>
+    <div class="notice success">未成交：停在客服追蹤並停止後續流程。已付款：進入 Order，完成交付後在此查詢歷史。</div>
+    <section class="payment-history-card" style="margin-top:18px"><div class="payment-history-head"><div><h2>提早結案／未成交</h2><p>仍可點擊查看原客服追蹤流程；流程燈號固定停在客服追蹤。</p></div><span class="tag bad">${crmRows.length} 筆</span></div><div class="table-wrap"><table class="table l1-table"><thead><tr><th>結案日期</th><th>詢問編號</th><th>客戶</th><th>未成交原因</th><th>目前流程</th></tr></thead><tbody>${crmRows.length ? crmRows.map(r => `<tr onclick="core3Open('crm',${r._index})"><td class="cell-date">${_esc(_dateOnly(r.closedAt || r.inqDate))}</td><td class="cell-id">${_esc(r.id)}</td><td>${_esc(r.name || '—')}</td><td>${_esc(r.lostReason || '—')}</td><td><span class="tag bad">客服追蹤 · 已關案</span></td></tr>`).join('') : '<tr><td colspan="5" class="order-category-empty">目前沒有提早結案案件</td></tr>'}</tbody></table></div></section>
+    <section class="payment-history-card" style="margin-top:18px"><div class="payment-history-head"><div><h2>Order 結案</h2><p>Order 完成交付與客戶確認後才會出現在這裡。</p></div><span class="tag ok">${orderRows.length} 筆</span></div><div class="table-wrap"><table class="table l1-table"><thead><tr><th>結案日期</th><th>Order</th><th>客戶</th><th>服務</th><th>負責人</th><th>付款</th><th>交付連結</th></tr></thead><tbody>${orderRows.length ? orderRows.map(r => `<tr onclick="core3Open('ord',${CORE_ORD.indexOf(r)})"><td class="cell-date">${_esc(_dateOnly(r.deliveryDate || r.completion || r.orderDate))}</td><td class="cell-id">${_esc(r.id)}</td><td><div class="cell-name">${_esc(r.name || '—')}</div><div class="cell-sub">${_esc(r.partnerCode || '—')}</div></td><td>${_esc(r.service || '—')}</td><td>${_esc(r.producer || '—')}</td><td><span class="tag ok">${_esc(r.payStatus || '已付款')}</span></td><td>${_safeUrl(r.link) ? `<a href="${_esc(_safeUrl(r.link))}" target="_blank" rel="noopener noreferrer">開啟 ↗</a>` : '—'}</td></tr>`).join('') : '<tr><td colspan="7" class="order-category-empty">目前沒有已結案 Order</td></tr>'}</tbody></table></div></section>`;
 }
 function airtableRedirectsPage(){
   if(airtableDataState !== 'ready') return airtableDataGate();
@@ -1688,9 +1861,25 @@ function crmOrdersPage(){
   if(airtableDataState !== 'ready') return airtableDataGate();
   const rows = CORE_ORD.map((r,i) => ({r,i})).sort((a,b) => String(b.r.orderDate || '').localeCompare(String(a.r.orderDate || '')));
   return `<div class="page-title"><div><h1>Production</h1>
-    <p style="color:#c3bce0">一筆 = 一次專案。付款欄位唯讀，從 CRM 帶入，不在這裡修改。</p></div><button class="btn" onclick="openOrderFlowDemo()">查看流程預覽 Demo</button></div>
-  ${core3Flow()}${orderCategoryCards()}${orderDemoPreviewCard()}
+    <p style="color:#c3bce0">生產總表 · 只顯示付款完成並鎖定後建立的 Order。洽談、等待客戶回覆、待付款一律留在 CRM。</p></div><button class="btn" onclick="openOrderFlowDemo()">查看流程預覽 Demo</button></div>
+  ${flowSimulationCard()}${orderCategoryCards()}${orderDemoPreviewCard()}
   <p style="margin-top:12px;font-size:12.5px;color:#a99cd0">依製作狀態分類 · 點任一列展開第二層製作時程</p>`;
+}
+function productionBroadKey(order){
+  const status = String(order?.prod || order?.orderStatus || '').trim().toLowerCase();
+  if(['已完成','完成','completed','closed','交付完成','客戶確認'].some(value => status.includes(value)) || order?.completion || order?.deliveryDate) return 'closed';
+  if(['客人收件','客戶收件','tg回傳','tg 回傳','已回傳','待客戶確認','customer received','delivered'].some(value => status.includes(value))) return 'customer';
+  return 'generating';
+}
+function productionOverviewPage(){
+  if(airtableDataState !== 'ready') return airtableDataGate();
+  const active = CORE_ORD.map((r,i) => ({r,i})).filter(({r}) => Boolean(r.payStatus || r.payment || r.locked));
+  const sections = [
+    ['生成中','付款鎖定後，製作、等素材、生成與審核都歸在這裡。','generating','blue'],
+    ['客人收件','成品已由真人客服透過 TG 回傳，等待客戶確認。','customer','pink'],
+    ['結案','客戶確認完成後，進入結案歷史。','closed','ok']
+  ];
+  return `<div class="page-title"><div><h1>Production</h1><p style="color:#c3bce0">生產大方向 · 只追蹤付款後的 Order：生成 → 客人收件 → 結案。</p></div><button class="btn" onclick="go('admin-orders')">查看 Orders 完整流程</button></div><div class="notice" style="margin-bottom:18px">新訂單與每個細節節點請到「Orders 訂單」查看；Production 只保留生產總覽。</div>${sections.map(([title,subtitle,key,tone]) => { const rows = active.filter(({r}) => productionBroadKey(r) === key); return `<section class="order-category-card ${tone}"><div class="order-category-head"><div><div class="order-category-title">${title}</div><div class="order-category-sub">${subtitle}</div></div><div class="order-category-count">${rows.length} 筆</div></div>${rows.length ? `<div class="order-category-table"><table class="table l1-table"><thead><tr><th>日期</th><th>Order</th><th>客戶</th><th>目前生產狀態</th><th>素材</th><th>負責人</th></tr></thead><tbody>${rows.map(({r,i}) => `<tr onclick="core3Open('ord',${i})"><td class="cell-date">${_esc(_dateOnly(r.orderDate))}</td><td class="cell-id">${_esc(r.id)}</td><td><div class="cell-name">${_esc(r.name || '—')}</div><div class="cell-sub">${_esc(r.service || '—')}</div></td><td><span class="tag ${_esc(r.prodTag || 'blue')}">${_esc(r.prod || r.orderStatus || '—')}</span></td><td>${_esc(r.asset || '—')}</td><td>${_esc(r.producer || '—')}</td></tr>`).join('')}</tbody></table></div>` : '<div class="order-category-empty">目前沒有案件</div>'}</section>`; }).join('')}`;
 }
 function openOrderFlowDemo(){ core3Open('ord-demo', 0); }
 
@@ -1718,48 +1907,149 @@ function crmPartnersPage(){
 }
 
 /* ═══ 第二層抽屜 ═══ */
+function normalizeCrmWorkflowStatus(value){
+  const key = String(value || '').trim().toLowerCase();
+  const aliases = {
+    '新進件':'new', '新進來的詢問單':'new', 'new':'new', 'contacted':'new', '已聯絡':'new',
+    '洽談中':'discussing',
+    '等客戶回覆':'waiting customer',
+    '準備成交':'ready to close',
+    '待帳務確認':'payment verified', '付款待確認':'payment verified',
+    '成交':'converted', '已轉單':'converted', 'closed won':'converted'
+  };
+  return aliases[key] || key;
+}
 const CRM_WORKFLOW_STAGES = [
-  { status:'New', label:'新進件', section:1, task:'確認已接手案件並指定負責客服', fields:[['負責客服', r => r.cs]] },
-  { status:'Contacted', label:'已聯絡', section:3, task:'完成第一次聯絡並留下聯絡時間', fields:[['最近聯絡時間', r => r.lastContact]] },
-  { status:'Discussing', label:'洽談中', section:2, task:'確認需求與預算，補上需求摘要', fields:[['需求摘要', r => r.summary], ['預算區間', r => r.budget]] },
-  { status:'Waiting Customer', label:'等客戶回覆', section:3, task:'設定下一次追蹤時間', fields:[['下次追蹤', r => r.next && r.next !== '—']] },
-  { status:'Ready to Close', label:'準備成交', section:4, task:'確認方案與報價金額，等待付款驗證', fields:[['報價金額', r => r.quoted]] },
-  { status:'Converted', label:'已轉單', section:5, task:'付款確認並完成轉單', fields:[['付款鎖定', r => r.locked || ['已付款','已確認','confirmed','paid'].includes(String(r.payStatus || '').trim().toLowerCase())]] },
+  { status:'New', label:'客服追蹤', section:3, task:'TG／客服自動追蹤需求與回覆', systemOnly:true, fields:[] },
+  { status:'Data', label:'客戶資料／照片', section:2, task:'TG 自動判定是否已收到客戶資料', systemOnly:true, fields:[] },
+  { status:'Discussing', label:'洽談中', section:2, task:'TG 自動化持續確認需求與方案', systemOnly:true, fields:[] },
+  { status:'Waiting Customer', label:'等客戶回覆', section:3, task:'TG 自動化等待客戶回覆或補件', systemOnly:true, fields:[] },
+  { status:'Ready to Close', label:'準備成交', section:4, task:'TG 自動化提供付款方式並等待付款', systemOnly:true, fields:[] },
+  { status:'Payment Submitted', label:'收到付款後五碼', section:4, task:'收到付款證明與後五碼，轉入帳務查詢', systemOnly:true, fields:[] },
+  { status:'Payment Verified', label:'帳務查帳／付款鎖定', section:4, task:'財務人工核對入帳，確認後由系統鎖定付款', systemOnly:true, fields:[] },
+  { status:'Converted', label:'已轉入 Order', section:5, task:'付款完成且已鎖定，Order 已建立；後續由 Production 接手', systemOnly:true, fields:[] },
 ];
 function crmWorkflow(status, index, r){
-  const currentKey = String(status || 'New').trim().toLowerCase();
-  const normalizedKey = currentKey === 'closed won' || currentKey === '已轉單' ? 'converted' : currentKey;
-  const currentIndex = Math.max(0, CRM_WORKFLOW_STAGES.findIndex(stage => stage.status.toLowerCase() === normalizedKey));
+  const normalizedKey = normalizeCrmWorkflowStatus(status || 'New');
+  const pay = String(r.payStatus || r.pay || '').trim().toLowerCase();
+  if(normalizedKey === 'lost'){
+    return `<section class="crm-workflow" aria-label="詢問與成交流程"><div class="crm-workflow-head"><div><div class="fk">CRM 詢問／成交流程</div><div class="crm-workflow-current">目前在：客服追蹤</div><div class="crm-workflow-task">案件已關案：未成交，不再進入付款、Order 或 Production。</div></div><span class="tag bad">已關案 · 流程停止</span></div><div class="crm-workflow-steps">${CRM_WORKFLOW_STAGES.map((stage, stepIndex) => { const active = stepIndex === 0; return `<button type="button" class="crm-workflow-step ${active?'active':''} locked" onclick="crmJumpToSection(${stage.section})"><span class="crm-workflow-dot">${active?'●':stepIndex+1}</span><span><b>${_esc(stage.label)}</b><small>${active?'目前步驟':'不再執行'}</small></span></button>`; }).join('')}</div></section>`;
+  }
+  let currentIndex = normalizedKey === 'waiting customer' ? 3 : normalizedKey === 'ready to close' ? 4 : normalizedKey === 'discussing' ? 2 : 0;
+  if(r.hasFiles) currentIndex = Math.max(currentIndex, 2);
+  if(['pending verification','待帳務確認','payment received','已付款待驗證'].includes(pay) || r.last5) currentIndex = 6;
+  else if(['paid','已付款','confirmed','已確認'].includes(pay) && !r.locked) currentIndex = 6;
+  else if(normalizedKey === 'payment verified') currentIndex = 6;
+  else if(normalizedKey === 'converted' || r.locked) currentIndex = 7;
   const next = CRM_WORKFLOW_STAGES[currentIndex + 1];
   const nextChecks = next ? next.fields.map(([label, get]) => ({label, done:Boolean(get(r))})) : [];
   const missing = nextChecks.filter(check => !check.done);
   const canAdvance = Boolean(next && missing.length === 0);
-  return `<section class="crm-workflow" aria-label="案件流程"><div class="crm-workflow-head"><div><div class="fk">客服工作流程</div><div class="crm-workflow-current">目前在：${_esc(CRM_WORKFLOW_STAGES[currentIndex].label)}</div>${next ? `<div class="crm-workflow-task">下一步：${_esc(next.task)}</div>` : '<div class="crm-workflow-task">所有流程已完成</div>'}</div>${next ? `<button class="btn ${canAdvance ? 'success' : ''}" ${canAdvance ? `onclick="setCrmStatus(${index},'${_esc(next.status)}')"` : 'disabled'}>${canAdvance ? `完成並進入「${_esc(next.label)}」 →` : `先完成 ${missing.length} 項必要資料`}</button>` : '<span class="tag ok">流程完成</span>'}</div><div class="crm-workflow-steps">${CRM_WORKFLOW_STAGES.map((stage, stepIndex) => { const active = stepIndex === currentIndex; const done = stepIndex < currentIndex; return `<button type="button" class="crm-workflow-step ${active?'active':''} ${done?'done':''}" onclick="crmJumpToSection(${stage.section})"><span class="crm-workflow-dot">${done?'✓':stepIndex+1}</span><span><b>${_esc(stage.label)}</b><small>${active?'目前步驟':done?'已完成':'點擊查看資料'}</small></span></button>`; }).join('')}</div>${next ? `<div class="crm-workflow-gate"><b>進入下一步前需完成：</b>${nextChecks.map(check => `<span class="${check.done?'done':''}">${check.done?'✓':'○'} ${_esc(check.label)}</span>`).join('')}</div>` : ''}</section>`;
+  const isConverted = currentIndex === 7;
+  const headTask = next ? `<div class="crm-workflow-task">下一步：${_esc(next.task)}</div>` : (isConverted ? '<div class="crm-workflow-task">已進入 Production；請在 Order 分頁追蹤生產與交付</div>' : '<div class="crm-workflow-task">等待自動化流程或帳務介入</div>');
+  const headAction = next?.systemOnly
+    ? '<span class="tag warn">付款完成並鎖定後自動轉單</span>'
+    : next ? `<button class="btn ${canAdvance ? 'success' : ''}" ${canAdvance ? `onclick="setCrmStatus(${index},'${_esc(next.status)}')"` : 'disabled'}>${canAdvance ? `完成並進入「${_esc(next.label)}」 →` : `先完成 ${missing.length} 項必要資料`}</button>`
+    : (isConverted ? '<span class="tag blue">已轉入 Order</span>' : '<span class="tag ok">流程完成</span>');
+  return `<section class="crm-workflow" aria-label="詢問與成交流程"><div class="crm-workflow-head"><div><div class="fk">CRM 詢問／成交流程</div><div class="crm-workflow-current">目前在：${_esc(CRM_WORKFLOW_STAGES[currentIndex].label)}</div>${headTask}</div>${headAction}</div><div class="crm-workflow-steps">${CRM_WORKFLOW_STAGES.map((stage, stepIndex) => { const active = stepIndex === currentIndex; const done = stepIndex < currentIndex; return `<button type="button" class="crm-workflow-step ${active?'active':''} ${done?'done':''}" onclick="crmJumpToSection(${stage.section})"><span class="crm-workflow-dot">${done?'✓':stepIndex+1}</span><span><b>${_esc(stage.label)}</b><small>${active?'目前步驟':done?'已完成':'點擊查看資料'}</small></span></button>`; }).join('')}</div>${next ? `<div class="crm-workflow-gate"><b>進入下一步前需完成：</b>${nextChecks.map(check => `<span class="${check.done?'done':''}">${check.done?'✓':'○'} ${_esc(check.label)}`).join('')}</div>` : ''}</section>`;
 }
 function crmJumpToSection(section){
   const target = document.getElementById(`detail-section-${section}`);
   if(target) target.scrollIntoView({behavior:'smooth', block:'start'});
 }
-const CRM_EDIT_FIELDS = [
-  {key:'lastContact', label:'最近聯絡時間', stage:1, type:'text', placeholder:'例如 2026-08-02 19:30'},
-  {key:'summary', label:'需求摘要', stage:2, type:'textarea', full:true},
-  {key:'budget', label:'預算區間', stage:2, type:'text', placeholder:'例如 $20–50'},
-  {key:'nextFollowUp', label:'下次追蹤時間', stage:3, type:'text', placeholder:'例如 2026-08-05 14:00'},
-  {key:'followupNote', label:'追蹤備註', stage:3, type:'textarea', full:true},
-  {key:'quoted', label:'報價金額', stage:4, type:'text', placeholder:'例如 28'},
-  {key:'method', label:'付款方式', stage:4, type:'text', placeholder:'例如 ABA / 銀行匯款'},
-];
+const CRM_EDIT_FIELDS = [];
 function crmEditPanel(r, index){
-  const currentKey = String(r.status || 'New').trim().toLowerCase();
-  const currentIndex = Math.max(0, CRM_WORKFLOW_STAGES.findIndex(stage => stage.status.toLowerCase() === (currentKey === 'closed won' ? 'converted' : currentKey)));
-  const values = {lastContact:r.lastContact, summary:r.summary, budget:r.budget, nextFollowUp:r.next, followupNote:r.note, quoted:r.quoted, method:r.method};
-  return `<section class="crm-edit-panel"><div class="crm-edit-head"><b>本步驟工作欄位</b><span>只有已到達或正在進入的步驟可編輯；帶入資料維持唯讀</span></div><div class="crm-edit-grid">${CRM_EDIT_FIELDS.map(field => { const enabled = field.stage <= currentIndex + 1; const tag = enabled ? (field.stage === currentIndex + 1 ? '本步驟' : '已開啟') : '尚未到步驟'; const control = field.type === 'textarea' ? `<textarea id="crm-edit-${field.key}-${index}" ${enabled?'':'disabled'} placeholder="${_esc(field.placeholder || '')}">${_esc(values[field.key] || '')}</textarea>` : `<input id="crm-edit-${field.key}-${index}" ${enabled?'':'disabled'} value="${_esc(values[field.key] || '')}" placeholder="${_esc(field.placeholder || '')}">`; return `<label class="crm-edit-field ${field.full?'full':''}"><span class="crm-edit-label"><span>${_esc(field.label)}</span><span class="crm-edit-lock">${tag}</span></span>${control}</label>`; }).join('')}</div><div style="display:flex;align-items:center;gap:12px;margin-top:14px"><button class="btn primary" onclick="saveCrmFields(${index})">儲存工作欄位</button><span style="color:#a99cd0;font-size:12px">儲存後由後台同步 Airtable</span></div></section>`;
+  return `<section class="crm-edit-panel"><div class="crm-edit-head"><b>客服追蹤紀錄</b><span>進件時間、聯絡次數與 TG 資料狀態固定自動產生；只有卡點與備註可人工補充</span></div><div style="color:#a99cd0;font-size:12px;line-height:1.6;margin-bottom:14px">洽談、等待回覆、客戶資料狀態由 TG 自動化處理。收到付款後五碼後，請到「帳務／Payment」進行人工查帳與付款鎖定。</div><label class="crm-edit-field full"><span class="crm-edit-label"><span>追蹤備註</span><span class="crm-edit-lock">人工輸入</span></span><textarea id="crm-followup-note-${index}" placeholder="例如：客戶說明週末補傳正面照">${_esc(r.note || '')}</textarea></label><div style="display:flex;align-items:center;gap:12px;margin-top:14px"><button class="btn primary" onclick="saveCrmFollowup(${index})">儲存追蹤備註</button><span style="color:#a99cd0;font-size:12px">不修改詢問時間與主流程狀態</span></div></section>`;
+}
+const CRM_ASSIGNEES = ['Nina','Sunny','Cat'];
+const CRM_BLOCKERS = ['等客戶回傳照片','客戶無回應'];
+function crmAssigneeSelect(r, index){
+  const current = String(r.cs || '').replace(/（客服）$/,'').trim();
+  const options = [...new Set([current, ...CRM_ASSIGNEES].filter(Boolean))];
+  return `<div class="fitem"><div class="fk">負責客服／客服追蹤</div><div class="fv"><select aria-label="負責客服／客服追蹤" onchange="setCrmAssignee(${index},this.value)">${options.map(name => `<option value="${_esc(name)}" ${name===current?'selected':''}>${_esc(name)}</option>`).join('')}</select></div><div class="fn">客服分派欄位；不會修改進件時間或案件流程狀態</div></div>`;
+}
+function paymentAutoDate(r){
+  return _fmt(r.transferDate || (r.subAt ? String(r.subAt).slice(0,10) : ''));
+}
+function paymentSubmitterOptions(current){
+  const names = ['Nina','Sunny','Cat'];
+  return [...new Set([String(current || '').replace(/（客服）$/,'').trim(), ...names].filter(Boolean))];
+}
+function paymentLast5Field(r, index){
+  const disabled = r.locked ? ' disabled' : '';
+  return `<div class="fitem"><div class="fk">帳戶後五碼<span class="chip new">人工輸入</span></div><div class="fv"><input id="payment-last5-detail-${index}" class="payment-review-input" inputmode="numeric" maxlength="5" value="${_esc(r.last5 || '')}" placeholder="輸入 5 位數"${disabled}></div><div class="fn">只有這個欄位由客服填寫；付款確認後鎖定</div></div>`;
+}
+function paymentSubmitterField(r, index){
+  const disabled = r.locked ? ' disabled' : '';
+  const current = String(r.subBy || '').replace(/（客服）$/,'').trim();
+  return `<div class="fitem"><div class="fk">填寫人<span class="chip new">人工選擇</span></div><div class="fv"><select id="payment-submitter-${index}"${disabled}>${paymentSubmitterOptions(current).map(name => `<option value="${_esc(name)}" ${name===current?'selected':''}>${_esc(name)}</option>`).join('')}</select></div><div class="fn">客服填寫後保留紀錄，付款確認後鎖定</div></div>`;
+}
+function paymentVerificationNoteField(r, index){
+  const disabled = r.locked ? ' disabled' : '';
+  return `<div class="fitem full"><div class="fk">驗證備註<span class="chip new">人工輸入</span></div><div class="fv"><textarea id="payment-verification-note-${index}" class="payment-verification-note" placeholder="對不上時記錄原因"${disabled}>${_esc(r.verNote || '')}</textarea></div><div class="fn">付款資料不符時由帳務記錄原因；付款鎖定後不可修改</div></div>`;
+}
+function paymentDetailActions(r, index){
+  return r.locked ? '<span class="tag ok">付款完成 · 🔒 已鎖定</span>' : `<button class="btn primary" onclick="savePaymentDetail(${index})">儲存付款資料</button><span class="fn" style="display:inline-block;margin-left:10px">送出後由帳務查帳並自動帶入核准人／核准時間</span>`;
+}
+function setCrmAssignee(index, value){
+  const crm = CORE_CRM[index];
+  if(!crm || !CRM_ASSIGNEES.includes(value)) return;
+  crm.cs = value;
+  toast(`已指定客服：${value}`);
+}
+function crmBlockerSelect(r, index){
+  const current = CRM_BLOCKERS.includes(r.blockerStatus) ? r.blockerStatus : CRM_BLOCKERS[0];
+  return `<div class="fitem"><div class="fk">卡在線狀態</div><div class="fv"><select aria-label="卡在線狀態" onchange="setCrmBlocker(${index},this.value)">${CRM_BLOCKERS.map(option => `<option value="${_esc(option)}" ${option===current?'selected':''}>${_esc(option)}</option>`).join('')}</select></div><div class="fn">客服手動選擇；預設「等客戶回傳照片」</div></div>`;
+}
+function setCrmBlocker(index, value){
+  const crm = CORE_CRM[index];
+  if(!crm || !CRM_BLOCKERS.includes(value)) return;
+  crm.blockerStatus = value;
+  saveCrmFollowup(index, false);
+}
+async function saveCrmFollowup(index, notify=true){
+  const crm = CORE_CRM[index];
+  if(!crm) return;
+  const noteInput = document.getElementById(`crm-followup-note-${index}`);
+  if(noteInput) crm.note = noteInput.value;
+  const fields = {followupNote: crm.note || '', blockerStatus: crm.blockerStatus || CRM_BLOCKERS[0]};
+  if(crm.recordId){
+    try{
+      const response = await fetch('/api/crm/update-fields',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({recordId:crm.recordId,fields})});
+      const result = await response.json();
+      if(!response.ok || !result.ok) throw new Error(result.error || `HTTP ${response.status}`);
+    }catch(error){ toast(`追蹤紀錄同步失敗：${error.message}`); return; }
+  }
+  if(notify) toast('追蹤備註已儲存');
+}
+async function closeCrmAsLost(index){
+  const crm = CORE_CRM[index];
+  const reasonInput = document.getElementById(`crm-lost-reason-${index}`);
+  const reason = String(reasonInput?.value || '').trim();
+  if(!crm || crm.locked || ['已付款','已確認'].includes(String(crm.payStatus || crm.pay || '').trim())){ toast('付款已確認的案件不能標記為未成交'); return; }
+  if(!reason){ toast('請先輸入未成交原因'); return; }
+  try{
+    if(crm.recordId){
+      const statusResponse = await fetch('/api/crm/update-status',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({recordId:crm.recordId,status:'Closed Lost'})});
+      const statusResult = await statusResponse.json();
+      if(!statusResponse.ok || !statusResult.ok) throw new Error(statusResult.error || `HTTP ${statusResponse.status}`);
+      const fieldResponse = await fetch('/api/crm/update-fields',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({recordId:crm.recordId,fields:{lostReason:reason,closeResult:'未成交',closedAt:localDateTimeValue()}})});
+      const fieldResult = await fieldResponse.json();
+      if(!fieldResponse.ok || !fieldResult.ok) throw new Error(fieldResult.error || `HTTP ${fieldResponse.status}`);
+    }
+    crm.status='未成交'; crm.statusTag='bad'; crm.closeResult='未成交'; crm.lostReason=reason; crm.closedAt=localDateTimeValue(); crm.next='—';
+    crm.history=Array.isArray(crm.history)?crm.history:[];
+    crm.history.push({t:`未成交 · ${reason}`,d:`${_dateOnly(crm.closedAt)} · 客服關案`,s:'now'});
+    go('admin-closed-records');
+    toast('案件已提早結案；付款、Order、Production 流程停止');
+  }catch(error){ toast(`關案同步失敗：${error.message}`); }
 }
 function setCrmStatus(index, status){
   saveCrmStatus(index, status);
 }
 function core3CrmCard(r){
-  const tl = `<div class="tl">${r.history.map(h=>`<div class="tl-i ${h.s}"><div class="tl-t">${_esc(h.t)}</div><div class="tl-d">${_esc(h.d)}</div></div>`).join('')}</div>`;
+  const history = [{t:'客服追蹤開始',d:`${_dateOnly(r.inqDate)} · 自動進入客服追蹤`,s:'now'}, {t:r.hasFiles ? 'TG 已收到客戶資料／照片' : 'TG 尚未收到客戶資料／照片',d:'由 Telegram 附件狀態自動判定',s:r.hasFiles ? 'done' : 'now'}, ...(Array.isArray(r.history) ? r.history.filter(h => !String(h.t || '').startsWith('新進件')) : [])];
+  const tl = `<div class="tl">${history.map(h=>`<div class="tl-i ${h.s}"><div class="tl-t">${_esc(h.t)}</div><div class="tl-d">${_esc(h.d)}</div></div>`).join('')}</div>`;
   const crmStatusEditor = `<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 18px;padding:12px 16px;border:1px solid rgba(151,126,255,.3);border-radius:14px;background:rgba(50,37,104,.18)"><span class="tag">目前狀態：${_esc(r.status || 'New')}</span><span style="color:#a99cd0;font-size:12px">狀態只能透過上方流程主操作更新，完成必要資料後才會同步 Airtable</span></div>`;
   let box = "";
   if(r.locked) box = `<div class="infobox lock"><span class="ic">🔒</span><div><b>付款已鎖定</b> — ${_esc(r.verBy)} 於 ${_esc(r.verAt)} 確認入帳，欄位不可再修改。<br>系統已自動建立 <b>${_esc(r.convOrder)}</b>，Partner 額度 +1。</div></div>`;
@@ -1767,7 +2057,7 @@ function core3CrmCard(r){
 
   return crmWorkflow(r.status, CORE_CRM.indexOf(r), r) + crmEditPanel(r, CORE_CRM.indexOf(r)) + crmStatusEditor + _gs(1,"詢問基本資料","",`<div class="fgrid">
       ${_fi("詢問編號", _inquiryLabel(r), null, ["自動"])}
-      ${_fi("進件時間", _fmt(r.inqDate), null, ["自動"])}
+      ${_fi("進件時間（固定）", _fmt(r.inqDate), "CRM 建立時寫入的事件時間，不可修改", ["自動"])}
       ${_fi("客戶姓名", r.name)}
       ${_fi("服務類型", r.service)}
       ${_fi("Telegram User ID", r.tgId)}
@@ -1786,35 +2076,35 @@ function core3CrmCard(r){
       ${_fi("優先度", r.pri)}
     </div>`)
   + _gs(3,"客服追蹤","",`<div class="fgrid">
-      ${_fi("負責客服", r.cs)}
+      ${crmAssigneeSelect(r, CORE_CRM.indexOf(r))}
       ${_fi("目前狀態", r.status)}
       ${_fi("最近聯絡", _fmt(r.lastContact))}
       ${_fi("下次追蹤", r.next === "—" ? null : _dateOnly(r.next))}
       ${_fi("首次回應時間", r.firstResp, "最能預測成交率的單一指標", ["新增","new"])}
-      ${_fi("已聯絡次數", `${r.touch} 次`, "分辨「還沒追」和「追五次沒回」", ["新增","new"])}
-      ${_fi("卡在現狀態", `${r.daysIn} 天`, "撈爛尾案件", ["新增","new"])}
+      ${_fi("已聯絡次數", `${r.touch || 0} 次`, "由 TG／CRM 自動累計，客服不可手改")}
+      ${crmBlockerSelect(r, CORE_CRM.indexOf(r))}
+      ${_fi("卡在現狀態天數", `${r.daysIn || 0} 天`, "系統依狀態時間自動計算")}
       ${_fi("追蹤備註", r.note)}
-    </div><div style="margin-top:16px"><div class="fk">狀態歷程</div>${tl}</div>`)
+    </div><div style="margin-top:16px"><div class="fk">未成交原因／客服關案</div>${r.status === '未成交' ? `<div class="fv">${_esc(r.lostReason || '—')}</div><div class="fn">已提早結案；後續付款與生產流程不再執行</div>` : `<textarea id="crm-lost-reason-${CORE_CRM.indexOf(r)}" class="payment-verification-note" placeholder="例如：預算不符、客戶無回應、需求取消"></textarea><div style="margin-top:10px"><button class="btn danger" onclick="closeCrmAsLost(${CORE_CRM.indexOf(r)})">未成交並提早結案</button></div>`}</div><div style="margin-top:16px"><div class="fk">狀態歷程</div>${tl}</div>`)
   + _gs(4,"付款驗證","客服填寫 → 帳務核准 → 鎖定",`<div class="fgrid">
       ${_fi("付款狀態", r.payStatus)}
-      ${_fi("報價金額", r.quoted)}
-      ${_fi("付款方式", r.method)}
-      ${_fi("匯款日期", _fmt(r.transferDate))}
-      ${_fi("帳戶後五碼", r.last5, r.last5 ? "客戶銀行帳戶後五碼" : "尚未填寫", ["新增","new"])}
+      ${_fi("報價金額", r.quoted, "由客戶選定方案自動帶入", ["自動","auto"])}
+      <div class="fitem"><div class="fk">付款方式<span class="chip auto">固定</span></div><div class="fv">匯款</div><div class="fn">目前僅提供匯款</div></div>
+      ${_fi("匯款日期", paymentAutoDate(r), "由 TG／付款資料自動帶入", ["自動","auto"])}
+      ${paymentLast5Field(r, CORE_CRM.indexOf(r))}
       ${_fi("後五碼檢核", r.last5valid === null ? null : (r.last5valid ? "✓ 五碼正確" : "✗ 長度不符"), "自動判斷長度是否為 5，打錯當下就看得到", ["公式"])}
       ${_fi("匯款證明", r.proof)}
-      ${_fi("付款鎖定", r.locked ? "🔒 已鎖定" : "未鎖定", null, ["新增","lk"])}
-      ${_fi("填寫人", r.subBy, "客服", ["新增","new"])}
-      ${_fi("填寫時間", _fmt(r.subAt))}
-      ${_fi("核准人", r.verBy, "帳務，必須 ≠ 填寫人", ["新增","new"])}
-      ${_fi("核准時間", _fmt(r.verAt))}
-      ${_fiw("驗證備註", r.verNote, "對不上時記錄原因")}
-    </div>${box}`)
+      ${_fi("付款鎖定（系統）", r.locked ? "付款完成 · 🔒 已鎖定" : "尚未完成付款確認", r.locked ? "查帳成功後不可回寫付款資料" : "等待財務核對入帳", ["自動","lk"])}
+      ${paymentSubmitterField(r, CORE_CRM.indexOf(r))}
+      ${_fi("填寫時間", _fmt(r.subAt), "填寫後自動記錄", ["自動","auto"])}
+      ${_fi("核准人", r.verBy, "付款區查帳完成後自動帶入", ["自動","auto"])}
+      ${_fi("核准時間", _fmt(r.verAt), "付款區查帳完成後自動帶入", ["自動","auto"])}
+      ${paymentVerificationNoteField(r, CORE_CRM.indexOf(r))}
+    </div><div style="margin-top:14px">${paymentDetailActions(r, CORE_CRM.indexOf(r))}</div>${box}`)
   + _gs(5,"結案結果","",`<div class="fgrid">
       ${_fi("結案結果", r.closeResult)}
       ${_fi("結案時間", _fmt(r.closedAt))}
       ${_fi("轉入訂單", r.convOrder, r.convOrder ? "系統自動寫入，非手動建立" : "尚未成交", ["自動"])}
-      ${_fi("未成交原因", r.lostReason)}
       ${_fi("成交耗時", r.daysToClose, "排產能與現金流", ["新增","new"])}
     </div>`)
   + _gs(6,"系統紀錄","",`<div class="fgrid">
@@ -1829,11 +2119,14 @@ async function saveCrmStatus(index, requestedStatus){
   const crm = CORE_CRM[index];
   const status = String(requestedStatus || '').trim();
   if(!crm || !status) return;
-  const currentKey = String(crm.status || 'New').trim().toLowerCase();
-  const currentIndex = Math.max(0, CRM_WORKFLOW_STAGES.findIndex(stage => stage.status.toLowerCase() === (currentKey === 'closed won' ? 'converted' : currentKey)));
+  const currentIndex = Math.max(0, CRM_WORKFLOW_STAGES.findIndex(stage => stage.status.toLowerCase() === normalizeCrmWorkflowStatus(crm.status || 'New')));
   const nextStage = CRM_WORKFLOW_STAGES[currentIndex + 1];
   if(!nextStage || status !== nextStage.status){
     toast('流程必須依序完成，不能跳過必要步驟');
+    return;
+  }
+  if(nextStage.systemOnly){
+    toast('「已轉單」只能由付款完成並鎖定後自動寫入，不能手動修改');
     return;
   }
   const endpoint = location.protocol === 'file:'
@@ -2080,22 +2373,48 @@ document.addEventListener('keydown', e => { if(e.key === 'Escape') core3Close();
 
 /* ── 掛進既有側邊欄與路由 ── */
 (function(){
+  const SOP_STEPS = [
+    {label:'經銷商帶客', sub:'Partner／TG 進件', route:'admin-crm-partners'},
+    {label:'客服追蹤', sub:'諮詢／資料／洽談', route:'admin-crm'},
+    {label:'付款驗證', sub:'後五碼／人工查帳', route:'admin-payments'},
+    {label:'Orders 訂單', sub:'查看完整流程', route:'admin-orders'},
+    {label:'Production 生產', sub:'生成／收件／結案', route:'admin-crm-orders'},
+    {label:'結案紀錄', sub:'唯讀歷史查詢', route:'admin-closed-records'},
+    {label:'經銷商結算', sub:'額度／分潤同步', route:'admin-crm-partners'}
+  ];
+  function sopActiveIndex(r){
+    if(r === 'admin-crm') return 1;
+    if(r === 'admin-payments') return 2;
+    if(r === 'admin-orders') return 3;
+    if(r === 'admin-crm-orders') return 4;
+    if(r === 'admin-closed-records') return 5;
+    if(r === 'admin-crm-partners' || r === 'admin-partners' || r === 'admin-customers') return 6;
+    return -1;
+  }
+  function adminSop(r){
+    const active = sopActiveIndex(r);
+    return `<section class="sop-wrap" aria-label="SOP 流程導航"><div class="sop-heading">SOP · 目前所在作業節點</div><div class="sop-flow">${SOP_STEPS.map((step,i) => `<button type="button" class="sop-step ${i===active?'active':''}" onclick="go('${step.route}')"><span class="sop-step-num">0${i+1}</span><span class="sop-step-title">${_esc(step.label)}</span><span class="sop-step-sub">${_esc(step.sub)}</span></button>`).join('')}</div></section>`;
+  }
   const _shell = adminShell;
   adminDashboard = adminDashboardAirtable;
   adminShell = function(r){
     const html = _shell(r);
     const nav = `<div class="column-map" style="padding:18px 14px 8px">核心三表</div>`
       + crmNotifySideLink(r)
-      + sideLink('admin-crm-orders','Production 製作',r)
+      + sideLink('admin-orders','Orders 訂單',r)
+      + sideLink('admin-closed-records','結案紀錄',r)
       + sideLink('admin-crm-partners','Partners 經銷商',r)
       + followupSideLink(r);
-    return html.replace('<div class="column-map" style="padding:18px 14px 8px">Airtable Data</div>',
+    const withNav = html.replace('<div class="column-map" style="padding:18px 14px 8px">Airtable Data</div>',
                         nav + '<div class="column-map" style="padding:18px 14px 8px">Airtable Data</div>');
+    return withNav.replace('<main class="main">','<main class="main">' + adminSop(r));
   };
   const _page = adminPage;
   adminPage = function(r){
     if(r === 'admin-crm') return crmPage();
-    if(r === 'admin-crm-orders') return crmOrdersPage();
+    if(r === 'admin-orders') return crmOrdersPage();
+    if(r === 'admin-crm-orders') return productionOverviewPage();
+    if(r === 'admin-closed-records') return closedRecordsPage();
     if(r === 'admin-crm-partners') return crmPartnersPage();
     if(r === 'admin-payments') return paymentReviewPage();
     if(r === 'admin-followup-calendar') return followupCalendarPage();
