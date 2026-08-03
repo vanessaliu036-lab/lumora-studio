@@ -539,6 +539,15 @@
     }
 
     /* ---------- Motion films (9:16) ---------- */
+    #films.personal-film-section{
+      background:
+        radial-gradient(900px 460px at 18% 8%,rgba(255,188,221,.38),transparent 68%),
+        radial-gradient(760px 520px at 84% 30%,rgba(190,181,255,.34),transparent 70%),
+        linear-gradient(135deg,#fff4fb 0%,#f8efff 48%,#eaf2ff 100%);
+      color:#30223f;
+    }
+    #films.personal-film-section .kicker{color:#8b4da9}
+    #films.personal-film-section .section-copy{color:#675878}
     .film-room{position:relative}
     .film-room::before{
       content:"";position:absolute;z-index:0;left:50%;top:44%;transform:translate(-50%,-50%);
@@ -1908,7 +1917,7 @@
     </section>
 
     <!-- ===== ADDED: Motion film room (videos only) ===== -->
-    <section class="section" id="films">
+    <section class="section personal-film-section" id="films">
       <div class="shell film-room">
         <div class="section-head reveal" style="position:relative;z-index:1">
           <span class="kicker">Motion editorial</span>
