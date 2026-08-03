@@ -2376,10 +2376,10 @@ document.addEventListener('keydown', e => { if(e.key === 'Escape') core3Close();
 /* ── 掛進既有側邊欄與路由 ── */
 (function(){
   const SOP_STEPS = [
-    {label:'客服處理', sub:'CRM 進件後直接接手', route:'admin-crm'},
-    {label:'付款驗證', sub:'後五碼／人工查帳', route:'admin-payments'},
+    {label:'諮詢案件', sub:'CRM 進件後直接接手', route:'admin-crm'},
+    {label:'付款審核', sub:'後五碼／人工查帳', route:'admin-payments'},
     {label:'Orders 訂單', sub:'查看完整流程', route:'admin-orders'},
-    {label:'Production 生產', sub:'生成／收件／結案', route:'admin-crm-orders'},
+    {label:'Production', sub:'生成／收件／結案', route:'admin-crm-orders'},
     {label:'結案紀錄', sub:'唯讀歷史查詢', route:'admin-closed-records'},
     {label:'經銷商結算', sub:'額度／分潤同步', route:'admin-crm-partners'}
   ];
