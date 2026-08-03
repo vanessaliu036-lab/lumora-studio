@@ -794,8 +794,12 @@ html{background:#080817}
 .crm-workflow-step b,.crm-workflow-step small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .crm-workflow-step b{font-size:12px}.crm-workflow-step small{font-size:10px;margin-top:3px;color:#9e94c5}
 .crm-workflow-history{margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,.1)}.crm-workflow-history-title{color:#c9c0e8;font-size:12px;font-weight:700;margin-bottom:12px}.crm-workflow-history-list{display:flex;gap:0;overflow-x:auto;padding:2px 0 6px}.crm-workflow-history-item{position:relative;min-width:150px;padding:0 16px 0 28px;color:#a99cd0;font-size:11px;line-height:1.4}.crm-workflow-history-item:first-child{padding-left:0}.crm-workflow-history-item:not(:last-child)::after{content:"";position:absolute;left:calc(100% - 8px);top:7px;width:16px;border-top:1px solid rgba(151,126,255,.45)}.crm-workflow-history-dot{position:absolute;left:8px;top:2px;width:8px;height:8px;border-radius:50%;background:#ffb870;box-shadow:0 0 0 4px rgba(255,184,112,.13)}.crm-workflow-history-item:first-child .crm-workflow-history-dot{left:0}.crm-workflow-history-item strong{display:block;color:#fff;font-size:12px;margin-bottom:3px}.crm-workflow-history-item small{display:block;color:#9e94c5;font-size:10px;white-space:normal}
+.sidebar{overflow-y:auto;overscroll-behavior:contain}
 .crm-edit-panel{margin:0 0 22px;padding:16px;border:1px solid rgba(205,173,255,.28);border-radius:18px;background:rgba(37,28,76,.32)}
 .crm-followup-note{display:block;width:min(100%,680px);min-height:92px;box-sizing:border-box;margin-top:9px;padding:12px 14px;border:1px solid rgba(151,126,255,.45);border-radius:12px;background:#0e0b24;color:#fff;line-height:1.55;resize:vertical}.crm-followup-note::placeholder{color:#8d83b1}.crm-followup-note:focus{outline:none;border-color:#cbb6ff;box-shadow:0 0 0 3px rgba(154,121,255,.12)}
+.payment-verification-note{display:block;width:min(100%,680px);min-height:92px;box-sizing:border-box;margin-top:9px;padding:12px 14px;border:1px solid rgba(151,126,255,.45);border-radius:12px;background:#0e0b24;color:#fff;line-height:1.55;resize:vertical}.payment-verification-note::placeholder{color:#8d83b1}.payment-verification-note:focus{outline:none;border-color:#cbb6ff;box-shadow:0 0 0 3px rgba(154,121,255,.12)}
+.order-process-action{margin-top:8px;border:1px solid rgba(205,173,255,.45);background:rgba(116,77,190,.32);color:#fff;border-radius:999px;padding:6px 11px;font-size:11px;font-weight:700}.order-process-action:hover{border-color:#f1b7ff;background:rgba(151,102,238,.5)}
+.order-delivery-editor{margin-top:16px;padding:14px 16px;border:1px solid rgba(151,126,255,.3);border-radius:14px;background:rgba(37,28,76,.25)}.order-delivery-editor label{display:block;color:#c9c0e8;font-size:12px;font-weight:700;margin-bottom:7px}.order-delivery-editor input{width:min(100%,680px);box-sizing:border-box;padding:10px 12px;border:1px solid rgba(151,126,255,.45);border-radius:10px;background:#0e0b24;color:#fff}.order-delivery-editor span{display:block;color:#9e94c5;font-size:11px;margin-top:7px}
 .crm-edit-head{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:12px}.crm-edit-head b{color:#fff}.crm-edit-head span{color:#a99cd0;font-size:12px}
 .crm-edit-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.crm-edit-field{display:flex;flex-direction:column;gap:6px;color:#bdb0e5;font-size:12px}.crm-edit-field.full{grid-column:1/-1}.crm-edit-field input,.crm-edit-field textarea{width:100%;box-sizing:border-box;background:#0e0b24;border:1px solid rgba(151,126,255,.45);border-radius:10px;padding:10px;color:#fff}.crm-edit-field textarea{min-height:72px;resize:vertical}.crm-edit-field input:disabled,.crm-edit-field textarea:disabled{opacity:.45;cursor:not-allowed;border-style:dashed}.crm-edit-label{display:flex;justify-content:space-between;gap:8px}.crm-edit-lock{color:#8d83b1;font-size:10px}
 @media(max-width:900px){.crm-workflow-steps{grid-template-columns:repeat(3,minmax(0,1fr))}}
@@ -1825,7 +1829,7 @@ function orderCategoryCards(){
   const cards = [
     preOrderRows.length ? `<div class="notice warn" style="margin-bottom:14px">${preOrderRows.length} 筆前置詢問狀態未進入 Orders：請回 CRM 處理「洽談／等客戶回覆／待付款」，付款鎖定後才會建立 Order。</div>` : '',
     unknownRows.length ? `<div class="notice warn" style="margin-bottom:14px">${unknownRows.length} 筆 Order 狀態無法判定，已暫停分類，請補上正式生產狀態。</div>` : '',
-    orderCategoryCard('新訂單','付款完成並鎖定後由系統自動建立，等待安排製作',newRows)
+    orderCategoryCard('訂單進度','付款完成並鎖定後由系統自動建立，等待安排製作',newRows)
   ];
   groups.forEach(([title,subtitle,tone,key]) => {
     const groupRows = activeRows.filter(({r}) => !r.isNew && statusOf(r) === key);
@@ -2182,22 +2186,124 @@ function orderProcessDate(raw, offset=0){
   date.setDate(date.getDate() + offset);
   return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
 }
+const ORDER_PROCESS_ACTIONS = {
+  photos: {label:'確認客戶已提交照片', next:'photos', target:3},
+  identity: {label:'確認個人照完成', next:'identity', target:3},
+  template: {label:'確認模板照片已提交', next:'template', target:3},
+  acceptance: {label:'完成客戶驗收／交付', next:'acceptance', target:4},
+  close: {label:'完成結案', next:'close', target:4},
+};
+function orderProcessAction(step, index){
+  const action = ORDER_PROCESS_ACTIONS[step.key];
+  return action && step.state === 'current' ? `<button type="button" class="order-process-action" onclick="advanceOrderProcess(${index},'${action.next}')">${action.label} →</button>` : '';
+}
+function orderProcessToday(){
+  const now = new Date();
+  return `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+}
+function orderDeliveryEditor(r,index){
+  return `<div class="order-delivery-editor"><label for="order-delivery-link-${index}">交付連結</label><input id="order-delivery-link-${index}" type="url" value="${_esc(r.link || '')}" placeholder="貼上 Telegram／雲端交付連結"><button type="button" class="btn primary" style="margin-top:10px" onclick="saveOrderDeliveryDetails(${index})">儲存交付資料</button><span>填寫交付連結後，才能完成結案。</span></div>`;
+}
+async function saveOrderDeliveryDetails(index){
+  const order = CORE_ORD[index];
+  const input = document.getElementById(`order-delivery-link-${index}`);
+  if(!order || !input) return;
+  const link = String(input.value || '').trim();
+  if(!link){ toast('請先填寫交付連結'); return; }
+  order.link = link;
+  try{
+    if(order.recordId){
+      const endpoint = location.protocol === 'file:' ? 'https://lumora-studiokh.vercel.app/api/orders/update-fields' : '/api/orders/update-fields';
+      const response = await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({recordId:order.recordId,fields:{link}})});
+      const result = await response.json();
+      if(!response.ok || !result.ok) throw new Error(result.error || `HTTP ${response.status}`);
+    }
+    toast('交付資料已儲存');
+  }catch(error){ toast(`交付資料同步失敗：${error.message}`); }
+}
+async function advanceOrderProcess(index, action){
+  const order = CORE_ORD[index];
+  if(!order) return;
+  if(action === 'close' && !String(order.link || '').trim()){
+    toast('請先在交付區塊填寫交付連結');
+    document.getElementById('detail-section-4')?.scrollIntoView({behavior:'smooth',block:'start'});
+    return;
+  }
+  const today = orderProcessToday();
+  const fields = {};
+  if(action === 'photos'){
+    order.materialDate = today;
+    order.asset = '素材齊全';
+    order.productionStatus = '生成個人照';
+    order.prod = order.productionStatus;
+    fields.materialDate = today;
+    fields.assetStatus = order.asset;
+    fields.productionStatus = order.productionStatus;
+  } else if(action === 'identity'){
+    order.productionDate = today;
+    order.productionStatus = '提交模板照片';
+    order.orderStatus = '生成完成';
+    order.prod = order.productionStatus;
+    fields.productionDate = today;
+    fields.productionStatus = order.productionStatus;
+    fields.orderStatus = order.orderStatus;
+  } else if(action === 'template'){
+    order.reviewDate = today;
+    order.productionStatus = '客戶驗收';
+    order.prod = order.productionStatus;
+    fields.reviewDate = today;
+    fields.productionStatus = order.productionStatus;
+  } else if(action === 'acceptance'){
+    order.deliveryDate = today;
+    order.productionStatus = '已交付';
+    order.orderStatus = '已交付';
+    order.prod = order.productionStatus;
+    fields.deliveryDate = today;
+    fields.productionStatus = order.productionStatus;
+    fields.orderStatus = order.orderStatus;
+  } else if(action === 'close'){
+    order.completion = today;
+    order.productionStatus = '生產結案';
+    order.orderStatus = '已結案';
+    order.prod = order.productionStatus;
+    fields.completion = today;
+    fields.productionStatus = order.productionStatus;
+    fields.orderStatus = order.orderStatus;
+  }
+  try{
+    if(order.recordId){
+      const endpoint = location.protocol === 'file:' ? 'https://lumora-studiokh.vercel.app/api/orders/update-fields' : '/api/orders/update-fields';
+      const response = await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({recordId:order.recordId,fields})});
+      const result = await response.json();
+      if(!response.ok || !result.ok) throw new Error(result.error || `HTTP ${response.status}`);
+    }
+    if(action === 'close'){
+      core3Close();
+      go('admin-closed-records');
+      toast('訂單已結案並移至結案紀錄');
+      return;
+    }
+    core3Open('ord', index);
+    setTimeout(()=>document.getElementById(`detail-section-${ORDER_PROCESS_ACTIONS[action]?.target || 3}`)?.scrollIntoView({behavior:'smooth',block:'start'}),180);
+    toast(`已更新流程：${ORDER_PROCESS_ACTIONS[action]?.label || action}`);
+  }catch(error){ toast(`訂單流程同步失敗：${error.message}`); }
+}
 function orderProcessTimeline(r){
-  const production = String(r.prod || '').trim();
+  const production = String(r.productionStatus || r.prod || '').trim();
   const paid = ['已付款','已確認','paid','confirmed'].includes(String(r.payStatus || '').trim().toLowerCase());
-  const assigned = r.producer && r.producer !== '待分派';
-  const finished = orderStatusGroupKey(r.orderStatus) === 'closed' || Boolean(r.completion || r.deliveryDate);
-  const statusGroup = orderStatusGroupKey(production);
-  const stage = statusGroup === 'new' ? 'schedule' : statusGroup === 'assets' ? 'materials' : statusGroup === 'review' ? 'review' : statusGroup === 'closed' || finished ? 'closed' : 'production';
+  const status = production.toLowerCase();
+  const finished = production.includes('生產結案') || Boolean(r.completion);
+  const stage = finished ? 'close' : status.includes('已交付') ? 'close' : status.includes('客戶驗收') ? 'acceptance' : status.includes('提交模板') ? 'template' : status.includes('生成個人照') || status.includes('個人照') ? 'identity' : status.includes('素材齊全') || status.includes('等待客戶') || status.includes('待素材') || !production ? 'photos' : 'photos';
   const steps = [
     {key:'payment', name:'付款確認', person:r.verBy || '財務', date:r.verAt ? _dateOnly(r.verAt) : _dateOnly(r.orderDate), state:paid?'done':'current', info:paid?'已核對入帳':'等待財務確認'},
-    {key:'schedule', name:'安排生成', person:r.producer || '待分派', date:r.scheduleDate ? _dateOnly(r.scheduleDate) : orderProcessDate(r.orderDate,1), state:assigned && stage !== 'schedule' ? 'done' : stage === 'schedule' ? 'current' : 'pending', info:assigned ? '已安排製作人員' : '等待分派人員'},
-    {key:'materials', name:'素材確認', person:r.producer || '製作人員', date:r.materialDate ? _dateOnly(r.materialDate) : orderProcessDate(r.orderDate,1), state:['materials','schedule'].includes(stage) ? (stage === 'materials' ? 'current' : 'pending') : 'done', info:r.asset || '待確認素材'},
-    {key:'production', name:'製作生成', person:r.producer || '待分派', date:r.productionDate ? _dateOnly(r.productionDate) : orderProcessDate(r.orderDate,2), state:stage === 'production' ? 'current' : ['review','closed'].includes(stage) ? 'done' : 'pending', info:production || '尚未開始'},
-    {key:'review', name:'審核與修改', person:r.producer || '製作人員', date:r.reviewDate ? _dateOnly(r.reviewDate) : _dateOnly(r.promisedDate), state:stage === 'review' ? 'current' : stage === 'closed' ? 'done' : 'pending', info:stage === 'review' ? '目前處理中' : '等待成品進入審核'},
-    {key:'closed', name:'交付結案', person:r.producer || '製作人員', date:r.deliveryDate || r.completion ? _dateOnly(r.deliveryDate || r.completion) : _dateOnly(r.promisedDate), state:stage === 'closed' ? 'done' : 'pending', info:stage === 'closed' ? '訂單已完成' : `承諾交期 ${_dateOnly(r.promisedDate)}`}
+    {key:'photos', name:'客戶提交照片', person:r.producer || '待分派', date:r.materialDate ? _dateOnly(r.materialDate) : orderProcessDate(r.orderDate,1), state:stage === 'photos' ? 'current' : 'done', info:r.asset || '等待客戶提交'},
+    {key:'identity', name:'生成個人照確認', person:r.producer || '待分派', date:r.productionDate ? _dateOnly(r.productionDate) : orderProcessDate(r.orderDate,2), state:stage === 'identity' ? 'current' : ['template','acceptance','close'].includes(stage) ? 'done' : 'pending', info:stage === 'identity' ? '等待確認個人照' : '尚未完成'},
+    {key:'template', name:'提交模板照片', person:r.producer || '待分派', date:r.reviewDate ? _dateOnly(r.reviewDate) : orderProcessDate(r.orderDate,3), state:stage === 'template' ? 'current' : ['acceptance','close'].includes(stage) ? 'done' : 'pending', info:stage === 'template' ? '等待提交模板照片' : '尚未完成'},
+    {key:'acceptance', name:'客戶驗收', person:r.producer || '客服', date:r.deliveryDate ? _dateOnly(r.deliveryDate) : _dateOnly(r.promisedDate), state:stage === 'acceptance' ? 'current' : stage === 'close' ? 'done' : 'pending', info:stage === 'acceptance' ? '等待客戶確認' : '尚未完成'},
+    {key:'close', name:'生產結案', person:r.producer || '客服', date:r.completion ? _dateOnly(r.completion) : _dateOnly(r.promisedDate), state:stage === 'close' ? 'done' : 'pending', info:stage === 'close' ? '已完成並進入結案紀錄' : '完成驗收後結案'}
   ];
-  return `<section class="order-process"><div class="order-process-title"><span>製作流程時程</span><span class="order-process-sub">付款後依狀態往後推進</span></div><div class="order-process-list">${steps.map(step => `<div class="order-process-item ${step.state}"><span class="order-process-dot"></span><div><div class="order-process-name">${_esc(step.name)}</div><div class="order-process-info">${_esc(step.info)} · ${_esc(step.person)}</div></div><span class="order-process-date">${_esc(step.date)}</span></div>`).join('')}</div></section>`;
+  const orderIndex = CORE_ORD.indexOf(r);
+  return `<section class="order-process"><div class="order-process-title"><span>製作流程時程</span><span class="order-process-sub">付款後依狀態往後推進</span></div><div class="order-process-list">${steps.map(step => `<div class="order-process-item ${step.state}"><span class="order-process-dot"></span><div><div class="order-process-name">${_esc(step.name)}</div><div class="order-process-info">${_esc(step.info)} · ${_esc(step.person)}</div>${orderProcessAction(step,orderIndex)}</div><span class="order-process-date">${_esc(step.date)}</span></div>`).join('')}</div></section>`;
 }
 function core3OrdCard(r){
   const prev = r.prevOrders.length
@@ -2244,7 +2350,7 @@ function core3OrdCard(r){
       ${_fi("完成日期", _fmt(r.completion))}
       ${_fi("交付連結", r.link)}
       ${_fi("訂單狀態", r.orderStatus)}
-    </div>${late}`)
+    </div>${orderDeliveryEditor(r, CORE_ORD.indexOf(r))}${late}`)
   + _gs(5,"客戶歷史","需要 Customers 錨點表才算得出來",`<div class="fgrid">
       ${_fi("累計訂單數", String(r.totalOrders), null, ["統計"])}
       ${_fi("終身價值", r.ltv, null, ["統計"])}
@@ -2481,7 +2587,7 @@ function _airtableFieldMap(rows, kind){
     }));
   } else if(kind === 'ord'){
     return rows.map(r => ({
-      id: r.orderId, name: r.name, prod: r.orderStatus, prodTag: r.orderStatus,
+      id: r.orderId, recordId: r.id, name: r.name, prod: r.productionStatus || r.orderStatus, productionStatus: r.productionStatus || r.orderStatus, prodTag: r.productionStatus || r.orderStatus,
       asset: r.asset, assetTag: r.asset, promised: r.promisedDate, promisedCls: '',
       producer: r.producer, service: r.service, orderId: r.orderId,
       scheduleDate: r.scheduleDate, materialDate: r.materialDate,
