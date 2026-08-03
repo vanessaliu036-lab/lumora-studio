@@ -83,10 +83,30 @@
     .btn-ghost{background:rgba(255,255,255,.06);border:1px solid var(--line)}
     .btn-ghost:hover{background:rgba(255,255,255,.11)}
     .hero{
-      min-height:100vh; padding:128px 0 60px; position:relative;
+      min-height:100vh; padding:128px 0 60px; position:relative;isolation:isolate;overflow:hidden;
       display:grid; align-items:center;
+      background:
+        radial-gradient(ellipse 44% 38% at 18% 72%,rgba(111,123,218,.25),transparent 72%),
+        radial-gradient(ellipse 38% 32% at 78% 16%,rgba(238,167,208,.20),transparent 70%),
+        linear-gradient(135deg,rgba(16,18,48,.76),rgba(32,24,61,.44) 54%,rgba(13,22,48,.78));
     }
-    .hero-grid{display:grid;grid-template-columns:1.02fr .98fr;gap:36px;align-items:center}
+    .hero::before,.hero::after{
+      content:"";position:absolute;z-index:0;pointer-events:none;border-radius:50%;
+      filter:blur(32px);mix-blend-mode:screen;will-change:transform;
+    }
+    .hero::before{
+      width:42vw;height:18vw;left:-8vw;top:38%;
+      background:radial-gradient(ellipse,rgba(205,211,255,.36) 0%,rgba(137,151,241,.19) 38%,transparent 72%);
+      animation:cloud-drift-one 18s ease-in-out infinite alternate;
+    }
+    .hero::after{
+      width:34vw;height:15vw;right:-5vw;top:16%;
+      background:radial-gradient(ellipse,rgba(255,213,229,.30) 0%,rgba(188,155,230,.16) 42%,transparent 74%);
+      animation:cloud-drift-two 22s ease-in-out infinite alternate;
+    }
+    @keyframes cloud-drift-one{to{transform:translate3d(12vw,-2vh,0) scale(1.12)}}
+    @keyframes cloud-drift-two{to{transform:translate3d(-10vw,6vh,0) scale(1.08)}}
+    .hero-grid{position:relative;z-index:1;display:grid;grid-template-columns:1.02fr .98fr;gap:36px;align-items:center}
     .eyebrow{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:#e4d8ff;display:flex;align-items:center;gap:10px}
     .eyebrow::before{content:"";width:34px;height:1px;background:linear-gradient(90deg,var(--pink),transparent)}
     h1,h2,h3,p{margin-top:0}
@@ -317,7 +337,20 @@
     .floating-card p{color:var(--muted);margin:8px 0 0;line-height:1.55;font-size:13px}
     .spark{position:absolute;border-radius:50%;background:white;box-shadow:0 0 14px #fff,0 0 34px #bc91ff;animation:float 7s ease-in-out infinite}
     @keyframes float{50%{transform:translate3d(12px,-18px,0) scale(1.25);opacity:.5}}
-    .section{padding:110px 0;position:relative}
+    .section{
+      padding:110px 0;position:relative;isolation:isolate;overflow:hidden;
+      background:
+        radial-gradient(ellipse 48% 42% at 12% 18%,rgba(105,122,218,.16),transparent 72%),
+        radial-gradient(ellipse 42% 38% at 84% 78%,rgba(226,156,203,.13),transparent 72%),
+        linear-gradient(135deg,rgba(16,18,48,.22),rgba(37,26,65,.28) 52%,rgba(12,22,48,.24));
+    }
+    .section::before{
+      content:"";position:absolute;z-index:0;inset:0;pointer-events:none;
+      background:
+        radial-gradient(ellipse 30% 20% at 30% 12%,rgba(255,255,255,.06),transparent 72%),
+        radial-gradient(ellipse 36% 24% at 72% 88%,rgba(126,143,239,.10),transparent 72%);
+    }
+    .section>.shell{position:relative;z-index:1}
     .section-head{width:100%;max-width:820px;margin-bottom:54px}
     .kicker{font-size:12px;letter-spacing:.17em;text-transform:uppercase;color:#cdb9ff}
     h2{
