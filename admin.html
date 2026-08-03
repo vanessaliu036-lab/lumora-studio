@@ -2082,7 +2082,7 @@ function core3CrmCard(r){
       ${_fi("預算區間", r.budget)}
       ${_fi("優先度", r.pri)}
     </div>`)
-  + _gs(3,"客服處理","",`<div class="fgrid">
+  + _gs(3,"客服追蹤","",`<div class="fgrid">
       ${crmAssigneeSelect(r, CORE_CRM.indexOf(r))}
       ${_fi("目前狀態", r.status)}
       ${_fi("最近聯絡", _fmt(r.lastContact))}
