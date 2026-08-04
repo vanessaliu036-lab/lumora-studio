@@ -2362,8 +2362,8 @@ async function advanceOrderProcess(index, action){
           const identityResponse = await fetch(identityEndpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({recordId:order.recordId,previewUrl:manualIdentityUrl,previewDataUrl:manualIdentityDataUrl})});
           const identityResult = await identityResponse.json();
           if(!identityResponse.ok || !identityResult.ok) throw new Error(identityResult.error || `HTTP ${identityResponse.status}`);
-          order.productionStatus = '客戶驗收';
-          order.orderStatus = '客戶驗收';
+          order.productionStatus = '生產結案';
+          order.orderStatus = '已結案';
           order.prod = order.productionStatus;
         }
       }

@@ -104,13 +104,12 @@ export default async function handler(req, res) {
     if (!image) return res.status(500).json({ ok: false, error: 'OPENAI_API_KEY is required for GPT image generation.' });
     const orderId = order.fields?.['Order ID'] || recordId;
     const replyMarkup = { inline_keyboard: [[
-      { text: '✓ 確認', callback_data: `identity_confirm:${recordId}` },
       { text: '↻ 再生成一張', callback_data: `identity_redo:${recordId}` },
     ]] };
     const sent = await telegramPhoto(
       tgId,
       image,
-      `這是您的個人風格形象圖（${orderId}）\n\n謝謝您使用 Lumora Studio，請確認這張是否符合您的期待。`,
+      `這是您的個人風格形象圖（${orderId}）\n\n哇，你看起來超美的！✨\n\n感謝您使用 Lumora Studio，希望再次遇見您。\n\n✅ 訂單已完成並結案`,
       replyMarkup,
     );
     const deliveredPhoto = sent?.result?.photo?.at(-1);
@@ -122,12 +121,19 @@ export default async function handler(req, res) {
       method: 'PATCH',
       body: JSON.stringify({ fields: {
         Download: storedImage,
-        'Production Status': '客戶驗收',
+        'Production Status': '生產結案',
         'Asset Status': '素材齊全',
-        'Missing Assets Note': '個人風格形象圖已傳送至 TG，等待客戶確認',
+        'Missing Assets Note': '個人風格形象圖已傳送至 TG，訂單自動結案',
       }, typecast: true }),
     });
-    return res.status(200).json({ ok: true, orderId, status: '客戶驗收' });
+    await airtable(`${CRM}/${encodeURIComponent(crmId)}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ fields: {
+        'Next Follow-up': null,
+        'Follow-up Note': '個人風格形象圖已交付，訂單自動結案',
+      }, typecast: true }),
+    });
+    return res.status(200).json({ ok: true, orderId, status: '生產結案' });
   } catch (error) {
     return res.status(500).json({ ok: false, error: String(error.message || error) });
   }
