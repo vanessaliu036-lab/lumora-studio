@@ -1600,9 +1600,15 @@ function paymentReviewPage(){
   const historyMarkup = `<section class="payment-history-card"><div class="payment-history-head"><div><h2>付款紀錄</h2><p>只有已完成付款且已建立 Order 的資料會出現在這裡。</p></div><span class="tag ok">${history.length} 筆</span></div>${history.length ? `<div class="table-wrap"><table class="table l1-table"><thead><tr><th>確認日期</th><th>訂單編號</th><th>客戶</th><th>方案</th><th>金額</th><th>付款方式</th><th>後五碼</th><th>付款狀態</th></tr></thead><tbody>${history.map(r => `<tr ${r._crmIndex >= 0 ? `onclick="core3Open('crm',${r._crmIndex})"` : ''}><td class="cell-date">${_esc(_dateOnly(r.verAt || r.orderDate))}</td><td class="cell-id">${_esc(r.orderId || r.id)}</td><td><div class="cell-name">${_esc(r.name || '—')}</div><div class="cell-sub">${_esc(r.partnerCode || '—')}</div></td><td>${_esc(r.pkg || r.service || '—')}</td><td class="payment-amount">${_esc(r.amount || '—')}</td><td>${_esc(r.payMethod || '—')}</td><td><span class="payment-review-readonly">${_esc(r.last5 || '—')}</span></td><td><span class="tag ok">已付款</span></td></tr>`).join('')}</tbody></table></div>` : '<div class="payment-history-empty">目前沒有已完成付款訂單。</div>'}</section>`;
   return `<div class="page-title"><div><h1>付款審核</h1><p style="color:#c3bce0">財務查看後五碼並核對入帳，確認後付款狀態變更為已付款。</p></div><span class="tag ${rows.length?'bad':'ok'}">${rows.length} 筆待審核</span></div>${pendingMarkup}${historyMarkup}`;
 }
+const _displayValue = value => {
+  if (value === null || value === undefined || value === '') return '';
+  if (Array.isArray(value)) return value.map(_displayValue).filter(Boolean).join('、');
+  if (typeof value === 'object') return value.name || value.label || value.value || JSON.stringify(value);
+  return String(value);
+};
 const _fi = (k,v,note,chip) => `<div class="fitem">
   <div class="fk">${_esc(k)}${chip?`<span class="chip ${chip[1]||'auto'}">${_esc(chip[0])}</span>`:""}</div>
-  <div class="fv ${v?'':'none'}">${v?_esc(v):"—"}</div>
+  <div class="fv ${_displayValue(v)?'':'none'}">${_displayValue(v)?_esc(_displayValue(v)):"—"}</div>
   ${note?`<div class="fn">${_esc(note)}</div>`:""}</div>`;
 const _fiw = (k,v,note,chip) => _fi(k,v,note,chip).replace('class="fitem"','class="fitem full"');
 const _safeUrl = value => {
@@ -2275,8 +2281,24 @@ async function advanceOrderProcess(index, action){
   const order = CORE_ORD[index];
   if(!order) return;
   let manualIdentityUrl = '';
+  let manualIdentityDataUrl = '';
   if(action === 'photos'){
-    manualIdentityUrl = String(window.prompt('請先人工檢查照片相似度並套用風格。\n如已有個人風格形象圖，可貼上圖片網址；目前也可以留空，先送入真人客服待處理。') || '').trim();
+    manualIdentityUrl = String(window.prompt('請先人工檢查照片相似度並套用風格。\n可貼上已生成好的圖片網址；若沒有網址，按「取消」後可選擇本機圖片。') || '').trim();
+    if(!manualIdentityUrl && window.confirm('要從本機選擇人工完成的個人風格形象圖嗎？')){
+      manualIdentityDataUrl = await new Promise(resolve => {
+        const input = document.createElement('input');
+        input.type = 'file'; input.accept = 'image/*';
+        input.onchange = () => {
+          const file = input.files?.[0];
+          if(!file) return resolve('');
+          const reader = new FileReader();
+          reader.onload = () => resolve(String(reader.result || ''));
+          reader.onerror = () => resolve('');
+          reader.readAsDataURL(file);
+        };
+        input.click();
+      });
+    }
     if(manualIdentityUrl && !/^https:\/\//i.test(manualIdentityUrl)){ toast('若填寫網址，必須是 https:// 開頭的公開網址'); return; }
   }
   if(action === 'close' && !String(order.link || '').trim()){
@@ -2336,9 +2358,9 @@ async function advanceOrderProcess(index, action){
       const result = await response.json();
       if(!response.ok || !result.ok) throw new Error(result.error || `HTTP ${response.status}`);
       if(action === 'photos'){
-        if(manualIdentityUrl){
+        if(manualIdentityUrl || manualIdentityDataUrl){
           const identityEndpoint = location.protocol === 'file:' ? 'https://lumora-studiokh.vercel.app/api/orders/generate-identity' : '/api/orders/generate-identity';
-          const identityResponse = await fetch(identityEndpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({recordId:order.recordId,previewUrl:manualIdentityUrl})});
+          const identityResponse = await fetch(identityEndpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({recordId:order.recordId,previewUrl:manualIdentityUrl,previewDataUrl:manualIdentityDataUrl})});
           const identityResult = await identityResponse.json();
           if(!identityResponse.ok || !identityResult.ok) throw new Error(identityResult.error || `HTTP ${identityResponse.status}`);
           order.productionStatus = 'Review 審核中';
@@ -2370,11 +2392,11 @@ function orderProcessTimeline(r){
   const paid = ['已付款','已確認','paid','confirmed'].includes(String(r.payStatus || '').trim().toLowerCase());
   const status = production.toLowerCase();
   const finished = production.includes('生產結案') || Boolean(r.completion);
-  const stage = finished ? 'close' : status.includes('已交付') ? 'close' : status.includes('客戶驗收') ? 'acceptance' : status.includes('提交模板') ? 'template' : status.includes('生成個人照') || status.includes('個人照') ? 'identity' : status.includes('素材齊全') || status.includes('等待客戶') || status.includes('待素材') || !production ? 'photos' : 'photos';
+  const stage = finished ? 'close' : status.includes('已交付') ? 'close' : status.includes('客戶驗收') ? 'acceptance' : status.includes('提交模板') ? 'template' : status.includes('review') || status.includes('生成個人照') || status.includes('個人照') ? 'identity' : status.includes('素材齊全') || status.includes('等待客戶') || status.includes('待素材') || !production ? 'photos' : 'photos';
   const steps = [
     {key:'payment', name:'付款確認', person:r.verBy || '財務', date:r.verAt ? _dateOnly(r.verAt) : _dateOnly(r.orderDate), state:paid?'done':'current', info:paid?'已核對入帳':'等待財務確認'},
     {key:'photos', name:'客戶提交照片', person:r.producer || '待分派', date:r.materialDate ? _dateOnly(r.materialDate) : orderProcessDate(r.orderDate,1), state:stage === 'photos' ? 'current' : 'done', info:r.asset || '等待客戶提交'},
-    {key:'identity', name:'確認個人風格形象圖', person:r.producer || '待分派', date:r.productionDate ? _dateOnly(r.productionDate) : orderProcessDate(r.orderDate,2), state:stage === 'identity' ? 'current' : ['template','acceptance','close'].includes(stage) ? 'done' : 'pending', info:stage === 'identity' ? '等待確認風格成品' : ['template','acceptance','close'].includes(stage) ? '已確認完成' : '尚未完成'},
+    {key:'identity', name:'確認個人風格形象圖', person:r.producer || '待分派', date:r.productionDate ? _dateOnly(r.productionDate) : orderProcessDate(r.orderDate,2), state:stage === 'identity' ? 'current' : ['template','acceptance','close'].includes(stage) ? 'done' : 'pending', info:stage === 'identity' ? (status.includes('review') ? '真人客服製作中' : '等待確認風格成品') : ['template','acceptance','close'].includes(stage) ? '已確認完成' : '尚未完成'},
     {key:'template', name:'提交模板照片', person:r.producer || '待分派', date:r.reviewDate ? _dateOnly(r.reviewDate) : orderProcessDate(r.orderDate,3), state:stage === 'template' ? 'current' : ['acceptance','close'].includes(stage) ? 'done' : 'pending', info:stage === 'template' ? '等待提交模板照片' : ['acceptance','close'].includes(stage) ? '已提交完成' : '尚未完成'},
     {key:'acceptance', name:'客戶驗收', person:r.producer || '客服', date:r.deliveryDate ? _dateOnly(r.deliveryDate) : _dateOnly(r.promisedDate), state:stage === 'acceptance' ? 'current' : stage === 'close' ? 'done' : 'pending', info:stage === 'acceptance' ? '等待客戶確認' : stage === 'close' ? '已完成驗收' : '尚未完成'},
     {key:'close', name:'生產結案', person:r.producer || '客服', date:r.completion ? _dateOnly(r.completion) : _dateOnly(r.promisedDate), state:stage === 'close' ? 'done' : 'pending', info:stage === 'close' ? '已完成並進入結案紀錄' : '完成驗收後結案'}

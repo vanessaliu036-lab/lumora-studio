@@ -86,7 +86,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { recordId, previewUrl } = req.body || {};
+    const { recordId, previewUrl, previewDataUrl } = req.body || {};
     if (!recordId) return res.status(400).json({ ok: false, error: 'recordId is required' });
 
     const order = await airtable(`${ORDERS}/${encodeURIComponent(recordId)}`);
@@ -98,6 +98,8 @@ export default async function handler(req, res) {
 
     const image = previewUrl
       ? { type: 'url', value: previewUrl }
+      : previewDataUrl?.startsWith('data:image/')
+        ? { type: 'buffer', data: Buffer.from(previewDataUrl.split(',')[1] || '', 'base64') }
       : await generatePreview(crm.fields?.['Reference Files'] || []);
     if (!image) return res.status(500).json({ ok: false, error: 'OPENAI_API_KEY is required for GPT image generation.' });
     const orderId = order.fields?.['Order ID'] || recordId;
