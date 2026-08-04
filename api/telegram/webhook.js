@@ -130,8 +130,24 @@ export default async function handler(req, res) {
     const [action, recordId] = String(callback.data).split(':');
     if (action === 'payment_done') {
       try { await telegram('answerCallbackQuery', { callback_query_id: callback.id }); } catch (_) { /* continue CRM sync if Telegram query has expired */ }
-      if (recordId && recordId !== 'none') {
-        await airtable(`${CRM}/${encodeURIComponent(recordId)}`, {
+      try {
+        await telegram('editMessageReplyMarkup', {
+          chat_id: callback.message.chat.id,
+          message_id: callback.message.message_id,
+          reply_markup: { inline_keyboard: [] },
+        });
+      } catch (_) { /* old messages may not be editable */ }
+      const linkedCrm = recordId && recordId !== 'none'
+        ? { id: recordId }
+        : await findLatestCrmByTelegramUser(callback.from?.id || callback.message.chat.id);
+      let alreadyPending = false;
+      if (linkedCrm?.id) {
+        const currentCrm = await airtable(`${CRM}/${encodeURIComponent(linkedCrm.id)}`);
+        alreadyPending = currentCrm.fields?.fldVJoRnj7Jh4YGu1 === 'Pending Verification'
+          || currentCrm.fields?.['Payment Status'] === 'Pending Verification';
+      }
+      if (linkedCrm?.id && !alreadyPending) {
+        await airtable(`${CRM}/${encodeURIComponent(linkedCrm.id)}`, {
           method: 'PATCH',
           body: JSON.stringify({ fields: {
             fldVJoRnj7Jh4YGu1: 'Pending Verification',
@@ -139,7 +155,7 @@ export default async function handler(req, res) {
           }, typecast: true }),
         });
       }
-      await telegram('sendMessage', { chat_id: callback.message.chat.id,
+      if (!alreadyPending) await telegram('sendMessage', { chat_id: callback.message.chat.id,
         text: '✅ 已收到付款完成通知。\n\n請回覆你的「帳號後五碼」，客服會盡快與你回覆。' });
       return res.status(200).json({ ok: true, event: 'payment_done' });
     }
