@@ -80,7 +80,7 @@ async function handlePhoto(message) {
   await rememberTelegramUser(crmRecord, message);
   await telegram('sendMessage', {
     chat_id: message.chat.id,
-    text: '✅ 已收到你的生活照，請繼續上傳照片。至少 5 張都收到後，真人客服會開始建立 AI 個人基準照。',
+    text: '✅ 已收到你的生活照，請繼續上傳照片。至少 5 張都收到後，真人客服會檢查相似度並直接套用風格。',
   });
 }
 
@@ -154,7 +154,7 @@ export default async function handler(req, res) {
         });
       }
       await telegram('sendMessage', { chat_id: callback.message.chat.id,
-        text: '✅ 已收到您的照片上傳通知。\n\n客服會先確認照片是否清晰完整，確認後開始建立個人基準照。' });
+        text: '✅ 已收到您的照片上傳通知。\n\n客服會先人工確認照片清晰度與相似度，確認後直接套用您選擇的風格。' });
       return res.status(200).json({ ok: true, event: 'photos_uploaded' });
     }
     if (!recordId || !['identity_confirm', 'identity_redo'].includes(action)) return res.status(200).json({ ok: true });
@@ -167,19 +167,30 @@ export default async function handler(req, res) {
       await airtable(`${ORDERS}/${encodeURIComponent(recordId)}`, {
         method: 'PATCH',
         body: JSON.stringify({ fields: {
-          'Production Status': 'Generating 生成中',
-          'Missing Assets Note': '客戶已確認基準照，可套用所選風格',
+          'Production Status': '生產結案',
+          'Order Status': '已結案',
+          'Missing Assets Note': '客戶已確認個人風格形象圖，訂單已結案',
         }, typecast: true }),
       });
-      await telegram('sendMessage', { chat_id: callback.message.chat.id,
-        text: `✅ 已確認基準照（${orderId}）\n\n接下來開始套用你選擇的風格。完成後會再通知你。` });
-    } else {
-      const origin = `https://${req.headers.host}`;
-      await fetch(`${origin}/api/orders/generate-identity`, {
-        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ recordId }),
+      const crmId = Array.isArray(order.fields?.CRM) ? order.fields.CRM[0] : '';
+      if (crmId) await airtable(`${CRM}/${encodeURIComponent(crmId)}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ fields: { 'Next Follow-up': null, 'Follow-up Note': '客戶已確認風格成品，訂單完成並結案' }, typecast: true }),
       });
       await telegram('sendMessage', { chat_id: callback.message.chat.id,
-        text: `已收到重新生成要求（${orderId}），請稍候查看新的基準照。` });
+        text: `✅ 已確認您的個人風格形象圖（${orderId}）\n\n哇，你看起來超美的！✨\n感謝您使用 Lumora Studio，希望再次遇見您。\n\n✅ 訂單已完成並結案` });
+    } else {
+      const crmId = Array.isArray(order.fields?.CRM) ? order.fields.CRM[0] : '';
+      if (crmId) await airtable(`${CRM}/${encodeURIComponent(crmId)}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ fields: { 'Next Follow-up': followupDate(3), 'Follow-up Note': '客戶要求再生成，需真人客服聯繫；3 天無回覆請追蹤，可手動結案' }, typecast: true }),
+      });
+      await airtable(`${ORDERS}/${encodeURIComponent(recordId)}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ fields: { 'Production Status': 'Review 審核中', 'Missing Assets Note': '真人客服待處理：客戶要求再生成，需聯繫客戶' }, typecast: true }),
+      });
+      await telegram('sendMessage', { chat_id: callback.message.chat.id,
+        text: `已收到重新生成要求（${orderId}）。真人客服會直接與您聯繫，確認需求後重新製作。若暫時沒有回覆，客服會在 3 天後追蹤。` });
     }
     return res.status(200).json({ ok: true, action, recordId });
   } catch (error) {

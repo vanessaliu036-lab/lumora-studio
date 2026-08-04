@@ -1,4 +1,4 @@
-// Staff action: send the identity preview to the customer in Telegram.
+// Staff action: send the manually produced style portrait to the customer in Telegram.
 // The next production step is locked until the customer presses Confirm.
 const BASE = 'appOLY56Y7cNExxzs';
 const ORDERS = 'tblJix6eujPrblpIv';
@@ -36,7 +36,7 @@ async function telegramPhoto(chatId, photo, caption, replyMarkup) {
 
   const form = new FormData();
   form.append('chat_id', String(chatId));
-  form.append('photo', new Blob([photo.data], { type: 'image/png' }), 'identity-baseline.png');
+  form.append('photo', new Blob([photo.data], { type: 'image/png' }), 'lumora-style-portrait.png');
   form.append('caption', caption);
   form.append('reply_markup', JSON.stringify(replyMarkup));
   const response = await fetch(`https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/sendPhoto`, {
@@ -58,7 +58,7 @@ async function generatePreview(referenceFiles) {
   const sourceBytes = await source.arrayBuffer();
   const form = new FormData();
   form.append('model', 'gpt-image-1');
-  form.append('prompt', 'Create a realistic AI identity baseline portrait from this person reference. Preserve the person\'s facial structure, recognizable features, skin tone, hair, and overall identity. Use neutral editorial lighting, a clean simple background, natural expression, no text, no watermark.');
+  form.append('prompt', 'Create a realistic personal style portrait from this person reference. Preserve the person\'s facial structure, recognizable features, skin tone, hair, and overall identity. Apply the selected editorial style with polished lighting, natural expression, no text, no watermark.');
   form.append('input_fidelity', 'high');
   form.append('size', '1024x1536');
   form.append('quality', 'medium');
@@ -102,13 +102,13 @@ export default async function handler(req, res) {
     if (!image) return res.status(500).json({ ok: false, error: 'OPENAI_API_KEY is required for GPT image generation.' });
     const orderId = order.fields?.['Order ID'] || recordId;
     const replyMarkup = { inline_keyboard: [[
-      { text: '✓ 確認這張', callback_data: `identity_confirm:${recordId}` },
-      { text: '✗ 再生成一張', callback_data: `identity_redo:${recordId}` },
+      { text: '✓ 確認', callback_data: `identity_confirm:${recordId}` },
+      { text: '↻ 再生成一張', callback_data: `identity_redo:${recordId}` },
     ]] };
     const sent = await telegramPhoto(
       tgId,
       image,
-      `這是你的 AI 個人照基準圖（${orderId}）\n\n請確認這張是否像你。確認後才會套用你選擇的風格。`,
+      `這是您的個人風格形象圖（${orderId}）\n\n謝謝您使用 Lumora Studio，請確認這張是否符合您的期待。`,
       replyMarkup,
     );
     const deliveredPhoto = sent?.result?.photo?.at(-1);
@@ -122,7 +122,7 @@ export default async function handler(req, res) {
         Download: storedImage,
         'Production Status': 'Review 審核中',
         'Asset Status': '素材齊全',
-        'Missing Assets Note': '基準照已傳送至 TG，等待客戶確認',
+        'Missing Assets Note': '個人風格形象圖已傳送至 TG，等待客戶確認',
       }, typecast: true }),
     });
     return res.status(200).json({ ok: true, orderId, status: 'Review 審核中' });

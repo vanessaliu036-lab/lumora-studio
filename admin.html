@@ -198,7 +198,9 @@ function qs(s){return document.querySelector(s)}
 function partner(){return state.partners.find(p=>p.id===state.currentPartner)||state.partners[0]}
 function money(n){return '$'+Number(n).toFixed(0)}
 function pill(status){const map={ACTIVE:'green',PAST_DUE:'yellow',SUSPENDED:'red',COMPLETED:'green',GENERATING:'blue',REDIRECTED:'yellow',WAITING_PHOTOS:'yellow'};return `<span class="pill ${map[status]||'blue'}">${status}</span>`}
-function navTop(){const paymentCount=typeof paymentNotificationCount==='function'?paymentNotificationCount():0;const inquiryCount=typeof newInquiryNotificationCount==='function'?newInquiryNotificationCount():0;return `<header class="topbar"><div class="brand"><div class="logo">✦</div><span class="brand-name">Lumora <em>Cloud</em></span></div><div class="nav"><button class="inquiry-notify" onclick="openNewInquiryNotifications()" aria-label="查看新詢問通知">新詢問 <span class="payment-notify-badge ${inquiryCount?'':'empty'}">${inquiryCount}</span></button><button class="payment-notify" onclick="openPaymentNotifications()" aria-label="查看付款通知">付款通知 <span class="payment-notify-badge ${paymentCount?'':'empty'}">${paymentCount}</span></button><button onclick="go('admin-login')">Admin Login</button><button class="btn primary" onclick="go('partner-login')">Partner Login</button></div></header>`}
+function humanOrderNotificationRows(){return (typeof CORE_ORD==='undefined'?[]:CORE_ORD).map((order,index)=>({order,index})).filter(({order})=>!['已結案','生產結案','已交付'].includes(String(order.orderStatus||order.productionStatus||''))&&String(order.assetNote||'').includes('真人客服待處理'))}
+function humanOrderNotificationCount(){return humanOrderNotificationRows().length}
+function navTop(){const paymentCount=typeof paymentNotificationCount==='function'?paymentNotificationCount():0;const inquiryCount=typeof newInquiryNotificationCount==='function'?newInquiryNotificationCount():0;const humanCount=typeof humanOrderNotificationCount==='function'?humanOrderNotificationCount():0;return `<header class="topbar"><div class="brand"><div class="logo">✦</div><span class="brand-name">Lumora <em>Cloud</em></span></div><div class="nav"><button class="inquiry-notify" onclick="openNewInquiryNotifications()" aria-label="查看新詢問通知">新詢問 <span class="payment-notify-badge ${inquiryCount?'':'empty'}">${inquiryCount}</span></button><button class="payment-notify" onclick="openPaymentNotifications()" aria-label="查看付款通知">付款通知 <span class="payment-notify-badge ${paymentCount?'':'empty'}">${paymentCount}</span></button><button class="payment-notify" onclick="go('admin-orders')" aria-label="查看真人處理通知">真人處理 <span class="payment-notify-badge ${humanCount?'':'empty'}">${humanCount}</span></button><button onclick="go('admin-login')">Admin Login</button><button class="btn primary" onclick="go('partner-login')">Partner Login</button></div></header>`}
 function go(route){location.hash=route}
 function route(){return location.hash.replace('#','')||'home'}
 function render(){const r=route();let html='';if(['partner-login','admin-login'].includes(r)) html=loginPage(r);else if(r.startsWith('admin')) html=adminShell(r);else if(r.startsWith('partner')) html=partnerShell(r);else html=publicPage(r);qs('#app').innerHTML=html;window.scrollTo(0,0)}
@@ -871,7 +873,7 @@ html{background:#080817}
    CRM（詢問漏斗）→ Orders（專案製作）→ Partners（歸屬額度）
    ═══════════════════════════════════════════════════ */
 
-const MOCK_ONLY_MODE = true;
+const MOCK_ONLY_MODE = false;
 
 const CORE_CRM = [
   { id:"CRM-20260802-006", name:"Vanessa Liu", status:"已轉單", statusTag:"ok",
@@ -2196,13 +2198,13 @@ const ORDER_PROCESS_ACTIONS = {
 };
 function orderProcessAction(step, index){
   const action = ORDER_PROCESS_ACTIONS[step.key];
-  if(step.key === 'identity' && step.state === 'current') return '<span class="tag warn">等待客戶在 TG 確認基準照</span>';
+  if(step.key === 'identity' && step.state === 'current') return '<span class="tag warn">等待客戶在 TG 確認個人風格形象圖</span>';
   return action && step.state === 'current' ? `<button type="button" class="order-process-action" onclick="openOrderProcessForm(${index},'${action.next}')">${action.label} →</button>` : '';
 }
 function orderProcessFormMarkup(step,index,order){
   const copy = {
     photos:{title:'確認客戶提交照片',description:'請先確認素材數量與完整性；送出後才會進入生成個人照。',fields:`<div class="order-process-field"><label for="order-photo-count-${index}">收到照片張數 *</label><input id="order-photo-count-${index}" type="number" min="1" value="${_esc(order.photoCount || '')}" placeholder="例如 5" required></div><div class="order-process-field"><label for="order-photo-check-${index}">素材確認 *</label><select id="order-photo-check-${index}" required><option value="">請選擇</option><option value="素材齊全">素材齊全，可開始製作</option><option value="素材不全">素材不全，退回補件</option></select></div><div class="order-process-field full"><label for="order-photo-note-${index}">備註</label><textarea id="order-photo-note-${index}" placeholder="記錄收到的照片內容或缺件原因">${_esc(order.assetNote || '')}</textarea></div>`,note:'送出後狀態會更新為「生成個人照」，本確認按鈕會消失。'},
-    identity:{title:'確認個人照完成',description:'素材已確認齊全；這一步只記錄客戶對個人照的確認結果，不需要手寫備註。',fields:`<div class="order-process-field full"><label for="order-identity-check-${index}">確認狀態 *</label><select id="order-identity-check-${index}" required><option value="">請選擇</option><option value="客戶已確認" ${order.customerConfirmation==='客戶已確認'?'selected':''}>客戶已確認</option><option value="客人不滿意" ${order.customerConfirmation==='客人不滿意'?'selected':''}>客人不滿意</option></select></div>`,note:'選「客戶已確認」才會推進；選「客人不滿意」會停留在此步驟。'},
+    identity:{title:'確認個人風格形象圖完成',description:'真人客服已檢查照片相似度並套用風格；這一步記錄客戶對風格成品的確認結果。',fields:`<div class="order-process-field full"><label for="order-identity-check-${index}">確認狀態 *</label><select id="order-identity-check-${index}" required><option value="">請選擇</option><option value="客戶已確認" ${order.customerConfirmation==='客戶已確認'?'selected':''}>客戶已確認</option><option value="客人不滿意" ${order.customerConfirmation==='客人不滿意'?'selected':''}>客人不滿意</option></select></div>`,note:'選「客戶已確認」才會推進；選「客人不滿意」會停留在此步驟。'},
     template:{title:'確認模板照片已提交',description:'請確認模板成品已整理完成，並留下可供後續驗收的連結。',fields:`<div class="order-process-field full"><label for="order-template-preview-${index}">模板照片預覽連結 *</label><input id="order-template-preview-${index}" type="url" value="${_esc(order.templatePreview || '')}" placeholder="貼上模板成品預覽連結" required></div><div class="order-process-field"><label for="order-template-check-${index}">提交確認 *</label><select id="order-template-check-${index}" required><option value="">請選擇</option><option value="已完成">已完成，可交客戶驗收</option><option value="需修改">需修改，暫不交付</option></select></div><div class="order-process-field"><label for="order-template-note-${index}">確認備註</label><input id="order-template-note-${index}" value="${_esc(order.productionNote || '')}" placeholder="例如：已檢查尺寸與文字"></div>`,note:'送出後狀態會更新為「客戶驗收」，提交模板按鈕會消失。'},
     acceptance:{title:'完成客戶驗收／交付',description:'請先記錄客戶是否確認，以及實際交付位置。',fields:`<div class="order-process-field"><label for="order-acceptance-check-${index}">客戶確認結果 *</label><select id="order-acceptance-check-${index}" required><option value="">請選擇</option><option value="已確認">客戶已確認</option><option value="需修改">客戶要求修改</option></select></div><div class="order-process-field"><label for="order-delivery-link-${index}">交付連結 *</label><input id="order-delivery-link-${index}" type="url" value="${_esc(order.link || '')}" placeholder="貼上 Telegram／雲端交付連結" required></div><div class="order-process-field full"><label for="order-acceptance-note-${index}">驗收備註</label><textarea id="order-acceptance-note-${index}" placeholder="記錄客戶回覆或修改內容">${_esc(order.acceptanceNote || '')}</textarea></div>`,note:'送出後狀態會更新為「已交付」，驗收按鈕會消失。'},
     close:{title:'完成結案確認',description:'確認交付資料與客戶驗收紀錄完整後，才能正式結案。',fields:`<div class="order-process-field"><label for="order-close-check-${index}">結案確認 *</label><select id="order-close-check-${index}" required><option value="">請選擇</option><option value="已確認">資料完整，確認結案</option></select></div><div class="order-process-field"><label for="order-close-note-${index}">結案備註</label><input id="order-close-note-${index}" value="${_esc(order.closeNote || '')}" placeholder="可留空"></div>`,note:'送出後訂單會移至結案紀錄，這顆按鈕會消失。'}
@@ -2274,8 +2276,8 @@ async function advanceOrderProcess(index, action){
   if(!order) return;
   let manualIdentityUrl = '';
   if(action === 'photos'){
-    manualIdentityUrl = String(window.prompt('請先人工生成基準照，再貼上可公開存取的圖片網址（https://...）。\n系統會將這張照片傳到客戶 TG，並等待客戶按確認。') || '').trim();
-    if(!manualIdentityUrl){ toast('尚未提供人工基準照網址，流程未送出'); return; }
+    manualIdentityUrl = String(window.prompt('請先人工檢查照片相似度並套用風格，再貼上個人風格形象圖的公開網址（https://...）。\n系統會將成品傳到客戶 TG，並等待客戶確認。') || '').trim();
+    if(!manualIdentityUrl){ toast('尚未提供個人風格形象圖網址，流程未送出'); return; }
     if(!/^https:\/\//i.test(manualIdentityUrl)){ toast('圖片網址必須是 https:// 開頭的公開網址'); return; }
   }
   if(action === 'close' && !String(order.link || '').trim()){
@@ -2363,7 +2365,7 @@ function orderProcessTimeline(r){
   const steps = [
     {key:'payment', name:'付款確認', person:r.verBy || '財務', date:r.verAt ? _dateOnly(r.verAt) : _dateOnly(r.orderDate), state:paid?'done':'current', info:paid?'已核對入帳':'等待財務確認'},
     {key:'photos', name:'客戶提交照片', person:r.producer || '待分派', date:r.materialDate ? _dateOnly(r.materialDate) : orderProcessDate(r.orderDate,1), state:stage === 'photos' ? 'current' : 'done', info:r.asset || '等待客戶提交'},
-    {key:'identity', name:'生成個人照確認', person:r.producer || '待分派', date:r.productionDate ? _dateOnly(r.productionDate) : orderProcessDate(r.orderDate,2), state:stage === 'identity' ? 'current' : ['template','acceptance','close'].includes(stage) ? 'done' : 'pending', info:stage === 'identity' ? '等待確認個人照' : ['template','acceptance','close'].includes(stage) ? '已確認完成' : '尚未完成'},
+    {key:'identity', name:'確認個人風格形象圖', person:r.producer || '待分派', date:r.productionDate ? _dateOnly(r.productionDate) : orderProcessDate(r.orderDate,2), state:stage === 'identity' ? 'current' : ['template','acceptance','close'].includes(stage) ? 'done' : 'pending', info:stage === 'identity' ? '等待確認風格成品' : ['template','acceptance','close'].includes(stage) ? '已確認完成' : '尚未完成'},
     {key:'template', name:'提交模板照片', person:r.producer || '待分派', date:r.reviewDate ? _dateOnly(r.reviewDate) : orderProcessDate(r.orderDate,3), state:stage === 'template' ? 'current' : ['acceptance','close'].includes(stage) ? 'done' : 'pending', info:stage === 'template' ? '等待提交模板照片' : ['acceptance','close'].includes(stage) ? '已提交完成' : '尚未完成'},
     {key:'acceptance', name:'客戶驗收', person:r.producer || '客服', date:r.deliveryDate ? _dateOnly(r.deliveryDate) : _dateOnly(r.promisedDate), state:stage === 'acceptance' ? 'current' : stage === 'close' ? 'done' : 'pending', info:stage === 'acceptance' ? '等待客戶確認' : stage === 'close' ? '已完成驗收' : '尚未完成'},
     {key:'close', name:'生產結案', person:r.producer || '客服', date:r.completion ? _dateOnly(r.completion) : _dateOnly(r.promisedDate), state:stage === 'close' ? 'done' : 'pending', info:stage === 'close' ? '已完成並進入結案紀錄' : '完成驗收後結案'}
