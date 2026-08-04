@@ -54,8 +54,11 @@
       background:rgba(10,8,24,.58);backdrop-filter:blur(20px);
       box-shadow:0 16px 60px rgba(0,0,0,.28)
     }
-    .logo{font-family:var(--serif);font-size:26px;letter-spacing:.08em}
+    .logo{display:inline-flex;align-items:center;line-height:0}
+    .logo-image{display:block;width:118px;height:42px;object-fit:contain;filter:drop-shadow(0 0 10px rgba(255,255,255,.2))}
     .nav-note{color:var(--muted);font-size:12px}
+    .nav-links{display:flex;gap:28px;color:var(--muted);font-size:13px}
+    .nav-links a:hover{color:white}
     .btn{
       display:inline-flex;align-items:center;justify-content:center;
       min-height:48px;padding:0 22px;border-radius:999px;border:1px solid var(--line);
@@ -138,6 +141,7 @@
       .services,.flow,.feature-wrap{grid-template-columns:1fr}
       .feature-art{min-height:460px}
       .nav-note{display:none}
+      .nav-links{display:none}
     }
     @media(max-width:620px){
       nav{top:10px}.logo{font-size:21px}.btn{min-height:42px;padding:0 16px;font-size:12px}
@@ -151,10 +155,17 @@
 </head>
 <body>
   <nav>
-    <a class="logo" href="#top">LUMORA</a>
+    <a class="logo" href="index.html#top" aria-label="Lumora home"><img class="logo-image" src="lumora-logo.png" alt="Lumora" /></a>
     <div class="nav-note">WHITE LABEL CREATIVE PLATFORM</div>
     <div class="nav-actions">
-      <a class="btn home-link" href="index.html">Home</a>
+      <div class="nav-links">
+        <a href="index.html#why">Why Lumora</a>
+        <a href="index.html#gallery">Personal</a>
+        <a href="index.html#brand-campaign">Branding</a>
+        <a href="lamura-os.html">LAMURA OS</a>
+        <a href="white-label.html">White Label</a>
+      </div>
+      <a class="btn home-link" href="index.html#top">Back to Home</a>
       <a class="btn btn-primary" href="#partner">Become a Partner</a>
     </div>
   </nav>

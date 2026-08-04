@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="LAMURA OS builds branded websites and business systems for modern brands." />
+  <title>LAMURA OS — The Operating System for Modern Brands</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Italiana&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --ink:#fffafd;--muted:rgba(255,255,255,.67);--line:rgba(255,255,255,.14);
+      --pink:#ffb4d5;--violet:#9c7cff;--blue:#9ab6ff;--mint:#a8f1df;
+      --night:#090714;--serif:"Italiana",serif;--sans:"DM Sans",sans-serif;
+    }
+    *{box-sizing:border-box} html{scroll-behavior:smooth}
+    body{margin:0;color:var(--ink);font-family:var(--sans);overflow-x:hidden;background:
+      radial-gradient(circle at 8% 8%,rgba(255,176,213,.19),transparent 27%),
+      radial-gradient(circle at 88% 15%,rgba(154,124,255,.25),transparent 30%),
+      radial-gradient(circle at 55% 82%,rgba(115,184,255,.12),transparent 33%),
+      linear-gradient(135deg,#090714,#17102f 52%,#0a1021)}
+    body:before{content:"";position:fixed;inset:-32%;pointer-events:none;z-index:-1;background:conic-gradient(from 180deg,rgba(255,172,211,.08),rgba(151,125,255,.1),rgba(144,225,213,.06),rgba(255,172,211,.08));filter:blur(105px);animation:spin 25s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}} a{text-decoration:none;color:inherit}
+    .shell{width:min(1180px,calc(100% - 32px));margin:auto}
+    nav{position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:30;width:min(1180px,calc(100% - 24px));display:flex;align-items:center;justify-content:space-between;padding:12px 14px 12px 20px;border:1px solid var(--line);border-radius:999px;background:rgba(10,8,24,.58);backdrop-filter:blur(20px);box-shadow:0 16px 60px rgba(0,0,0,.28)}
+    .logo{display:inline-flex;align-items:center;line-height:0}.logo-image{display:block;width:118px;height:42px;object-fit:contain;filter:drop-shadow(0 0 10px rgba(255,255,255,.2))}.nav-note{font-size:11px;letter-spacing:.14em;color:var(--muted)}.nav-links{display:flex;gap:28px;color:var(--muted);font-size:13px}.nav-links a:hover{color:white}
+    .btn{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:0 22px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.07);font-weight:600;transition:.3s ease}.btn:hover{transform:translateY(-2px);background:rgba(255,255,255,.12)}
+    .nav-actions{display:flex;align-items:center;gap:10px}.btn-primary{border:0;background:linear-gradient(110deg,var(--pink),var(--violet));box-shadow:0 14px 38px rgba(151,108,255,.34),inset 0 1px rgba(255,255,255,.7)}
+    .hero{min-height:100vh;display:grid;place-items:center;text-align:center;padding:130px 0 80px}.eyebrow{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:#decfff;margin-bottom:22px}
+    h1,h2,h3,p{margin-top:0} h1{font-family:var(--serif);font-size:clamp(66px,10vw,136px);font-weight:400;line-height:.9;letter-spacing:-.045em;margin-bottom:28px}.gradient{background:linear-gradient(90deg,#fff 4%,#ffd4e8 47%,#baa6ff 92%);-webkit-background-clip:text;background-clip:text;color:transparent}
+    .hero p{max-width:700px;margin:0 auto 34px;color:var(--muted);font-size:clamp(18px,2vw,23px);line-height:1.6}.hero-actions{display:flex;justify-content:center;gap:12px;flex-wrap:wrap}.micro{margin-top:20px!important;font-size:12px!important;color:rgba(255,255,255,.44)!important}
+    section{padding:100px 0}.center{text-align:center}.section-title{font-family:var(--serif);font-size:clamp(48px,7vw,86px);font-weight:400;line-height:.96;letter-spacing:-.04em;margin-bottom:18px}.section-copy{max-width:720px;margin:0 auto;color:var(--muted);font-size:18px;line-height:1.65}
+    .glass{border:1px solid var(--line);border-radius:30px;background:linear-gradient(145deg,rgba(255,255,255,.11),rgba(255,255,255,.035));backdrop-filter:blur(18px);box-shadow:0 30px 90px rgba(0,0,0,.24)}
+    .services{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:42px}.service{padding:30px;min-height:215px;display:flex;flex-direction:column;justify-content:space-between;overflow:hidden;position:relative}.service:after{content:"";position:absolute;width:150px;height:150px;border-radius:50%;right:-45px;top:-45px;background:radial-gradient(circle,rgba(178,137,255,.36),transparent 68%)}.service span{font-size:11px;letter-spacing:.16em;color:#d8c7ff}.service h3{font-family:var(--serif);font-size:34px;font-weight:400;margin:56px 0 8px}.service p{margin:0;color:var(--muted);font-size:13px;line-height:1.55}
+    .showcase{display:grid;grid-template-columns:1.15fr .85fr;gap:18px;margin-top:44px}.site-card{min-height:470px;padding:24px;position:relative;overflow:hidden}.browser{position:absolute;inset:24px;border:1px solid rgba(255,255,255,.18);border-radius:24px;background:rgba(9,7,24,.72);overflow:hidden}.browser-top{height:44px;display:flex;align-items:center;gap:7px;padding:0 16px;border-bottom:1px solid var(--line)}.browser-top i{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.38)}.browser-page{height:calc(100% - 44px);padding:22px;background:radial-gradient(circle at 70% 20%,rgba(255,178,213,.22),transparent 26%),linear-gradient(135deg,#171229,#0e1020)}.browser-hero{height:62%;border-radius:18px;background:linear-gradient(135deg,rgba(255,255,255,.12),rgba(255,255,255,.035));padding:22px;display:flex;flex-direction:column;justify-content:flex-end}.browser-hero strong{font-family:var(--serif);font-size:42px;font-weight:400}.browser-hero span{color:var(--muted);font-size:12px;margin-top:8px}.browser-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}.browser-grid div{height:72px;border-radius:14px;background:rgba(255,255,255,.07);border:1px solid var(--line)}
+    .sample-list{display:grid;gap:18px}.sample{padding:28px;min-height:142px}.sample small{letter-spacing:.15em;color:#d7c5ff}.sample h3{font-family:var(--serif);font-size:31px;font-weight:400;margin:24px 0 7px}.sample p{margin:0;color:var(--muted);font-size:13px}
+    .system-wrap{display:grid;grid-template-columns:.95fr 1.05fr;gap:20px}.system-copy{padding:46px}.system-copy h2{font-family:var(--serif);font-size:clamp(48px,6vw,76px);font-weight:400;line-height:.95;letter-spacing:-.04em}.system-copy p{color:var(--muted);font-size:18px;line-height:1.65}.checks{display:grid;gap:14px;margin-top:28px}.check{display:flex;align-items:center;gap:12px}.check:before{content:"✓";display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:rgba(168,241,223,.16);color:var(--mint);font-size:12px}
+    .dashboard{padding:26px;min-height:520px;position:relative;overflow:hidden}.dash-shell{position:absolute;inset:26px;border-radius:25px;background:rgba(10,8,26,.7);border:1px solid var(--line);padding:18px}.dash-top{display:flex;justify-content:space-between;color:var(--muted);font-size:11px;margin-bottom:16px}.dash-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.stat{padding:18px;border-radius:16px;background:rgba(255,255,255,.07);border:1px solid var(--line)}.stat b{display:block;font-family:var(--serif);font-size:32px;font-weight:400}.stat span{font-size:11px;color:var(--muted)}.orders{margin-top:12px;border-radius:18px;border:1px solid var(--line);overflow:hidden}.row{display:grid;grid-template-columns:1.2fr .9fr .8fr .8fr;gap:12px;padding:15px 16px;border-bottom:1px solid var(--line);font-size:12px}.row:last-child{border-bottom:0}.row.head{color:var(--muted);background:rgba(255,255,255,.045)}.status{color:var(--mint)}
+    .process{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:40px}.step{padding:28px;min-height:210px}.step b{font-family:var(--serif);font-size:42px;font-weight:400;color:#dbc9ff}.step h3{font-size:18px;margin:44px 0 9px}.step p{margin:0;color:var(--muted);font-size:13px;line-height:1.55}
+    .cta{padding:92px 28px;text-align:center;border-radius:38px;background:radial-gradient(circle at 18% 12%,rgba(255,172,211,.35),transparent 30%),radial-gradient(circle at 84% 22%,rgba(151,125,255,.35),transparent 32%),linear-gradient(135deg,#24183e,#151327 65%,#152137)}.cta h2{font-family:var(--serif);font-size:clamp(52px,8vw,94px);font-weight:400;line-height:.94;letter-spacing:-.04em;margin-bottom:20px}.cta p{color:var(--muted);font-size:18px;margin-bottom:30px}
+    footer{padding:32px 0 50px;color:rgba(255,255,255,.4);font-size:12px}.footer-row{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:22px}.reveal{opacity:0;transform:translateY(30px);transition:.8s ease}.reveal.show{opacity:1;transform:none}
+    @media(max-width:920px){.services,.showcase,.system-wrap,.process{grid-template-columns:1fr}.nav-note{display:none}.nav-links{display:none}.site-card{min-height:430px}.dashboard{min-height:500px}}
+    @media(max-width:620px){nav{top:10px}.logo{font-size:21px}.btn{min-height:42px;padding:0 15px;font-size:12px}.hero{padding-top:110px}h1{font-size:58px}section{padding:74px 0}.service,.step{min-height:0}.system-copy{padding:28px}.dashboard{min-height:455px;padding:16px}.dash-shell{inset:16px}.dash-stats{grid-template-columns:1fr}.stat:nth-child(3){display:none}.row{grid-template-columns:1.2fr .8fr}.row span:nth-child(3),.row span:nth-child(4){display:none}.browser-hero strong{font-size:32px}}
+    @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.reveal{opacity:1;transform:none}}
+  </style>
+</head>
+<body>
+  <nav>
+    <a class="logo" href="#top">LAMOUS OS</a>
+    <div class="nav-note">THE OPERATING SYSTEM FOR MODERN BRANDS</div>
+    <a class="btn btn-primary" href="#contact">Start Your Brand</a>
+  </nav>
+
+  <main id="top">
+    <section class="hero">
+      <div class="shell reveal">
+        <div class="eyebrow">Brand · Website · System</div>
+        <h1>Build a Brand<br><span class="gradient">That Actually Works.</span></h1>
+        <p>Beautiful websites, branded customer journeys, and simple business systems — designed as one complete brand experience.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#services">Explore Services</a>
+          <a class="btn" href="#showcase">View Website Styles</a>
+        </div>
+        <p class="micro">Not just a website. A complete operating system for your brand.</p>
+      </div>
+    </section>
+
+    <section id="services">
+      <div class="shell center reveal">
+        <div class="eyebrow">What We Build</div>
+        <h2 class="section-title">Everything Your Brand<br><span class="gradient">Needs to Run.</span></h2>
+        <div class="services">
+          <article class="service glass"><span>01</span><div><h3>Website Design</h3><p>High-converting branded websites built around your visual identity.</p></div></article>
+          <article class="service glass"><span>02</span><div><h3>Brand Systems</h3><p>A consistent customer experience across design, content, and service.</p></div></article>
+          <article class="service glass"><span>03</span><div><h3>Order Dashboard</h3><p>Simple backend systems for customers, orders, payments, and delivery.</p></div></article>
+        </div>
+      </div>
+    </section>
+
+    <section id="showcase">
+      <div class="shell reveal">
+        <div class="center">
+          <div class="eyebrow">Website Design Library</div>
+          <h2 class="section-title">Choose a Direction.<br><span class="gradient">Make It Yours.</span></h2>
+          <p class="section-copy">Start from a curated design direction, then customize the brand, content, pages, and customer journey.</p>
+        </div>
+        <div class="showcase">
+          <div class="site-card glass">
+            <div class="browser">
+              <div class="browser-top"><i></i><i></i><i></i></div>
+              <div class="browser-page">
+                <div class="browser-hero"><strong>Editorial Luxury</strong><span>Fashion · Beauty · Personal Brand</span></div>
+                <div class="browser-grid"><div></div><div></div><div></div></div>
+              </div>
+            </div>
+          </div>
+          <div class="sample-list">
+            <article class="sample glass"><small>STYLE 01</small><h3>Dreamy Editorial</h3><p>Soft gradients, cinematic layouts, and premium visual storytelling.</p></article>
+            <article class="sample glass"><small>STYLE 02</small><h3>Modern Minimal</h3><p>Clean, structured, and designed for trust and conversion.</p></article>
+            <article class="sample glass"><small>STYLE 03</small><h3>Immersive Experience</h3><p>Motion-led pages for travel, hospitality, culture, and campaigns.</p></article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="system">
+      <div class="shell system-wrap reveal">
+        <div class="system-copy glass">
+          <div class="eyebrow">Business Backend</div>
+          <h2>Your Website<br><span class="gradient">Connected to Work.</span></h2>
+          <p>Turn customer inquiries into a clear operating workflow instead of managing everything across messages and spreadsheets.</p>
+          <div class="checks">
+            <div class="check">Customer and inquiry management</div>
+            <div class="check">Order and payment tracking</div>
+            <div class="check">Production and delivery status</div>
+            <div class="check">Team roles and access control</div>
+          </div>
+        </div>
+        <div class="dashboard glass">
+          <div class="dash-shell">
+            <div class="dash-top"><span>BRAND OPERATIONS</span><span>LIVE DASHBOARD</span></div>
+            <div class="dash-stats">
+              <div class="stat"><b>28</b><span>New Customers</span></div>
+              <div class="stat"><b>16</b><span>Active Orders</span></div>
+              <div class="stat"><b>12</b><span>Delivered</span></div>
+            </div>
+            <div class="orders">
+              <div class="row head"><span>Customer</span><span>Service</span><span>Payment</span><span>Status</span></div>
+              <div class="row"><span>Emma Studio</span><span>Website</span><span>Paid</span><span class="status">In Progress</span></div>
+              <div class="row"><span>Maison Lune</span><span>Brand System</span><span>Deposit</span><span class="status">Review</span></div>
+              <div class="row"><span>Nora Beauty</span><span>Order System</span><span>Paid</span><span class="status">Delivered</span></div>
+              <div class="row"><span>Atelier Nine</span><span>Website</span><span>Pending</span><span class="status">New</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="shell center reveal">
+        <div class="eyebrow">How It Works</div>
+        <h2 class="section-title">From Idea to<br><span class="gradient">Working Brand.</span></h2>
+        <div class="process">
+          <article class="step glass"><b>01</b><h3>Choose Direction</h3><p>Select the visual and business structure that fits your brand.</p></article>
+          <article class="step glass"><b>02</b><h3>Customize</h3><p>We adapt the design, content, pages, and workflow to your business.</p></article>
+          <article class="step glass"><b>03</b><h3>Connect</h3><p>Your website, inquiries, orders, and customer records work together.</p></article>
+          <article class="step glass"><b>04</b><h3>Launch</h3><p>Receive a complete brand system ready for customers and daily operations.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact">
+      <div class="shell reveal">
+        <div class="cta">
+          <h2>Build More Than<br><span class="gradient">A Beautiful Website.</span></h2>
+          <p>Create a brand your customers can see — and a system your business can use.</p>
+          <a class="btn btn-primary" href="mailto:hello@lumora.studio">Start Your Project</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="shell footer-row"><span>© 2026 LAMURA OS</span><span>The Operating System for Modern Brands</span></div>
+  </footer>
+
+  <script>
+    const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting)entry.target.classList.add('show')}),{threshold:.12});
+    document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+  </script>
+</body>
+
