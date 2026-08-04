@@ -2822,8 +2822,10 @@
     const pricingNote = document.getElementById("lpModalNote");
     const pricingVisualKicker = document.getElementById("lpVisualKicker");
     const pricingVisualTitle = document.getElementById("lpVisualTitle");
+    let selectedPricingKey = "";
     function openPricing(key){
       const item = services[key]; if(!item) return;
+      selectedPricingKey = key;
       pricingModal.dataset.theme = item.theme;
       pricingEyebrow.textContent = item.eyebrow;
       pricingTitle.textContent = item.title;
@@ -2852,9 +2854,21 @@
     });
     pricingModal.addEventListener("click", e => { if (e.target === pricingModal) closePricing(); });
     document.getElementById("pricingOrderButton").addEventListener("click", () => {
+      const item = services[selectedPricingKey];
       closePricing();
       const target = document.getElementById("contact");
-      if (target) target.scrollIntoView({behavior: "auto", block: "start"});
+      if (item && target) {
+        const identityButton = document.querySelector('[data-identity="Personal"]');
+        const selectedService = selectedPricingKey === "portrait" ? "Style Portrait — $5" : selectedPricingKey === "motion" ? "Style to Motion — $12" : selectedPricingKey === "template" ? "Template Video — $15" : "Custom Brand Style";
+        identityButton?.click();
+        serviceInput.value = selectedService;
+        document.querySelectorAll("[data-service]").forEach(button => {
+          button.classList.toggle("is-selected", button.dataset.service === selectedService);
+        });
+        const request = document.getElementById("leadRequest");
+        if (request && !request.value.trim()) request.value = `網站選擇：${item.title} ${item.price}`;
+        target.scrollIntoView({behavior: "auto", block: "start"});
+      }
     });
     document.addEventListener("keydown", e => {
       if (e.key === "Escape" && pricingModal.classList.contains("is-open")) closePricing();
@@ -2998,6 +3012,9 @@
           service: serviceInput.value,
           name: nameInput.value.trim(),
           request: requestInput.value.trim(),
+          package: serviceInput.value,
+          quoted: serviceInput.value.match(/\$(\d+)/)?.[1] || "",
+          source: "Website Pricing",
           createdAt: new Date().toISOString()
         };
         let result;
@@ -3028,7 +3045,9 @@
         }
 
         confirmTelegram.textContent = "Opening Telegram…";
-        const telegramUrl = `https://t.me/${TELEGRAM_BOT_USERNAME}?start=${encodeURIComponent(inquiryId)}`;
+        const priceKey = serviceInput.value.startsWith("Style Portrait") ? "portrait" : serviceInput.value.startsWith("Style to Motion") ? "motion" : serviceInput.value.startsWith("Template Video") ? "template" : "custom";
+        const telegramStart = `order_${inquiryId}_${priceKey}_${inquiryInput.quoted || "custom"}`;
+        const telegramUrl = `https://t.me/${TELEGRAM_BOT_USERNAME}?start=${encodeURIComponent(telegramStart)}`;
         window.location.assign(telegramUrl);
       });
     })();

@@ -33,6 +33,7 @@ from __future__ import annotations
 
 import logging
 import os
+import re
 from datetime import datetime, timezone
 from typing import Any
 
@@ -252,14 +253,32 @@ STYLE_KB = InlineKeyboardMarkup([
 
 async def start(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
     u = update.effective_user
+    start_payload = (ctx.args[0] if ctx.args else "").strip()
+    order_service = "Personal Identity"
+    order_package = "Style Portrait — $5"
+    order_quoted = 5
+    order_crm_id = ""
+    match = re.fullmatch(r"order_(CRM-\d{8}-\d{3})_(portrait|motion|template|custom)_(\d+|custom)", start_payload)
+    if match:
+        order_crm_id = match.group(1)
+        key = match.group(2)
+        order_quoted = None if match.group(3) == "custom" else int(match.group(3))
+        order_service = "Personal Identity" if key in ("portrait", "motion") else "Brand Campaign"
+        order_package = {
+            "portrait": "Style Portrait — $5",
+            "motion": "Style to Motion — $12",
+            "template": "Template Video — $15",
+            "custom": "Custom Brand Style",
+        }[key]
     ctx.chat_data["intake"] = {
         "step": ASK_PAYMENT,
         "photos": [],
         "flow": "personal_identity_v1",
         "name": (u.full_name or u.username or "Lumora 客戶").strip(),
-        "service": "Personal Identity",
-        "package": "Style Portrait — $5",
-        "quoted": 5,
+        "service": order_service,
+        "package": order_package,
+        "quoted": order_quoted,
+        "crm_id": order_crm_id,
     }
 
     # 這裡就抓到身分了，不用問客戶
@@ -267,12 +286,11 @@ async def start(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
 
     await update.message.reply_text(
         "你好，歡迎聯繫 Lumora ✨\n\n"
-        "你目前選擇的是：\n\n"
-        "Personal Identity\n"
-        "USD $5\n\n"
+        f"你目前選擇的是：\n\n{order_package}\n"
+        f"USD ${order_quoted if order_quoted is not None else '待報價'}\n\n"
         "💳 付款資訊\n\n"
-        "方案：Personal Identity\n"
-        "金額：USD $5\n"
+        f"方案：{order_package}\n"
+        f"金額：USD ${order_quoted if order_quoted is not None else '待報價'}\n"
         "收款帳號：000-303-520\n\n"
         "完成付款後，請直接回覆：\n\n"
         "帳號後五碼\n\n"
@@ -536,7 +554,15 @@ async def submit(update: Update, ctx: ContextTypes.DEFAULT_TYPE, from_button: bo
             log.warning("送件 log 寫入失敗: %s", e)
 
     try:
-        rec = at_create(T_CRM, fields)
+        existing = at_list(T_CRM, f"{{CRM ID}} = '{crm_id}'", 1) if s.get("crm_id") else []
+        if existing:
+            rec = existing[0]
+            requests.patch(
+                f"{API}/{T_CRM}/{rec['id']}", headers=H,
+                json={"fields": fields, "typecast": False}, timeout=20,
+            ).raise_for_status()
+        else:
+            rec = at_create(T_CRM, fields)
     except Exception as e:
         log.exception("CRM 寫入失敗")
         await ctx.bot.send_message(

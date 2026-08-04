@@ -17,6 +17,8 @@ export default async function handler(req, res) {
     const name = String(body.name || '').trim();
     const service = String(body.service || '').trim();
     const summary = String(body.request || '').trim();
+    const packageName = String(body.package || service).trim();
+    const quoted = body.quoted === '' || body.quoted == null ? null : Number(body.quoted);
     if (!name || !service || !summary) return res.status(400).json({ ok: false, error: 'name, service and request are required' });
 
     const all = await fetch(`${API}/${CRM}?pageSize=100`, { headers: { Authorization: `Bearer ${PAT}` } });
@@ -33,7 +35,8 @@ export default async function handler(req, res) {
       headers: { Authorization: `Bearer ${PAT}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({ fields: {
         'CRM ID': crmId, 'Customer Name': name, 'CRM Status': 'New', 'Service Type': service,
-        'Inquiry Summary': summary, 'Inquiry Date': createdAt, 'Created By': 'Telegram Bot',
+        'Inquiry Summary': summary, 'Inquiry Date': createdAt, 'Created By': 'Website Pricing',
+        'Package': packageName, ...(Number.isFinite(quoted) ? {'Quoted Amount': quoted} : {}),
       }, typecast: true }),
     });
     const payload = await response.json();
