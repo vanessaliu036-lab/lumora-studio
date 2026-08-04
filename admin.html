@@ -2196,6 +2196,7 @@ const ORDER_PROCESS_ACTIONS = {
 };
 function orderProcessAction(step, index){
   const action = ORDER_PROCESS_ACTIONS[step.key];
+  if(step.key === 'identity' && step.state === 'current') return '<span class="tag warn">等待客戶在 TG 確認基準照</span>';
   return action && step.state === 'current' ? `<button type="button" class="order-process-action" onclick="openOrderProcessForm(${index},'${action.next}')">${action.label} →</button>` : '';
 }
 function orderProcessFormMarkup(step,index,order){
@@ -2327,6 +2328,14 @@ async function advanceOrderProcess(index, action){
       const response = await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({recordId:order.recordId,fields})});
       const result = await response.json();
       if(!response.ok || !result.ok) throw new Error(result.error || `HTTP ${response.status}`);
+      if(action === 'photos'){
+        const identityEndpoint = location.protocol === 'file:' ? 'https://lumora-studiokh.vercel.app/api/orders/generate-identity' : '/api/orders/generate-identity';
+        const identityResponse = await fetch(identityEndpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({recordId:order.recordId})});
+        const identityResult = await identityResponse.json();
+        if(!identityResponse.ok || !identityResult.ok) throw new Error(identityResult.error || `HTTP ${identityResponse.status}`);
+        order.productionStatus = 'Review 審核中';
+        order.prod = order.productionStatus;
+      }
     }
     if(action === 'close'){
       core3Close();
