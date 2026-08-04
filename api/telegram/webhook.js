@@ -56,7 +56,7 @@ async function handleStart(message) {
   const amountText = amount ? `USD $${amount}` : '請依網站訂單金額';
   await telegram('sendMessage', {
     chat_id: message.chat.id,
-    text: `你好，歡迎來到 Lumora Studio ✨\n\n這邊跟你確認本次服務：\n方案：${serviceText}\n金額：${amountText}\n收款帳號：000-303-520\n\n完成付款後，請點擊下方「我已完成付款」，再回覆帳號後五碼。\n\n付款確認後，請上傳至少 5 張生活照，接著由真人客服協助建立基準照。`,
+    text: `你好，歡迎來到 Lumora Studio ✨\n\n這邊跟你確認本次服務：\n方案：${serviceText}\n金額：${amountText}\n收款帳號：000-303-520\n\n完成付款後，請點擊下方「我已完成付款」，再回覆帳號後五碼。`,
     reply_markup: { inline_keyboard: [[
       { text: '✅ 我已完成付款', callback_data: `payment_done:${crmRecord?.id || 'none'}` },
     ]] },
@@ -85,13 +85,13 @@ async function handlePaymentLast5(message, req) {
   const response = await fetch(`${origin}/api/crm/update-payment`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ recordId: crmRecord.id, last5, confirm: true }),
+    body: JSON.stringify({ recordId: crmRecord.id, last5, confirm: false }),
   });
   const result = await response.json();
   if (!response.ok || !result.ok) throw new Error(result.error || `Payment update failed: ${response.status}`);
   await telegram('sendMessage', {
     chat_id: message.chat.id,
-    text: `✅ 付款已確認${result.orderId ? `（${result.orderId}）` : ''}\n\n請上傳至少 5 張生活照：正面、左側臉、右側臉、半身、全身。收到後會由真人客服建立基準照。`,
+    text: '✅ 已收到你的付款後五碼。\n\n客服會盡快人工確認付款，確認完成後會再回覆你下一步。',
   });
 }
 
