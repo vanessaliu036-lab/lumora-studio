@@ -2858,15 +2858,16 @@
       closePricing();
       const target = document.getElementById("contact");
       if (item && target) {
+        const leadServiceInput = document.getElementById("leadService");
+        const leadRequestInput = document.getElementById("leadRequest");
         const identityButton = document.querySelector('[data-identity="Personal"]');
         const selectedService = selectedPricingKey === "portrait" ? "Style Portrait — $5" : selectedPricingKey === "motion" ? "Style to Motion — $12" : selectedPricingKey === "template" ? "Template Video — $15" : "Custom Brand Style";
         identityButton?.click();
-        serviceInput.value = selectedService;
+        if (leadServiceInput) leadServiceInput.value = selectedService;
         document.querySelectorAll("[data-service]").forEach(button => {
           button.classList.toggle("is-selected", button.dataset.service === selectedService);
         });
-        const request = document.getElementById("leadRequest");
-        if (request && !request.value.trim()) request.value = `網站選擇：${item.title} ${item.price}`;
+        if (leadRequestInput && !leadRequestInput.value.trim()) leadRequestInput.value = `網站選擇：${item.title} ${item.price}`;
         target.scrollIntoView({behavior: "auto", block: "start"});
       }
     });
