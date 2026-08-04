@@ -59,6 +59,17 @@ async function handleStart(message) {
   if (!crmRecord && message.from?.id) {
     crmRecord = await findLatestCrmByTelegramUser(message.from.id);
   }
+  if (!crmRecord) {
+    await telegram('sendMessage', {
+      chat_id: message.chat.id,
+      text: '您好，感謝您選擇 Lumora Studio ✨\n\n請選擇你要生成的項目：',
+      reply_markup: { inline_keyboard: [[
+        { text: '👤 個人形象照', callback_data: 'select_service:portrait' },
+        { text: '🎬 風格動態影像', callback_data: 'select_service:motion' },
+      ]] },
+    });
+    return;
+  }
   await rememberTelegramUser(crmRecord, message);
   const amount = parts[3] || crmRecord?.fields?.['Quoted Amount'] || '';
   const serviceText = parts[2] === 'portrait'
@@ -128,6 +139,14 @@ export default async function handler(req, res) {
     const callback = req.body?.callback_query;
     if (!callback?.data) return res.status(200).json({ ok: true });
     const [action, recordId] = String(callback.data).split(':');
+    if (action === 'select_service') {
+      try { await telegram('answerCallbackQuery', { callback_query_id: callback.id }); } catch (_) { /* expired callback */ }
+      const serviceText = recordId === 'motion' ? '風格動態影像' : '個人形象照';
+      const amountText = recordId === 'motion' ? 'USD $12' : 'USD $5';
+      await telegram('sendMessage', { chat_id: callback.message.chat.id,
+        text: `這邊跟你確認本次服務：\n\n方案：${serviceText}\n金額：${amountText}\n收款帳號：000-303-520\n\n完成付款後，請回覆 5 位數帳號後五碼。\n\n若你是從網站下單，請由網站訂單連結重新進入 TG，系統才會自動連動訂單。` });
+      return res.status(200).json({ ok: true, event: 'service_selected', service: recordId });
+    }
     if (action === 'payment_done') {
       try { await telegram('answerCallbackQuery', { callback_query_id: callback.id }); } catch (_) { /* continue CRM sync if Telegram query has expired */ }
       try {
@@ -141,11 +160,15 @@ export default async function handler(req, res) {
         ? { id: recordId }
         : await findLatestCrmByTelegramUser(callback.from?.id || callback.message.chat.id);
       let alreadyPending = false;
+      let alreadyPaid = false;
       if (linkedCrm?.id) {
         const currentCrm = await airtable(`${CRM}/${encodeURIComponent(linkedCrm.id)}`);
-        alreadyPending = currentCrm.fields?.fldVJoRnj7Jh4YGu1 === 'Pending Verification'
-          || currentCrm.fields?.['Payment Status'] === 'Pending Verification';
+        const paymentStatus = String(currentCrm.fields?.fldVJoRnj7Jh4YGu1 || currentCrm.fields?.['Payment Status'] || currentCrm.fields?.Status || '').toLowerCase();
+        alreadyPending = paymentStatus === 'pending verification';
+        alreadyPaid = ['confirmed', 'paid', 'converted', 'completed'].some(value => paymentStatus.includes(value))
+          || (Array.isArray(currentCrm.fields?.Order) && currentCrm.fields.Order.length > 0);
       }
+      if (alreadyPaid) return res.status(200).json({ ok: true, event: 'payment_done_ignored_already_paid' });
       if (linkedCrm?.id && !alreadyPending) {
         await airtable(`${CRM}/${encodeURIComponent(linkedCrm.id)}`, {
           method: 'PATCH',

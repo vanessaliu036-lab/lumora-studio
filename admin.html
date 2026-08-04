@@ -2216,7 +2216,15 @@ function orderProcessFormMarkup(step,index,order){
     close:{title:'完成結案確認',description:'確認交付資料與客戶驗收紀錄完整後，才能正式結案。',fields:`<div class="order-process-field"><label for="order-close-check-${index}">結案確認 *</label><select id="order-close-check-${index}" required><option value="">請選擇</option><option value="已確認">資料完整，確認結案</option></select></div><div class="order-process-field"><label for="order-close-note-${index}">結案備註</label><input id="order-close-note-${index}" value="${_esc(order.closeNote || '')}" placeholder="可留空"></div>`,note:'送出後訂單會移至結案紀錄，這顆按鈕會消失。'}
   }[step];
   if(!copy) return '';
-  return `<div class="order-process-form" id="order-process-form-${index}" data-action="${step}"><h4>${copy.title}</h4><p>${copy.description}</p><div class="order-process-form-grid">${copy.fields}</div><div class="order-process-form-actions"><button type="button" class="btn primary" onclick="submitOrderProcess(${index},'${step}')">送出確認</button><button type="button" class="btn" onclick="closeOrderProcessForm(${index})">取消</button><span class="order-process-form-note">${copy.note}</span></div></div>`;
+  const skip = step === 'photos' ? `<button type="button" class="btn" onclick="skipOrderPhotos(${index})">跳過（已收到照片）</button>` : '';
+  return `<div class="order-process-form" id="order-process-form-${index}" data-action="${step}"><h4>${copy.title}</h4><p>${copy.description}</p><div class="order-process-form-grid">${copy.fields}</div><div class="order-process-form-actions"><button type="button" class="btn primary" onclick="submitOrderProcess(${index},'${step}')">送出確認</button>${skip}<button type="button" class="btn" onclick="closeOrderProcessForm(${index})">取消</button><span class="order-process-form-note">${copy.note}</span></div></div>`;
+}
+async function skipOrderPhotos(index){
+  const order = CORE_ORD[index];
+  if(!order) return;
+  order.photoCount = order.photoCount || 5;
+  order.assetNote = '真人客服待處理：已收到照片，略過素材確認，直接人工檢查相似度並套用風格';
+  await advanceOrderProcess(index, 'photos');
 }
 function openOrderProcessForm(index, action){
   const host = document.getElementById(`order-process-form-${index}`);
