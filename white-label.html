@@ -62,6 +62,7 @@
       background:rgba(255,255,255,.07);font-weight:600;transition:.3s ease;
     }
     .btn:hover{transform:translateY(-2px);background:rgba(255,255,255,.12)}
+    .nav-actions{display:flex;align-items:center;gap:10px}
     .btn-primary{
       border:0;background:linear-gradient(110deg,var(--pink),var(--violet));
       box-shadow:0 14px 38px rgba(151,108,255,.34),inset 0 1px rgba(255,255,255,.7)
@@ -152,7 +153,10 @@
   <nav>
     <a class="logo" href="#top">LUMORA</a>
     <div class="nav-note">WHITE LABEL CREATIVE PLATFORM</div>
-    <a class="btn btn-primary" href="#partner">Become a Partner</a>
+    <div class="nav-actions">
+      <a class="btn home-link" href="index.html">Home</a>
+      <a class="btn btn-primary" href="#partner">Become a Partner</a>
+    </div>
   </nav>
 
   <main id="top">
@@ -264,4 +268,3 @@
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
   </script>
 </body>
-
