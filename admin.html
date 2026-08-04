@@ -2272,6 +2272,12 @@ async function saveOrderDeliveryDetails(index){
 async function advanceOrderProcess(index, action){
   const order = CORE_ORD[index];
   if(!order) return;
+  let manualIdentityUrl = '';
+  if(action === 'photos'){
+    manualIdentityUrl = String(window.prompt('請先人工生成基準照，再貼上可公開存取的圖片網址（https://...）。\n系統會將這張照片傳到客戶 TG，並等待客戶按確認。') || '').trim();
+    if(!manualIdentityUrl){ toast('尚未提供人工基準照網址，流程未送出'); return; }
+    if(!/^https:\/\//i.test(manualIdentityUrl)){ toast('圖片網址必須是 https:// 開頭的公開網址'); return; }
+  }
   if(action === 'close' && !String(order.link || '').trim()){
     toast('請先在交付區塊填寫交付連結');
     document.getElementById('detail-section-4')?.scrollIntoView({behavior:'smooth',block:'start'});
@@ -2330,7 +2336,7 @@ async function advanceOrderProcess(index, action){
       if(!response.ok || !result.ok) throw new Error(result.error || `HTTP ${response.status}`);
       if(action === 'photos'){
         const identityEndpoint = location.protocol === 'file:' ? 'https://lumora-studiokh.vercel.app/api/orders/generate-identity' : '/api/orders/generate-identity';
-        const identityResponse = await fetch(identityEndpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({recordId:order.recordId})});
+        const identityResponse = await fetch(identityEndpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({recordId:order.recordId,previewUrl:manualIdentityUrl})});
         const identityResult = await identityResponse.json();
         if(!identityResponse.ok || !identityResult.ok) throw new Error(identityResult.error || `HTTP ${identityResponse.status}`);
         order.productionStatus = 'Review 審核中';
