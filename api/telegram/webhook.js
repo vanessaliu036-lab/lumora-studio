@@ -145,7 +145,7 @@ export default async function handler(req, res) {
     }
     if (!recordId || !['identity_confirm', 'identity_redo'].includes(action)) return res.status(200).json({ ok: true });
 
-    await telegram('answerCallbackQuery', { callback_query_id: callback.id });
+    try { await telegram('answerCallbackQuery', { callback_query_id: callback.id }); } catch (_) { /* continue order sync if Telegram query has expired */ }
     const order = await airtable(`${ORDERS}/${encodeURIComponent(recordId)}`);
     const orderId = order.fields?.['Order ID'] || recordId;
 
