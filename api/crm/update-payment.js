@@ -5,6 +5,15 @@ const ORDERS = 'tblJix6eujPrblpIv';
 const API = `https://api.airtable.com/v0/${BASE}`;
 const PAT = process.env.AIRTABLE_PAT;
 
+async function telegram(method, body) {
+  const response = await fetch(`https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/${method}`, {
+    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
+  });
+  const payload = await response.json();
+  if (!response.ok || !payload.ok) throw new Error(payload?.description || `Telegram request failed: ${response.status}`);
+  return payload;
+}
+
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -78,6 +87,20 @@ export default async function handler(req, res) {
         });
         const linkPayload = await linkResponse.json();
         if (!linkResponse.ok) return res.status(linkResponse.status).json({ ok: false, error: linkPayload?.error?.message || 'CRM order link update failed' });
+      }
+      const telegramUserId = payload.fields?.['Telegram User ID'];
+      if (telegramUserId && process.env.TELEGRAM_BOT_TOKEN) {
+        try {
+          await telegram('sendMessage', {
+            chat_id: telegramUserId,
+            text: `✅ 已收到款項，這是您的訂單\n\n編號：${payload.fields?.['CRM ID'] || recordId}\n\n由於 AI 政策規範，真人照片無法直接套用風格。\n請上傳 5 張清晰個人照。\n\n照片上傳完成後，請點擊下方「我已上傳」。\n\n隨時可以輸入 /status 查詢進度`,
+            reply_markup: { inline_keyboard: [[
+              { text: '📸 我已上傳', callback_data: `photos_uploaded:${recordId}` },
+            ]] },
+          });
+        } catch (_) {
+          // Payment confirmation remains successful if Telegram notification is temporarily unavailable.
+        }
       }
     }
     return res.status(200).json({ ok: true, recordId: payload.id, orderId });

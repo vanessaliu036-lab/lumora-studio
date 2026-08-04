@@ -143,6 +143,20 @@ export default async function handler(req, res) {
         text: '✅ 已收到付款完成通知。\n\n請回覆你的「帳號後五碼」，客服會盡快與你回覆。' });
       return res.status(200).json({ ok: true, event: 'payment_done' });
     }
+    if (action === 'photos_uploaded') {
+      try { await telegram('answerCallbackQuery', { callback_query_id: callback.id }); } catch (_) { /* expired callback */ }
+      if (recordId && recordId !== 'none') {
+        await airtable(`${CRM}/${encodeURIComponent(recordId)}`, {
+          method: 'PATCH',
+          body: JSON.stringify({ fields: {
+            'Verification Note': '客戶已回覆已上傳 5 張清晰個人照，等待客服確認素材',
+          }, typecast: true }),
+        });
+      }
+      await telegram('sendMessage', { chat_id: callback.message.chat.id,
+        text: '✅ 已收到您的照片上傳通知。\n\n客服會先確認照片是否清晰完整，確認後開始建立個人基準照。' });
+      return res.status(200).json({ ok: true, event: 'photos_uploaded' });
+    }
     if (!recordId || !['identity_confirm', 'identity_redo'].includes(action)) return res.status(200).json({ ok: true });
 
     try { await telegram('answerCallbackQuery', { callback_query_id: callback.id }); } catch (_) { /* continue order sync if Telegram query has expired */ }
