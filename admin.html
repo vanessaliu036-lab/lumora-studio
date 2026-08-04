@@ -2197,20 +2197,20 @@ function orderProcessDate(raw, offset=0){
 }
 const ORDER_PROCESS_ACTIONS = {
   photos: {label:'確認客戶已提交照片', next:'photos', target:3},
-  identity: {label:'確認個人照完成', next:'identity', target:3},
+  identity: {label:'傳送個人風格形象圖', next:'identity', target:3},
   template: {label:'確認模板照片已提交', next:'template', target:3},
   acceptance: {label:'完成客戶驗收／交付', next:'acceptance', target:4},
   close: {label:'完成結案', next:'close', target:4},
 };
 function orderProcessAction(step, index){
   const action = ORDER_PROCESS_ACTIONS[step.key];
-  if(step.key === 'identity' && step.state === 'current') return '<span class="tag warn">等待客戶在 TG 確認個人風格形象圖</span>';
+  if(step.key === 'identity' && step.state === 'current') return action ? `<button type="button" class="order-process-action" onclick="openOrderProcessForm(${index},'${action.next}')">${action.label} →</button>` : '';
   return action && step.state === 'current' ? `<button type="button" class="order-process-action" onclick="openOrderProcessForm(${index},'${action.next}')">${action.label} →</button>` : '';
 }
 function orderProcessFormMarkup(step,index,order){
   const copy = {
-    photos:{title:'確認客戶提交照片',description:'請先確認素材數量與完整性；送出後才會進入生成個人照。',fields:`<div class="order-process-field"><label for="order-photo-count-${index}">收到照片張數 *</label><input id="order-photo-count-${index}" type="number" min="1" value="${_esc(order.photoCount || '')}" placeholder="例如 5" required></div><div class="order-process-field"><label for="order-photo-check-${index}">素材確認 *</label><select id="order-photo-check-${index}" required><option value="">請選擇</option><option value="素材齊全">素材齊全，可開始製作</option><option value="素材不全">素材不全，退回補件</option></select></div><div class="order-process-field full"><label for="order-photo-note-${index}">備註</label><textarea id="order-photo-note-${index}" placeholder="記錄收到的照片內容或缺件原因">${_esc(order.assetNote || '')}</textarea></div>`,note:'送出後狀態會更新為「生成個人照」，本確認按鈕會消失。'},
-    identity:{title:'確認個人風格形象圖完成',description:'真人客服已檢查照片相似度並套用風格；這一步記錄客戶對風格成品的確認結果。',fields:`<div class="order-process-field full"><label for="order-identity-check-${index}">確認狀態 *</label><select id="order-identity-check-${index}" required><option value="">請選擇</option><option value="客戶已確認" ${order.customerConfirmation==='客戶已確認'?'selected':''}>客戶已確認</option><option value="客人不滿意" ${order.customerConfirmation==='客人不滿意'?'selected':''}>客人不滿意</option></select></div>`,note:'選「客戶已確認」才會推進；選「客人不滿意」會停留在此步驟。'},
+    photos:{title:'確認客戶提交照片',description:'請先確認素材數量與完整性；送出後交由真人客服檢查相似度並套用風格。',fields:`<div class="order-process-field"><label for="order-photo-count-${index}">收到照片張數 *</label><input id="order-photo-count-${index}" type="number" min="1" value="${_esc(order.photoCount || '')}" placeholder="例如 5" required></div><div class="order-process-field"><label for="order-photo-check-${index}">素材確認 *</label><select id="order-photo-check-${index}" required><option value="">請選擇</option><option value="素材齊全">素材齊全，可開始製作</option><option value="素材不全">素材不全，退回補件</option></select></div><div class="order-process-field full"><label for="order-photo-note-${index}">備註</label><textarea id="order-photo-note-${index}" placeholder="記錄收到的照片內容或缺件原因">${_esc(order.assetNote || '')}</textarea></div>`,note:'送出後狀態會更新為「Review 審核中」，等待真人客服製作成品。'},
+    identity:{title:'傳送個人風格形象圖',description:'真人客服已檢查照片相似度並套用風格；請在按送出時選擇本機成品或貼上圖片網址。',fields:'',note:'送出後系統會將成品傳到客戶 TG，客戶確認後直接結案。'},
     template:{title:'確認模板照片已提交',description:'請確認模板成品已整理完成，並留下可供後續驗收的連結。',fields:`<div class="order-process-field full"><label for="order-template-preview-${index}">模板照片預覽連結 *</label><input id="order-template-preview-${index}" type="url" value="${_esc(order.templatePreview || '')}" placeholder="貼上模板成品預覽連結" required></div><div class="order-process-field"><label for="order-template-check-${index}">提交確認 *</label><select id="order-template-check-${index}" required><option value="">請選擇</option><option value="已完成">已完成，可交客戶驗收</option><option value="需修改">需修改，暫不交付</option></select></div><div class="order-process-field"><label for="order-template-note-${index}">確認備註</label><input id="order-template-note-${index}" value="${_esc(order.productionNote || '')}" placeholder="例如：已檢查尺寸與文字"></div>`,note:'送出後狀態會更新為「客戶驗收」，提交模板按鈕會消失。'},
     acceptance:{title:'完成客戶驗收／交付',description:'請先記錄客戶是否確認，以及實際交付位置。',fields:`<div class="order-process-field"><label for="order-acceptance-check-${index}">客戶確認結果 *</label><select id="order-acceptance-check-${index}" required><option value="">請選擇</option><option value="已確認">客戶已確認</option><option value="需修改">客戶要求修改</option></select></div><div class="order-process-field"><label for="order-delivery-link-${index}">交付連結 *</label><input id="order-delivery-link-${index}" type="url" value="${_esc(order.link || '')}" placeholder="貼上 Telegram／雲端交付連結" required></div><div class="order-process-field full"><label for="order-acceptance-note-${index}">驗收備註</label><textarea id="order-acceptance-note-${index}" placeholder="記錄客戶回覆或修改內容">${_esc(order.acceptanceNote || '')}</textarea></div>`,note:'送出後狀態會更新為「已交付」，驗收按鈕會消失。'},
     close:{title:'完成結案確認',description:'確認交付資料與客戶驗收紀錄完整後，才能正式結案。',fields:`<div class="order-process-field"><label for="order-close-check-${index}">結案確認 *</label><select id="order-close-check-${index}" required><option value="">請選擇</option><option value="已確認">資料完整，確認結案</option></select></div><div class="order-process-field"><label for="order-close-note-${index}">結案備註</label><input id="order-close-note-${index}" value="${_esc(order.closeNote || '')}" placeholder="可留空"></div>`,note:'送出後訂單會移至結案紀錄，這顆按鈕會消失。'}
@@ -2236,11 +2236,9 @@ async function submitOrderProcess(index, action){
   const required = [...form.querySelectorAll('[required]')];
   if(required.some(input => !String(input.value || '').trim())){ toast('請先完成所有必要欄位'); required.find(input => !String(input.value || '').trim())?.focus(); return; }
   if(action === 'photos' && form.querySelector(`#order-photo-check-${index}`)?.value === '素材不全'){ toast('素材不全，請補件後再送出'); return; }
-  if(action === 'identity' && form.querySelector(`#order-identity-check-${index}`)?.value !== '客戶已確認'){ toast('客戶尚未確認個人照，流程暫停在此步驟'); return; }
   if(action === 'template' && form.querySelector(`#order-template-check-${index}`)?.value !== '已完成'){ toast('模板照片尚未完成確認，不能進入下一步'); return; }
   if(action === 'acceptance' && form.querySelector(`#order-acceptance-check-${index}`)?.value !== '已確認'){ toast('請先取得客戶確認，不能完成交付'); return; }
   if(action === 'photos') order.photoCount = form.querySelector(`#order-photo-count-${index}`).value;
-  if(action === 'identity') order.customerConfirmation = form.querySelector(`#order-identity-check-${index}`).value;
   if(action === 'template') order.templatePreview = form.querySelector(`#order-template-preview-${index}`).value;
   if(action === 'acceptance'){
     order.link = form.querySelector(`#order-delivery-link-${index}`).value;
@@ -2282,7 +2280,7 @@ async function advanceOrderProcess(index, action){
   if(!order) return;
   let manualIdentityUrl = '';
   let manualIdentityDataUrl = '';
-  if(action === 'photos'){
+  if(action === 'identity'){
     manualIdentityUrl = String(window.prompt('請先人工檢查照片相似度並套用風格。\n可貼上已生成好的圖片網址；若沒有網址，按「取消」後可選擇本機圖片。') || '').trim();
     if(!manualIdentityUrl && window.confirm('要從本機選擇人工完成的個人風格形象圖嗎？')){
       manualIdentityDataUrl = await new Promise(resolve => {
@@ -2311,16 +2309,17 @@ async function advanceOrderProcess(index, action){
   if(action === 'photos'){
     order.materialDate = today;
     order.asset = '素材齊全';
-    order.productionStatus = '生成個人照';
+    order.productionStatus = 'Review 審核中';
     order.prod = order.productionStatus;
     fields.materialDate = today;
     fields.assetStatus = order.asset;
     fields.productionStatus = order.productionStatus;
+    fields.assetNote = '真人客服待處理：人工檢查照片相似度並直接套用風格';
   } else if(action === 'identity'){
     order.productionDate = today;
     order.asset = '素材齊全';
-    order.productionStatus = '提交模板照片';
-    order.orderStatus = '生成完成';
+    order.productionStatus = 'Review 審核中';
+    order.orderStatus = 'Review 審核中';
     order.prod = order.productionStatus;
     fields.productionDate = today;
     fields.assetStatus = order.asset;
@@ -2357,22 +2356,15 @@ async function advanceOrderProcess(index, action){
       const response = await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({recordId:order.recordId,fields})});
       const result = await response.json();
       if(!response.ok || !result.ok) throw new Error(result.error || `HTTP ${response.status}`);
-      if(action === 'photos'){
+      if(action === 'identity'){
         if(manualIdentityUrl || manualIdentityDataUrl){
           const identityEndpoint = location.protocol === 'file:' ? 'https://lumora-studiokh.vercel.app/api/orders/generate-identity' : '/api/orders/generate-identity';
           const identityResponse = await fetch(identityEndpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({recordId:order.recordId,previewUrl:manualIdentityUrl,previewDataUrl:manualIdentityDataUrl})});
           const identityResult = await identityResponse.json();
           if(!identityResponse.ok || !identityResult.ok) throw new Error(identityResult.error || `HTTP ${identityResponse.status}`);
-          order.productionStatus = 'Review 審核中';
+          order.productionStatus = '客戶驗收';
+          order.orderStatus = '客戶驗收';
           order.prod = order.productionStatus;
-        } else {
-          const humanFields = {productionStatus:'Review 審核中',assetNote:'真人客服待處理：人工檢查照片相似度並直接套用風格'};
-          const humanResponse = await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({recordId:order.recordId,fields:humanFields})});
-          const humanResult = await humanResponse.json();
-          if(!humanResponse.ok || !humanResult.ok) throw new Error(humanResult.error || `HTTP ${humanResponse.status}`);
-          order.productionStatus = 'Review 審核中';
-          order.prod = order.productionStatus;
-          order.assetNote = humanFields.assetNote;
         }
       }
     }
