@@ -53,8 +53,7 @@ export default async function handler(req, res) {
           body: JSON.stringify({ fields: {
             'Order ID': orderId, 'Created At': new Date().toISOString(), 'CRM': [recordId],
             // 付款事實只存在 CRM；Orders 透過 CRM lookup 讀取 Payment Status。
-            'Production Status': '新訂單', 'Customer Name': payload.fields?.['Customer Name'] || '',
-            'Order Summary': payload.fields?.['Inquiry Summary'] || '', 'Promised Date': null,
+            'Production Status': '新訂單',
           }, typecast: true }),
         });
         const orderPayload = await orderResponse.json();
