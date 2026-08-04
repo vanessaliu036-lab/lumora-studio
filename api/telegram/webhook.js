@@ -67,7 +67,7 @@ async function handleStart(message) {
   const amountText = amount ? `USD $${amount}` : '請依網站訂單金額';
   await telegram('sendMessage', {
     chat_id: message.chat.id,
-    text: `你好，歡迎來到 Lumora Studio ✨\n\n這邊跟你確認本次服務：\n方案：${serviceText}\n金額：${amountText}\n收款帳號：000-303-520\n\n完成付款後，請點擊下方「我已完成付款」，再回覆帳號後五碼。`,
+    text: `你好，歡迎來到 Lumora Studio ✨\n\n這邊跟你確認本次服務：\n方案：${serviceText}\n金額：${amountText}\n收款帳號：000-303-520\n\n完成付款後，請先直接輸入 5 位數帳號後五碼，再點擊下方「我已完成付款」，一次完成付款通知。`,
     reply_markup: { inline_keyboard: [[
       { text: '✅ 我已完成付款', callback_data: `payment_done:${crmRecord?.id || 'none'}` },
     ]] },
@@ -102,7 +102,7 @@ async function handlePaymentLast5(message, req) {
   if (!response.ok || !result.ok) throw new Error(result.error || `Payment update failed: ${response.status}`);
   await telegram('sendMessage', {
     chat_id: message.chat.id,
-    text: '✅ 已收到你的付款後五碼。\n\n客服會盡快人工確認付款，確認完成後會再回覆你下一步。',
+    text: '✅ 已收到你的付款後五碼。\n\n客服會盡快人工確認付款。',
   });
 }
 
