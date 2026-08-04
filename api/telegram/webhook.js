@@ -51,7 +51,10 @@ async function handleStart(message) {
   const amountText = amount ? `USD $${amount}` : '請依網站訂單金額';
   await telegram('sendMessage', {
     chat_id: message.chat.id,
-    text: `你好，歡迎來到 Lumora Studio ✨\n\n這邊跟你確認本次服務：\n方案：${serviceText}\n金額：${amountText}\n\n請依客服提供的付款方式完成付款，完成後回覆「帳號後五碼」。\n\n付款確認後，請上傳至少 5 張生活照，接著由真人客服協助建立基準照。`,
+    text: `你好，歡迎來到 Lumora Studio ✨\n\n這邊跟你確認本次服務：\n方案：${serviceText}\n金額：${amountText}\n收款帳號：000-303-520\n\n完成付款後，請點擊下方「我已完成付款」，再回覆帳號後五碼。\n\n付款確認後，請上傳至少 5 張生活照，接著由真人客服協助建立基準照。`,
+    reply_markup: { inline_keyboard: [[
+      { text: '✅ 我已完成付款', callback_data: `payment_done:${crmRecord?.id || 'none'}` },
+    ]] },
   });
 }
 
@@ -83,6 +86,12 @@ export default async function handler(req, res) {
     const callback = req.body?.callback_query;
     if (!callback?.data) return res.status(200).json({ ok: true });
     const [action, recordId] = String(callback.data).split(':');
+    if (action === 'payment_done') {
+      await telegram('answerCallbackQuery', { callback_query_id: callback.id });
+      await telegram('sendMessage', { chat_id: callback.message.chat.id,
+        text: '✅ 已收到付款完成通知。\n\n請回覆你的「帳號後五碼」，客服確認後會通知你上傳 5 張生活照。' });
+      return res.status(200).json({ ok: true, event: 'payment_done' });
+    }
     if (!recordId || !['identity_confirm', 'identity_redo'].includes(action)) return res.status(200).json({ ok: true });
 
     await telegram('answerCallbackQuery', { callback_query_id: callback.id });
