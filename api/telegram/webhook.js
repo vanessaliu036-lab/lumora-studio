@@ -44,10 +44,15 @@ async function handleStart(message) {
   const payload = text.split(/\s+/)[1] || '';
   const parts = payload.split('_');
   const crmId = parts[0] === 'order' ? parts[1] : '';
-  const amount = parts[3] || '';
-  const crmRecord = crmId ? await findCrmByFormula(`{CRM ID}='${crmId.replace(/'/g, "\\'")}'`) : null;
+  let crmRecord = crmId ? await findCrmByFormula(`{CRM ID}='${crmId.replace(/'/g, "\\'")}'`) : null;
+  if (!crmRecord && message.from?.id) {
+    crmRecord = await findCrmByFormula(`{Telegram User ID}='${String(message.from.id).replace(/'/g, "\\'")}'`);
+  }
   await rememberTelegramUser(crmRecord, message);
-  const serviceText = parts[2] === 'portrait' ? 'Personal Identity' : 'Lumora 個人形象照';
+  const amount = parts[3] || crmRecord?.fields?.['Quoted Amount'] || '';
+  const serviceText = parts[2] === 'portrait'
+    ? 'Personal Identity'
+    : crmRecord?.fields?.Package || crmRecord?.fields?.['Service Type'] || 'Lumora 個人形象照';
   const amountText = amount ? `USD $${amount}` : '請依網站訂單金額';
   await telegram('sendMessage', {
     chat_id: message.chat.id,
