@@ -10,12 +10,6 @@ const FIELD_MAP = {
   assetStatus: 'Asset Status',
   producer: 'Consultant',
   scheduleDate: 'Scheduled At',
-  materialDate: 'Assets Confirmed At',
-  productionDate: 'Production Started At',
-  reviewDate: 'Review Started At',
-  promisedDate: 'Promised Date',
-  deliveryDate: 'Completed At',
-  completion: 'Completed At',
   link: 'Download',
   assetNote: 'Missing Assets Note',
 };
