@@ -29,6 +29,17 @@ async function findCrmByFormula(formula) {
   return payload.records?.[0] || null;
 }
 
+async function findLatestCrmByTelegramUser(userId) {
+  const query = new URLSearchParams({
+    filterByFormula: `{Telegram User ID}='${String(userId).replace(/'/g, "\\'")}'`,
+    pageSize: '100',
+  });
+  query.set('sort[0][field]', 'Inquiry Date');
+  query.set('sort[0][direction]', 'desc');
+  const payload = await airtable(`${CRM}?${query.toString()}`);
+  return payload.records?.[0] || null;
+}
+
 async function rememberTelegramUser(crmRecord, message) {
   if (!crmRecord?.id || !message?.from?.id) return;
   await airtable(`${CRM}/${encodeURIComponent(crmRecord.id)}`, {
@@ -46,7 +57,7 @@ async function handleStart(message) {
   const crmId = parts[0] === 'order' ? parts[1] : '';
   let crmRecord = crmId ? await findCrmByFormula(`{CRM ID}='${crmId.replace(/'/g, "\\'")}'`) : null;
   if (!crmRecord && message.from?.id) {
-    crmRecord = await findCrmByFormula(`{Telegram User ID}='${String(message.from.id).replace(/'/g, "\\'")}'`);
+    crmRecord = await findLatestCrmByTelegramUser(message.from.id);
   }
   await rememberTelegramUser(crmRecord, message);
   const amount = parts[3] || crmRecord?.fields?.['Quoted Amount'] || '';
@@ -65,7 +76,7 @@ async function handleStart(message) {
 
 async function handlePhoto(message) {
   const userId = String(message.from?.id || '');
-  const crmRecord = userId ? await findCrmByFormula(`{Telegram User ID}='${userId.replace(/'/g, "\\'")}'`) : null;
+  const crmRecord = userId ? await findLatestCrmByTelegramUser(userId) : null;
   await rememberTelegramUser(crmRecord, message);
   await telegram('sendMessage', {
     chat_id: message.chat.id,
@@ -76,7 +87,7 @@ async function handlePhoto(message) {
 async function handlePaymentLast5(message, req) {
   const last5 = String(message.text || '').trim();
   const userId = String(message.from?.id || '');
-  const crmRecord = userId ? await findCrmByFormula(`{Telegram User ID}='${userId.replace(/'/g, "\\'")}'`) : null;
+  const crmRecord = userId ? await findLatestCrmByTelegramUser(userId) : null;
   if (!crmRecord) {
     await telegram('sendMessage', { chat_id: message.chat.id, text: '找不到對應的網站訂單，請重新從網站訂單連結進入 TG。' });
     return;
@@ -118,7 +129,7 @@ export default async function handler(req, res) {
     if (!callback?.data) return res.status(200).json({ ok: true });
     const [action, recordId] = String(callback.data).split(':');
     if (action === 'payment_done') {
-      await telegram('answerCallbackQuery', { callback_query_id: callback.id });
+      try { await telegram('answerCallbackQuery', { callback_query_id: callback.id }); } catch (_) { /* continue CRM sync if Telegram query has expired */ }
       if (recordId && recordId !== 'none') {
         await airtable(`${CRM}/${encodeURIComponent(recordId)}`, {
           method: 'PATCH',
