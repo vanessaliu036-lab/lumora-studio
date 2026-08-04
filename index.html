@@ -60,14 +60,8 @@
       backdrop-filter:blur(22px);
       box-shadow:0 16px 60px rgba(0,0,0,.28);
     }
-    .logo{font-family:var(--serif);font-size:28px;letter-spacing:.02em;display:flex;gap:10px;align-items:center}
-    .logo-mark{
-      width:30px;height:30px;border-radius:50%;
-      display:grid;place-items:center;
-      background:radial-gradient(circle at 35% 35%,#fff, #efc8ff 24%, #9876ff 58%, #1e1749 100%);
-      box-shadow:0 0 26px rgba(191,153,255,.85);
-      font-size:14px;
-    }
+    .logo{display:inline-flex;align-items:center;line-height:0}
+    .logo-image{display:block;width:118px;height:42px;object-fit:contain;filter:drop-shadow(0 0 10px rgba(255,255,255,.2))}
     .nav-links{display:flex;gap:28px;color:var(--muted);font-size:13px}
     .nav-links a:hover{color:white}
     .btn{
@@ -1738,7 +1732,7 @@
 </head>
 <body>
   <nav class="nav">
-    <a href="#top" class="logo"><span class="logo-mark">✦</span>Lumora</a>
+    <a href="#top" class="logo" aria-label="Lumora home"><img class="logo-image" src="lumora-logo.png" alt="Lumora" /></a>
     <div class="nav-links">
       <a href="#why">Why Lumora</a>
       <a href="#gallery">Personal</a>

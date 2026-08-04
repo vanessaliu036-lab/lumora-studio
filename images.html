@@ -44,14 +44,8 @@ button{font:inherit}
   backdrop-filter:blur(18px);
   border-bottom:1px solid var(--line);
 }
-.top-nav .logo{display:flex;align-items:center;gap:10px;font-family:var(--serif);font-size:24px;letter-spacing:.02em}
-.top-nav .logo-mark{
-  width:30px;height:30px;border-radius:50%;
-  display:grid;place-items:center;
-  background:radial-gradient(circle at 35% 35%, #fff, #efc8ff 24%, #9876ff 58%, #1e1749 100%);
-  box-shadow:0 0 26px rgba(191,153,255,.85);
-  font-size:14px;
-}
+.top-nav .logo{display:inline-flex;align-items:center;line-height:0}
+.top-nav .logo-image{display:block;width:118px;height:42px;object-fit:contain;filter:drop-shadow(0 0 10px rgba(255,255,255,.2))}
 .top-nav .back{
   display:inline-flex;align-items:center;gap:8px;
   padding:10px 18px;border-radius:999px;
@@ -129,7 +123,7 @@ button{font:inherit}
 <body>
 
 <nav class="top-nav">
-  <a href="/" class="logo"><span class="logo-mark">✦</span>Lumora</a>
+  <a href="/" class="logo" aria-label="Lumora home"><img class="logo-image" src="lumora-logo.png" alt="Lumora" /></a>
   <a href="/" class="back" target="_blank" rel="noopener">← Back to Lumora</a>
 </nav>
 
