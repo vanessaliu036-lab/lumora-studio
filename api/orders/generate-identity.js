@@ -123,7 +123,6 @@ export default async function handler(req, res) {
       body: JSON.stringify({ fields: {
         Download: storedImage,
         'Production Status': '客戶驗收',
-        'Order Status': '客戶驗收',
         'Asset Status': '素材齊全',
         'Missing Assets Note': '個人風格形象圖已傳送至 TG，等待客戶確認',
       }, typecast: true }),

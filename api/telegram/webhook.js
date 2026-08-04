@@ -184,7 +184,6 @@ export default async function handler(req, res) {
         method: 'PATCH',
         body: JSON.stringify({ fields: {
           'Production Status': '生產結案',
-          'Order Status': '已結案',
           'Missing Assets Note': '客戶已確認個人風格形象圖，訂單已結案',
         }, typecast: true }),
       });

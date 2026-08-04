@@ -5,7 +5,6 @@ const API = `https://api.airtable.com/v0/${BASE}`;
 const PAT = process.env.AIRTABLE_PAT;
 
 const FIELD_MAP = {
-  orderStatus: 'Order Status',
   productionStatus: 'Production Status',
   assetStatus: 'Asset Status',
   producer: 'Consultant',
