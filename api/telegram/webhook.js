@@ -73,6 +73,28 @@ async function handlePhoto(message) {
   });
 }
 
+async function handlePaymentLast5(message, req) {
+  const last5 = String(message.text || '').trim();
+  const userId = String(message.from?.id || '');
+  const crmRecord = userId ? await findCrmByFormula(`{Telegram User ID}='${userId.replace(/'/g, "\\'")}'`) : null;
+  if (!crmRecord) {
+    await telegram('sendMessage', { chat_id: message.chat.id, text: '找不到對應的網站訂單，請重新從網站訂單連結進入 TG。' });
+    return;
+  }
+  const origin = `https://${req.headers.host}`;
+  const response = await fetch(`${origin}/api/crm/update-payment`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ recordId: crmRecord.id, last5, confirm: true }),
+  });
+  const result = await response.json();
+  if (!response.ok || !result.ok) throw new Error(result.error || `Payment update failed: ${response.status}`);
+  await telegram('sendMessage', {
+    chat_id: message.chat.id,
+    text: `✅ 付款已確認${result.orderId ? `（${result.orderId}）` : ''}\n\n請上傳至少 5 張生活照：正面、左側臉、右側臉、半身、全身。收到後會由真人客服建立基準照。`,
+  });
+}
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(200).json({ ok: true });
   if (!process.env.TELEGRAM_WEBHOOK_SECRET || req.headers['x-telegram-bot-api-secret-token'] !== process.env.TELEGRAM_WEBHOOK_SECRET) {
@@ -83,6 +105,10 @@ export default async function handler(req, res) {
     if (message?.text?.startsWith('/start')) {
       await handleStart(message);
       return res.status(200).json({ ok: true, event: 'start' });
+    }
+    if (/^\d{5}$/.test(String(message?.text || '').trim())) {
+      await handlePaymentLast5(message, req);
+      return res.status(200).json({ ok: true, event: 'payment_last5' });
     }
     if (message?.photo?.length) {
       await handlePhoto(message);
