@@ -23,8 +23,8 @@
     body:before{content:"";position:fixed;inset:-32%;pointer-events:none;z-index:-1;background:conic-gradient(from 180deg,rgba(255,172,211,.08),rgba(151,125,255,.1),rgba(144,225,213,.06),rgba(255,172,211,.08));filter:blur(105px);animation:spin 25s linear infinite}
     @keyframes spin{to{transform:rotate(360deg)}} a{text-decoration:none;color:inherit}
     .shell{width:min(1180px,calc(100% - 32px));margin:auto}
-    nav{position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:30;width:min(1180px,calc(100% - 24px));display:flex;align-items:center;justify-content:space-between;padding:12px 14px 12px 20px;border:1px solid var(--line);border-radius:999px;background:rgba(10,8,24,.58);backdrop-filter:blur(20px);box-shadow:0 16px 60px rgba(0,0,0,.28)}
-    .logo{display:inline-flex;align-items:center;line-height:0}.logo-image{display:block;width:118px;height:42px;object-fit:contain;filter:drop-shadow(0 0 10px rgba(255,255,255,.2))}.nav-note{font-size:11px;letter-spacing:.14em;color:var(--muted)}.nav-links{display:flex;gap:28px;color:var(--muted);font-size:13px}.nav-links a:hover{color:white}
+    nav{position:fixed;top:18px;left:50%;transform:translateX(-50%);z-index:30;width:min(1320px,calc(100% - 28px));display:flex;align-items:center;justify-content:space-between;padding:12px 14px 12px 20px;border:1px solid var(--line);border-radius:999px;background:rgba(10,8,24,.58);backdrop-filter:blur(20px);box-shadow:0 16px 60px rgba(0,0,0,.28)}
+    .logo{display:inline-flex;align-items:center;line-height:0}.logo-image{display:block;width:118px;height:42px;object-fit:contain;filter:drop-shadow(0 0 10px rgba(255,255,255,.2))}.nav-note{font-size:11px;letter-spacing:.14em;color:var(--muted)}.nav-links{display:flex;gap:22px;color:var(--muted);font-size:12px;white-space:nowrap}.nav-links a:hover{color:white}
     .btn{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:0 22px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.07);font-weight:600;transition:.3s ease}.btn:hover{transform:translateY(-2px);background:rgba(255,255,255,.12)}
     .nav-actions{display:flex;align-items:center;gap:10px}.btn-primary{border:0;background:linear-gradient(110deg,var(--pink),var(--violet));box-shadow:0 14px 38px rgba(151,108,255,.34),inset 0 1px rgba(255,255,255,.7)}
     .hero{min-height:100vh;display:grid;place-items:center;text-align:center;padding:130px 0 80px}.eyebrow{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:#decfff;margin-bottom:22px}
@@ -49,18 +49,9 @@
 <body>
   <nav>
     <a class="logo" href="index.html#top" aria-label="Lumora home"><img class="logo-image" src="lumora-logo.png" alt="Lumora" /></a>
-    <div class="nav-note">THE OPERATING SYSTEM FOR MODERN BRANDS</div>
     <div class="nav-actions">
       <div class="nav-links">
-        <a href="index.html#why">Why Lumora</a>
-        <a href="index.html#process">How It Works</a>
-        <a href="index.html#gallery">Personal</a>
-        <a href="index.html#brand-campaign">Branding</a>
-        <a href="lamura-os.html">Lumora OS</a>
-        <a href="index.html#pricing">Pricing</a>
-        <a href="index.html#faq">FAQ</a>
-        <a href="index.html#contact">Contact</a>
-        <a href="white-label.html" target="_blank" rel="noopener">White Label</a>
+        <a href="index.html#why">Why Lumora</a><a href="index.html#process">How It Works</a><a href="index.html#gallery">Personal</a><a href="index.html#brand-campaign">Branding</a><a href="lamura-os.html">Lumora OS</a><a href="index.html#pricing">Pricing</a><a href="index.html#faq">FAQ</a><a href="index.html#contact">Contact</a><a href="white-label.html" target="_blank" rel="noopener">White Label</a>
       </div>
       <a class="btn btn-primary" href="#contact">Start Your Brand</a>
     </div>
