@@ -24,22 +24,56 @@ async function telegram(method, body) {
   return payload;
 }
 
-async function generatePreview(referenceFiles) {
-  if (!process.env.FAL_KEY) return process.env.IDENTITY_PREVIEW_URL || '';
-  const reference = referenceFiles.find(file => file?.url)?.url;
-  if (!reference) return '';
-  const response = await fetch('https://fal.run/fal-ai/flux-kontext-pro', {
+async function telegramPhoto(chatId, photo, caption, replyMarkup) {
+  if (photo.type === 'url') {
+    return telegram('sendPhoto', {
+      chat_id: chatId,
+      photo: photo.value,
+      caption,
+      reply_markup: replyMarkup,
+    });
+  }
+
+  const form = new FormData();
+  form.append('chat_id', String(chatId));
+  form.append('photo', new Blob([photo.data], { type: 'image/png' }), 'identity-baseline.png');
+  form.append('caption', caption);
+  form.append('reply_markup', JSON.stringify(replyMarkup));
+  const response = await fetch(`https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/sendPhoto`, {
     method: 'POST',
-    headers: { Authorization: `Key ${process.env.FAL_KEY}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      prompt: 'Create a realistic AI identity baseline portrait from this reference photo. Preserve facial structure and recognizable features. Neutral editorial light, no text, no watermark.',
-      image_url: reference,
-      num_images: 1,
-    }),
+    body: form,
   });
   const payload = await response.json();
-  if (!response.ok) throw new Error(payload?.detail || 'Identity image generation failed');
-  return payload?.images?.[0]?.url || '';
+  if (!response.ok || !payload.ok) throw new Error(payload?.description || `Telegram request failed: ${response.status}`);
+  return payload;
+}
+
+async function generatePreview(referenceFiles) {
+  if (!process.env.OPENAI_API_KEY) return process.env.IDENTITY_PREVIEW_URL || null;
+  const reference = referenceFiles.find(file => file?.url)?.url;
+  if (!reference) return null;
+
+  const source = await fetch(reference);
+  if (!source.ok) throw new Error(`Reference image download failed: ${source.status}`);
+  const sourceBytes = await source.arrayBuffer();
+  const form = new FormData();
+  form.append('model', 'gpt-image-1');
+  form.append('prompt', 'Create a realistic AI identity baseline portrait from this person reference. Preserve the person\'s facial structure, recognizable features, skin tone, hair, and overall identity. Use neutral editorial lighting, a clean simple background, natural expression, no text, no watermark.');
+  form.append('input_fidelity', 'high');
+  form.append('size', '1024x1536');
+  form.append('quality', 'medium');
+  form.append('image', new Blob([sourceBytes], { type: source.headers.get('content-type') || 'image/jpeg' }), 'reference.jpg');
+
+  const response = await fetch('https://api.openai.com/v1/images/edits', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${process.env.OPENAI_API_KEY}` },
+    body: form,
+  });
+  const payload = await response.json();
+  if (!response.ok) throw new Error(payload?.error?.message || 'OpenAI identity image generation failed');
+  const encoded = payload?.data?.[0]?.b64_json;
+  if (!encoded) throw new Error('OpenAI returned no image data');
+  return { type: 'buffer', data: Buffer.from(encoded, 'base64') };
 }
 
 export default async function handler(req, res) {
@@ -62,23 +96,30 @@ export default async function handler(req, res) {
     const tgId = crm.fields?.['Telegram User ID'];
     if (!tgId) return res.status(400).json({ ok: false, error: 'CRM record has no Telegram User ID' });
 
-    const image = previewUrl || await generatePreview(crm.fields?.['Reference Files'] || []);
-    if (!image) return res.status(500).json({ ok: false, error: 'No identity generator configured. Set FAL_KEY or IDENTITY_PREVIEW_URL.' });
+    const image = previewUrl
+      ? { type: 'url', value: previewUrl }
+      : await generatePreview(crm.fields?.['Reference Files'] || []);
+    if (!image) return res.status(500).json({ ok: false, error: 'OPENAI_API_KEY is required for GPT image generation.' });
     const orderId = order.fields?.['Order ID'] || recordId;
-    await telegram('sendPhoto', {
-      chat_id: tgId,
-      photo: image,
-      caption: `這是你的 AI 個人照基準圖（${orderId}）\n\n請確認這張是否像你。確認後才會套用你選擇的風格。`,
-      reply_markup: { inline_keyboard: [[
-        { text: '✓ 確認這張', callback_data: `identity_confirm:${recordId}` },
-        { text: '✗ 再生成一張', callback_data: `identity_redo:${recordId}` },
-      ]] },
-    });
+    const replyMarkup = { inline_keyboard: [[
+      { text: '✓ 確認這張', callback_data: `identity_confirm:${recordId}` },
+      { text: '✗ 再生成一張', callback_data: `identity_redo:${recordId}` },
+    ]] };
+    const sent = await telegramPhoto(
+      tgId,
+      image,
+      `這是你的 AI 個人照基準圖（${orderId}）\n\n請確認這張是否像你。確認後才會套用你選擇的風格。`,
+      replyMarkup,
+    );
+    const deliveredPhoto = sent?.result?.photo?.at(-1);
+    const storedImage = image.type === 'url'
+      ? image.value
+      : `telegram_file_id:${deliveredPhoto?.file_id || ''}`;
 
     await airtable(`${ORDERS}/${encodeURIComponent(recordId)}`, {
       method: 'PATCH',
       body: JSON.stringify({ fields: {
-        Download: image,
+        Download: storedImage,
         'Production Status': 'Review 審核中',
         'Asset Status': '素材齊全',
         'Missing Assets Note': '基準照已傳送至 TG，等待客戶確認',
