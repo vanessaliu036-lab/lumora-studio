@@ -1,6 +1,7 @@
 // Telegram webhook: customer confirmation is the hard gate before style production.
 const BASE = 'appOLY56Y7cNExxzs';
 const ORDERS = 'tblJix6eujPrblpIv';
+const CRM = 'tblWtB7qlAQQTYS9v';
 const API = `https://api.airtable.com/v0/${BASE}`;
 
 async function airtable(path, options = {}) {
@@ -22,12 +23,63 @@ async function telegram(method, body) {
   return payload;
 }
 
+async function findCrmByFormula(formula) {
+  const query = new URLSearchParams({ filterByFormula: formula, pageSize: '1' });
+  const payload = await airtable(`${CRM}?${query.toString()}`);
+  return payload.records?.[0] || null;
+}
+
+async function rememberTelegramUser(crmRecord, message) {
+  if (!crmRecord?.id || !message?.from?.id) return;
+  await airtable(`${CRM}/${encodeURIComponent(crmRecord.id)}`, {
+    method: 'PATCH',
+    body: JSON.stringify({ fields: {
+      'Telegram User ID': String(message.from.id),
+    }, typecast: true }),
+  });
+}
+
+async function handleStart(message) {
+  const text = String(message.text || '').trim();
+  const payload = text.split(/\s+/)[1] || '';
+  const parts = payload.split('_');
+  const crmId = parts[0] === 'order' ? parts[1] : '';
+  const amount = parts[3] || '';
+  const crmRecord = crmId ? await findCrmByFormula(`{CRM ID}='${crmId.replace(/'/g, "\\'")}'`) : null;
+  await rememberTelegramUser(crmRecord, message);
+  const serviceText = parts[2] === 'portrait' ? 'Personal Identity' : 'Lumora 個人形象照';
+  const amountText = amount ? `USD $${amount}` : '請依網站訂單金額';
+  await telegram('sendMessage', {
+    chat_id: message.chat.id,
+    text: `你好，歡迎來到 Lumora Studio ✨\n\n這邊跟你確認本次服務：\n方案：${serviceText}\n金額：${amountText}\n\n請依客服提供的付款方式完成付款，完成後回覆「帳號後五碼」。\n\n付款確認後，請上傳至少 5 張生活照，接著由真人客服協助建立基準照。`,
+  });
+}
+
+async function handlePhoto(message) {
+  const userId = String(message.from?.id || '');
+  const crmRecord = userId ? await findCrmByFormula(`{Telegram User ID}='${userId.replace(/'/g, "\\'")}'`) : null;
+  await rememberTelegramUser(crmRecord, message);
+  await telegram('sendMessage', {
+    chat_id: message.chat.id,
+    text: '✅ 已收到你的生活照，請繼續上傳照片。至少 5 張都收到後，真人客服會開始建立 AI 個人基準照。',
+  });
+}
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(200).json({ ok: true });
   if (!process.env.TELEGRAM_WEBHOOK_SECRET || req.headers['x-telegram-bot-api-secret-token'] !== process.env.TELEGRAM_WEBHOOK_SECRET) {
     return res.status(401).json({ ok: false, error: 'Invalid webhook secret' });
   }
   try {
+    const message = req.body?.message;
+    if (message?.text?.startsWith('/start')) {
+      await handleStart(message);
+      return res.status(200).json({ ok: true, event: 'start' });
+    }
+    if (message?.photo?.length) {
+      await handlePhoto(message);
+      return res.status(200).json({ ok: true, event: 'photo' });
+    }
     const callback = req.body?.callback_query;
     if (!callback?.data) return res.status(200).json({ ok: true });
     const [action, recordId] = String(callback.data).split(':');
