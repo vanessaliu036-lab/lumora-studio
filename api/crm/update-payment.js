@@ -52,7 +52,8 @@ export default async function handler(req, res) {
           headers: { Authorization: `Bearer ${PAT}`, 'Content-Type': 'application/json' },
           body: JSON.stringify({ fields: {
             'Order ID': orderId, 'Created At': new Date().toISOString(), 'CRM': [recordId],
-            'Payment': '已付款', 'Production Status': '新訂單', 'Customer Name': payload.fields?.['Customer Name'] || '',
+            // 付款事實只存在 CRM；Orders 透過 CRM lookup 讀取 Payment Status。
+            'Production Status': '新訂單', 'Customer Name': payload.fields?.['Customer Name'] || '',
             'Order Summary': payload.fields?.['Inquiry Summary'] || '', 'Promised Date': null,
           }, typecast: true }),
         });
