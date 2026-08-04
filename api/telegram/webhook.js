@@ -140,7 +140,7 @@ export default async function handler(req, res) {
         });
       }
       await telegram('sendMessage', { chat_id: callback.message.chat.id,
-        text: '✅ 已收到付款完成通知。\n\n請回覆你的「帳號後五碼」，客服確認後會通知你上傳 5 張生活照。' });
+        text: '✅ 已收到付款完成通知。\n\n請回覆你的「帳號後五碼」，客服會盡快與你回覆。' });
       return res.status(200).json({ ok: true, event: 'payment_done' });
     }
     if (!recordId || !['identity_confirm', 'identity_redo'].includes(action)) return res.status(200).json({ ok: true });
