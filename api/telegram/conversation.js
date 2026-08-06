@@ -58,6 +58,15 @@ async function airtableRecord(recordId, options = {}) {
   return payload;
 }
 
+async function airtableList() {
+  const response = await fetch(`${AIRTABLE_API}/${CRM}?pageSize=100`, {
+    headers: { Authorization: `Bearer ${process.env.AIRTABLE_PAT}` },
+  });
+  const payload = await response.json();
+  if (!response.ok) throw new Error(payload?.error?.message || `Airtable request failed: ${response.status}`);
+  return payload.records || [];
+}
+
 async function sendTelegramMessage(chatId, text) {
   const response = await fetch(`https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/sendMessage`, {
     method: 'POST',
@@ -72,15 +81,20 @@ async function sendTelegramMessage(chatId, text) {
 function recordView(record) {
   const fields = record.fields || {};
   const messages = parseConversationHistory(fields['Status History']);
+  const telegramUserId = fields['Telegram User ID'] ? String(fields['Telegram User ID']) : '';
+  const rawName = fields['Customer Name'] || '';
+  const sourceText = `${rawName} ${fields['Inquiry Summary'] || ''} ${fields['Follow-up Note'] || ''}`;
+  const isFixture = /test|e2e|mock|demo|驗證|測試/i.test(sourceText);
   return {
     recordId: record.id,
     crmId: fields['CRM ID'] || '',
-    customerName: fields['Customer Name'] || '未命名客戶',
-    telegramUserId: fields['Telegram User ID'] ? String(fields['Telegram User ID']) : '',
+    customerName: isFixture ? `Telegram ${fields['Telegram Username'] || telegramUserId || '對話'}` : (rawName || '未命名客戶'),
+    telegramUserId,
     telegramUsername: fields['Telegram Username'] || '',
     status: fields['CRM Status'] || '',
     updatedAt: fields['Last Updated'] || '',
     messages: messages.filter(message => message.role !== 'system' || message.kind !== 'history'),
+    isFixture,
     canReply: Boolean(fields['Telegram User ID']),
   };
 }
@@ -98,6 +112,19 @@ export default async function handler(req, res) {
   if (!recordId) return jsonError(res, 400, 'recordId is required');
 
   try {
+    if (req.method === 'GET' && String(req.query?.list || '') === '1') {
+      const records = await airtableList();
+      const latestByUser = new Map();
+      records.map(recordView)
+        .filter(conversation => conversation.telegramUserId && conversation.messages.length)
+        .forEach(conversation => {
+          const previous = latestByUser.get(conversation.telegramUserId);
+          const currentAt = conversation.messages.at(-1)?.at || '';
+          const previousAt = previous?.messages.at(-1)?.at || '';
+          if (!previous || currentAt >= previousAt) latestByUser.set(conversation.telegramUserId, conversation);
+        });
+      return res.status(200).json({ ok: true, conversations: [...latestByUser.values()] });
+    }
     const record = await airtableRecord(recordId);
     if (req.method === 'GET') return res.status(200).json({ ok: true, conversation: recordView(record) });
     if (req.method !== 'POST') return jsonError(res, 405, 'Method not allowed');

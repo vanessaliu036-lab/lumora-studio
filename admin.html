@@ -2766,7 +2766,7 @@ function telegramInboxMarkup() {
   const active = telegramInboxState.conversation;
   const list = telegramInboxState.records.length
     ? telegramInboxState.records.map(record => `<button class="telegram-thread ${record.recordId === telegramInboxState.activeId ? 'active' : ''}" onclick="selectTelegramConversation('${_esc(record.recordId)}')"><span class="telegram-thread-name">${_esc(record.customerName)}<span class="telegram-thread-status">${_esc(record.status || '—')}</span></span><span class="telegram-thread-meta">${_esc(record.telegramUsername || record.telegramUserId || '尚未綁定 Telegram')}</span></button>`).join('')
-    : '<div class="telegram-empty">目前沒有可用的 Telegram 客戶案件。</div>';
+    : '<div class="telegram-empty">目前沒有真實 Telegram 訊息。<br><br>請先在 @Lumora_Studio_Bot 按 Start 並傳送 /start，然後重新整理。</div>';
   const messages = active?.messages?.length
     ? active.messages.map(message => `<article class="telegram-message ${_esc(message.role)}"><div class="telegram-message-role">${telegramRoleLabel(message.role)} · ${_esc(message.kind || 'text')}</div><div class="telegram-message-text">${_esc(message.text)}</div><div class="telegram-message-time">${_esc(telegramTime(message.at))}</div></article>`).join('')
     : '<div class="telegram-empty">尚無已保存的訊息。Webhook 新訊息會從現在開始同步到這裡。</div>';
@@ -2786,24 +2786,10 @@ async function loadTelegramInbox() {
   telegramInboxState.loaded = true;
   telegramInboxState.error = '';
   try {
-    const response = await fetch(telegramApi('/api/crm/full'), { cache: 'no-store' });
+    const response = await fetch(telegramApi('/api/telegram/conversation?list=1'), { cache: 'no-store' });
     const result = await response.json();
     if (!response.ok || !result.ok) throw new Error(result.error || `HTTP ${response.status}`);
-    telegramInboxState.records = (result.records || []).filter(record => record.tgId || record.tgUser).map(record => ({
-      recordId: record.id,
-      crmId: record.crm_id || '',
-      customerName: record.name || '未命名客戶',
-      telegramUserId: record.tgId || '',
-      telegramUsername: record.tgUser || '',
-      status: record.status || '',
-      updatedAt: record.updated || record.inqDate || '',
-    }));
-    const latestByTelegram = new Map();
-    telegramInboxState.records.forEach(record => {
-      const previous = latestByTelegram.get(record.telegramUserId);
-      if (!previous || String(record.updatedAt).localeCompare(String(previous.updatedAt)) > 0) latestByTelegram.set(record.telegramUserId, record);
-    });
-    telegramInboxState.records = [...latestByTelegram.values()];
+    telegramInboxState.records = (result.conversations || []).map(record => ({ ...record, updatedAt: record.updatedAt || '' }));
     const requested = telegramInboxState.pendingRecordId;
     telegramInboxState.activeId = telegramInboxState.records.some(record => record.recordId === requested) ? requested : (telegramInboxState.activeId || telegramInboxState.records[0]?.recordId || '');
     telegramInboxState.pendingRecordId = '';
