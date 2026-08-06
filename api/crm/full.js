@@ -48,6 +48,10 @@ export default async function handler(req, res) {
       const history = historyText.split('\n').map(line => {
         const s = (line || '').trim();
         if (!s) return null;
+        try {
+          const event = JSON.parse(s);
+          if (event && typeof event === 'object' && event.text) return { ...event, t: event.text, d: event.at || '', s: 'done' };
+        } catch (_) {}
         return { t: s, d: '', s: 'done' };
       }).filter(Boolean);
       return {

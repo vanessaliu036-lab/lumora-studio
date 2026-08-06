@@ -12,6 +12,7 @@ function normalizeConversationEntry(entry) {
     kind: ['text', 'photo', 'callback', 'system', 'history'].includes(entry.kind) ? entry.kind : 'history',
     text,
     telegramMessageId: entry.telegramMessageId ? String(entry.telegramMessageId) : null,
+    senderName: entry.senderName ? String(entry.senderName) : null,
   };
 }
 
@@ -166,6 +167,7 @@ export default async function handler(req, res) {
       kind: 'text',
       text,
       telegramMessageId: String(sent.message_id || ''),
+      senderName: 'Vanessa',
     };
     const history = appendConversationEntry(fields['Status History'], entry);
     const updated = await airtableRecord(recordId, {

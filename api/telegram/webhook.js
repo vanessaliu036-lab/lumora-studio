@@ -14,6 +14,7 @@ function appendConversationEntry(value, entry) {
     kind: entry.kind || 'text',
     text: String(entry.text || '').trim(),
     telegramMessageId: entry.telegramMessageId ? String(entry.telegramMessageId) : null,
+    senderName: entry.senderName ? String(entry.senderName) : null,
   };
   if (!normalized.text) return existing;
   const serialized = JSON.stringify(normalized);

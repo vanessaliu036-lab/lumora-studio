@@ -1946,7 +1946,18 @@ const CRM_WORKFLOW_STAGES = [
   { status:'Converted', label:'已轉入 Order', section:5, task:'付款完成且已鎖定，Order 已建立；後續由 Production 接手', systemOnly:true, fields:[] },
 ];
 function crmWorkflowHistory(r){
-  const events = [{t:'客服接手',d:`${_dateOnly(r.inqDate)} · CRM 進件後直接交客服`}, ...(Array.isArray(r.history) ? r.history.filter(h => !String(h.t || '').startsWith('新進件') && !String(h.t || '').includes('洽談')) : [])];
+  const history = Array.isArray(r.history) ? r.history : [];
+  const events = [];
+  let humanTakenOver = false;
+  history.forEach(item => {
+    const role = String(item.role || '').toLowerCase();
+    if (role === 'bot') events.push({t:'Telegram Bot 回覆',d:telegramTime(item.at) || item.d || 'Telegram 自動回覆'});
+    else if (role === 'agent') {
+      if (!humanTakenOver) { events.push({t:'真人客服已接手 · Vanessa',d:telegramTime(item.at) || item.d || '後台人工回覆'}); humanTakenOver = true; }
+      else events.push({t:'真人客服回覆 · Vanessa',d:telegramTime(item.at) || item.d || '後台人工回覆'});
+    } else if (!String(item.t || '').startsWith('新進件') && !String(item.t || '').includes('洽談')) events.push(item);
+  });
+  if (!events.length) events.push({t:'等待 Telegram 訊息',d:`${_dateOnly(r.inqDate)} · 尚未有 Bot 或真人回覆`});
   return `<div class="crm-workflow-history"><div class="crm-workflow-history-title">狀態歷程</div><div class="crm-workflow-history-list">${events.map(event => `<div class="crm-workflow-history-item"><i class="crm-workflow-history-dot"></i><strong>${_esc(event.t)}</strong><small>${_esc(event.d)}</small></div>`).join('')}</div></div>`;
 }
 function crmWorkflow(status, index, r){
@@ -2072,8 +2083,7 @@ function setCrmStatus(index, status){
   saveCrmStatus(index, status);
 }
 function core3CrmCard(r){
-  const history = [{t:'客服接手',d:`${_dateOnly(r.inqDate)} · CRM 進件後直接交客服`,s:'now'}, ...(Array.isArray(r.history) ? r.history.filter(h => !String(h.t || '').startsWith('新進件') && !String(h.t || '').includes('洽談') && !String(h.t || '').includes('等客戶')) : [])];
-  const tl = '';
+  const tl = crmWorkflowHistory(r);
   const crmStatusEditor = `<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 18px;padding:12px 16px;border:1px solid rgba(151,126,255,.3);border-radius:14px;background:rgba(50,37,104,.18)"><span class="tag">目前狀態：${_esc(r.status || 'New')}</span><span style="color:#a99cd0;font-size:12px">狀態只能透過上方流程主操作更新，完成必要資料後才會同步 Airtable</span></div>`;
   let box = "";
   if(r.locked) box = `<div class="infobox lock"><span class="ic">🔒</span><div><b>付款已鎖定</b> — ${_esc(r.verBy)} 於 ${_esc(r.verAt)} 確認入帳，欄位不可再修改。<br>系統已自動建立 <b>${_esc(r.convOrder)}</b>，Partner 額度 +1。</div></div>`;
