@@ -1,11 +1,24 @@
 // Telegram webhook: customer confirmation is the hard gate before style production.
-import { appendConversationEntry } from '../../lib/telegram-conversation.mjs';
-
 const BASE = 'appOLY56Y7cNExxzs';
 const ORDERS = 'tblJix6eujPrblpIv';
 const CRM = 'tblWtB7qlAQQTYS9v';
 const API = `https://api.airtable.com/v0/${BASE}`;
 let activeCrmRecord = null;
+
+function appendConversationEntry(value, entry) {
+  const existing = String(value || '').trim();
+  const normalized = {
+    id: String(entry.id || `message-${Date.now()}`),
+    at: entry.at ? String(entry.at) : new Date().toISOString(),
+    role: entry.role || 'system',
+    kind: entry.kind || 'text',
+    text: String(entry.text || '').trim(),
+    telegramMessageId: entry.telegramMessageId ? String(entry.telegramMessageId) : null,
+  };
+  if (!normalized.text) return existing;
+  const serialized = JSON.stringify(normalized);
+  return existing ? `${existing}\n${serialized}` : serialized;
+}
 
 async function airtable(path, options = {}) {
   const response = await fetch(`${API}/${path}`, {

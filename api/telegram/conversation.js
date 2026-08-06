@@ -1,8 +1,44 @@
-import { appendConversationEntry, parseConversationHistory } from '../../lib/telegram-conversation.mjs';
-
 const BASE = 'appOLY56Y7cNExxzs';
 const CRM = 'tblWtB7qlAQQTYS9v';
 const AIRTABLE_API = `https://api.airtable.com/v0/${BASE}`;
+
+function normalizeConversationEntry(entry) {
+  const text = String(entry?.text || '').trim();
+  if (!text) return null;
+  return {
+    id: String(entry.id || `history-${text.length}-${text.slice(0, 12)}`),
+    at: entry.at ? String(entry.at) : null,
+    role: ['customer', 'agent', 'bot', 'system'].includes(entry.role) ? entry.role : 'system',
+    kind: ['text', 'photo', 'callback', 'system', 'history'].includes(entry.kind) ? entry.kind : 'history',
+    text,
+    telegramMessageId: entry.telegramMessageId ? String(entry.telegramMessageId) : null,
+  };
+}
+
+function parseConversationHistory(value) {
+  const raw = String(value || '').trim();
+  if (!raw) return [];
+  try {
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed)) return parsed.map(normalizeConversationEntry).filter(Boolean);
+    if (parsed && typeof parsed === 'object') return [normalizeConversationEntry(parsed)].filter(Boolean);
+  } catch (_) {}
+  return raw.split(/\r?\n/).map(line => {
+    const text = line.trim();
+    if (!text) return null;
+    try {
+      const parsed = JSON.parse(text);
+      if (parsed && typeof parsed === 'object') return normalizeConversationEntry(parsed);
+    } catch (_) {}
+    return normalizeConversationEntry({ role: 'system', kind: 'history', text });
+  }).filter(Boolean);
+}
+
+function appendConversationEntry(value, entry) {
+  const existing = String(value || '').trim();
+  const serialized = JSON.stringify(normalizeConversationEntry(entry));
+  return existing ? `${existing}\n${serialized}` : serialized;
+}
 
 function jsonError(res, status, error) {
   return res.status(status).json({ ok: false, error });
