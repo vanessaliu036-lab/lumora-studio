@@ -84,7 +84,7 @@ function recordView(record) {
   const telegramUserId = fields['Telegram User ID'] ? String(fields['Telegram User ID']) : '';
   const rawName = fields['Customer Name'] || '';
   const sourceText = `${rawName} ${fields['Inquiry Summary'] || ''} ${fields['Follow-up Note'] || ''}`;
-  const isFixture = /test|e2e|mock|demo|驗證|測試/i.test(sourceText);
+  const isFixture = /test|e2e|mock|demo/i.test(sourceText);
   return {
     recordId: record.id,
     crmId: fields['CRM ID'] || '',
