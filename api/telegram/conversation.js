@@ -108,9 +108,6 @@ export default async function handler(req, res) {
   if (!process.env.AIRTABLE_PAT) return jsonError(res, 500, 'AIRTABLE_PAT is not configured');
   if (!process.env.TELEGRAM_BOT_TOKEN) return jsonError(res, 500, 'TELEGRAM_BOT_TOKEN is not configured');
 
-  const recordId = String(req.query?.recordId || req.body?.recordId || '').trim();
-  if (!recordId) return jsonError(res, 400, 'recordId is required');
-
   try {
     if (req.method === 'GET' && String(req.query?.list || '') === '1') {
       const records = await airtableList();
@@ -125,6 +122,8 @@ export default async function handler(req, res) {
         });
       return res.status(200).json({ ok: true, conversations: [...latestByUser.values()] });
     }
+    const recordId = String(req.query?.recordId || req.body?.recordId || '').trim();
+    if (!recordId) return jsonError(res, 400, 'recordId is required');
     const record = await airtableRecord(recordId);
     if (req.method === 'GET') return res.status(200).json({ ok: true, conversation: recordView(record) });
     if (req.method !== 'POST') return jsonError(res, 405, 'Method not allowed');
