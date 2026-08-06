@@ -109,7 +109,7 @@ export default async function handler(req, res) {
     const sent = await telegramPhoto(
       tgId,
       image,
-      `這是您的個人風格形象圖（${orderId}）\n\n哇，你看起來超美的！✨\n\n感謝您使用 Lumora Studio，希望再次遇見您。\n\n✅ 訂單已完成並結案`,
+      `這是您的個人風格形象圖（${orderId}）\n\n哇，你看起來超美的！✨\n\n感謝您使用 Lumora Studio，希望再次遇見您。\n\n✅ 完成`,
       replyMarkup,
     );
     const deliveredPhoto = sent?.result?.photo?.at(-1);
