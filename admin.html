@@ -2811,9 +2811,9 @@ async function loadTelegramConversation(recordId, keepError = false) {
     const response = await fetch(telegramApi(`/api/telegram/conversation?recordId=${encodeURIComponent(recordId)}`), { cache: 'no-store' });
     const result = await response.json();
     if (!response.ok || !result.ok) throw new Error(result.error || `HTTP ${response.status}`);
-    telegramInboxState.conversation = result.conversation;
     const listRecord = telegramInboxState.records.find(record => record.recordId === recordId);
-    if (listRecord) Object.assign(listRecord, result.conversation);
+    telegramInboxState.conversation = { ...result.conversation, customerName: listRecord?.customerName || result.conversation.customerName };
+    if (listRecord) Object.assign(listRecord, result.conversation, { customerName: listRecord.customerName || result.conversation.customerName });
   } catch (error) {
     telegramInboxState.error = `訊息載入失敗：${error.message}`;
   }

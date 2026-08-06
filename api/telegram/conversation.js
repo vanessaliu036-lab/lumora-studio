@@ -88,10 +88,11 @@ function recordView(record) {
   return {
     recordId: record.id,
     crmId: fields['CRM ID'] || '',
-    customerName: isFixture ? `Telegram ${fields['Telegram Username'] || telegramUserId || '對話'}` : (rawName || '未命名客戶'),
+    customerName: rawName || `Telegram ${fields['Telegram Username'] || telegramUserId || '對話'}`,
     telegramUserId,
     telegramUsername: fields['Telegram Username'] || '',
     status: fields['CRM Status'] || '',
+    inquiryDate: fields['Inquiry Date'] || '',
     updatedAt: fields['Last Updated'] || '',
     messages: messages.filter(message => message.role !== 'system' || message.kind !== 'history'),
     isFixture,
@@ -111,16 +112,27 @@ export default async function handler(req, res) {
   try {
     if (req.method === 'GET' && String(req.query?.list || '') === '1') {
       const records = await airtableList();
-      const latestByUser = new Map();
+      const groupedByUser = new Map();
       records.map(recordView)
         .filter(conversation => conversation.telegramUserId && conversation.messages.length)
         .forEach(conversation => {
-          const previous = latestByUser.get(conversation.telegramUserId);
-          const currentAt = conversation.messages.at(-1)?.at || '';
-          const previousAt = previous?.messages.at(-1)?.at || '';
-          if (!previous || currentAt >= previousAt) latestByUser.set(conversation.telegramUserId, conversation);
+          const previous = groupedByUser.get(conversation.telegramUserId);
+          if (!previous) {
+            groupedByUser.set(conversation.telegramUserId, { ...conversation, messages: [...conversation.messages] });
+            return;
+          }
+          const messages = [...previous.messages, ...conversation.messages]
+            .sort((a, b) => String(a.at || '').localeCompare(String(b.at || '')))
+            .filter((message, index, all) => index === all.findIndex(item => item.id === message.id));
+          const currentIsBetterName = previous.isFixture && !conversation.isFixture;
+          const newestRecord = String(conversation.inquiryDate || '') >= String(previous.inquiryDate || '') ? conversation : previous;
+          groupedByUser.set(conversation.telegramUserId, {
+            ...newestRecord,
+            customerName: currentIsBetterName ? conversation.customerName : previous.customerName,
+            messages,
+          });
         });
-      return res.status(200).json({ ok: true, conversations: [...latestByUser.values()] });
+      return res.status(200).json({ ok: true, conversations: [...groupedByUser.values()] });
     }
     const recordId = String(req.query?.recordId || req.body?.recordId || '').trim();
     if (!recordId) return jsonError(res, 400, 'recordId is required');
