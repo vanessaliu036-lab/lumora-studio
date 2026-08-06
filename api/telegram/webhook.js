@@ -1,8 +1,11 @@
 // Telegram webhook: customer confirmation is the hard gate before style production.
+import { appendConversationEntry } from '../../lib/telegram-conversation.mjs';
+
 const BASE = 'appOLY56Y7cNExxzs';
 const ORDERS = 'tblJix6eujPrblpIv';
 const CRM = 'tblWtB7qlAQQTYS9v';
 const API = `https://api.airtable.com/v0/${BASE}`;
+let activeCrmRecord = null;
 
 async function airtable(path, options = {}) {
   const response = await fetch(`${API}/${path}`, {
@@ -20,7 +23,47 @@ async function telegram(method, body) {
   });
   const payload = await response.json();
   if (!response.ok || !payload.ok) throw new Error(payload?.description || `Telegram request failed: ${response.status}`);
+  if (method === 'sendMessage' && activeCrmRecord?.id && payload.result?.message_id) {
+    await rememberConversationEntry(activeCrmRecord, {
+      id: `bot-${payload.result.message_id}-${Date.now()}`,
+      at: new Date().toISOString(),
+      role: 'bot',
+      kind: 'text',
+      text: String(body?.text || ''),
+      telegramMessageId: String(payload.result.message_id),
+    });
+  }
   return payload;
+}
+
+async function rememberConversationEntry(crmRecord, entry) {
+  if (!crmRecord?.id || !entry?.text) return;
+  try {
+    const current = await airtable(`${CRM}/${encodeURIComponent(crmRecord.id)}`);
+    const history = appendConversationEntry(current.fields?.['Status History'], entry);
+    await airtable(`${CRM}/${encodeURIComponent(crmRecord.id)}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ fields: { 'Status History': history }, typecast: true }),
+    });
+  } catch (_) {
+    // Conversation history is additive telemetry; never break payment or delivery handling.
+  }
+}
+
+async function rememberIncomingMessage(message, kind = 'text') {
+  if (!activeCrmRecord?.id || !message) return;
+  const text = kind === 'photo'
+    ? '客戶傳送了一張照片'
+    : String(message.text || '').trim();
+  if (!text) return;
+  await rememberConversationEntry(activeCrmRecord, {
+    id: `customer-${message.message_id || `${Date.now()}-${text.slice(0, 12)}`}`,
+    at: new Date(message.date ? message.date * 1000 : Date.now()).toISOString(),
+    role: 'customer',
+    kind,
+    text,
+    telegramMessageId: message.message_id ? String(message.message_id) : null,
+  });
 }
 
 async function findCrmByFormula(formula) {
@@ -42,6 +85,7 @@ async function findLatestCrmByTelegramUser(userId) {
 
 async function rememberTelegramUser(crmRecord, message) {
   if (!crmRecord?.id || !message?.from?.id) return;
+  activeCrmRecord = crmRecord;
   await airtable(`${CRM}/${encodeURIComponent(crmRecord.id)}`, {
     method: 'PATCH',
     body: JSON.stringify({ fields: {
@@ -71,6 +115,7 @@ async function handleStart(message) {
     return;
   }
   await rememberTelegramUser(crmRecord, message);
+  await rememberIncomingMessage(message);
   const amount = parts[3] || crmRecord?.fields?.['Quoted Amount'] || '';
   const serviceText = parts[2] === 'portrait'
     ? 'Personal Identity'
@@ -99,6 +144,7 @@ async function handlePaymentLast5(message, req) {
   const last5 = String(message.text || '').trim();
   const userId = String(message.from?.id || '');
   const crmRecord = userId ? await findLatestCrmByTelegramUser(userId) : null;
+  await rememberTelegramUser(crmRecord, message);
   if (!crmRecord) {
     await telegram('sendMessage', { chat_id: message.chat.id, text: '找不到對應的網站訂單，請重新從網站訂單連結進入 TG。' });
     return;
@@ -124,6 +170,10 @@ export default async function handler(req, res) {
   }
   try {
     const message = req.body?.message;
+    if (message?.from?.id && !message?.text?.startsWith('/start')) {
+      activeCrmRecord = await findLatestCrmByTelegramUser(message.from.id);
+      await rememberIncomingMessage(message, message.photo?.length ? 'photo' : 'text');
+    }
     if (message?.text?.startsWith('/start')) {
       await handleStart(message);
       return res.status(200).json({ ok: true, event: 'start' });

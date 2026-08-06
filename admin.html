@@ -867,6 +867,14 @@ html{background:#080817}
 .flow-sim-head{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;margin-bottom:18px}.flow-sim-title{font-size:18px;font-weight:600}.flow-sim-sub{margin-top:5px;color:#a99cd0;font-size:12px;line-height:1.5}.flow-sim-actions{display:flex;gap:8px;flex-wrap:wrap}.flow-sim-steps{display:grid;grid-template-columns:repeat(7,minmax(110px,1fr));gap:8px;overflow:auto;padding-bottom:4px}.flow-sim-step{min-height:94px;padding:12px;border:1px solid rgba(255,255,255,.13);border-radius:15px;background:rgba(255,255,255,.035);color:#a99cd0}.flow-sim-step.done{border-color:rgba(139,244,220,.45);background:rgba(87,194,165,.10);color:#dffef6}.flow-sim-step.current{border-color:rgba(255,190,227,.65);background:rgba(190,137,255,.16);color:#fff;box-shadow:0 0 22px rgba(180,127,255,.16)}.flow-sim-step.locked{opacity:.48}.flow-sim-num{font-size:10px;letter-spacing:.12em}.flow-sim-label{display:block;margin-top:8px;font-size:12px;font-weight:600;white-space:nowrap}.flow-sim-state{display:block;margin-top:6px;font-size:10px;line-height:1.35}.flow-sim-detail{display:grid;grid-template-columns:1fr auto;gap:16px;align-items:center;margin-top:18px;padding-top:16px;border-top:1px solid rgba(255,255,255,.11)}.flow-sim-detail p{margin:0;color:#c5bddf;font-size:12px;line-height:1.55}.flow-sim-detail strong{color:#fff}.flow-sim-rule{margin-top:10px;color:#a99cd0;font-size:11px}.flow-sim-ok{color:#aaffea}.flow-sim-warn{color:#ffd1a5}@media(max-width:760px){.flow-sim-head,.flow-sim-detail{grid-template-columns:1fr;display:grid}.flow-sim-actions{justify-content:flex-start}.flow-sim-steps{grid-template-columns:repeat(7,130px)}}
 </style>
 
+<style id="telegram-inbox-styles">
+  .telegram-inbox{display:grid;grid-template-columns:320px minmax(0,1fr);min-height:680px;border:1px solid rgba(255,255,255,.12);border-radius:24px;overflow:hidden;background:rgba(10,8,28,.52);box-shadow:0 24px 80px rgba(0,0,0,.22)}
+  .telegram-list{border-right:1px solid rgba(255,255,255,.1);background:rgba(16,12,40,.72);overflow:auto}.telegram-list-head{padding:20px;border-bottom:1px solid rgba(255,255,255,.1)}
+  .telegram-list-head h2{margin:0 0 6px;font-size:18px}.telegram-list-head p{margin:0;color:#a99cd0;font-size:12px}.telegram-thread{width:100%;display:block;text-align:left;padding:16px 18px;border:0;border-bottom:1px solid rgba(255,255,255,.07);background:transparent;color:#f7f3ff;cursor:pointer}.telegram-thread:hover,.telegram-thread.active{background:linear-gradient(90deg,rgba(151,126,255,.24),rgba(255,164,209,.08))}.telegram-thread-name{display:flex;justify-content:space-between;gap:12px;font-weight:650}.telegram-thread-meta{display:block;margin-top:5px;color:#a99cd0;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.telegram-thread-status{float:right;color:#9df3d9;font-size:10px}
+  .telegram-chat{display:flex;min-width:0;flex-direction:column;background:radial-gradient(circle at 80% 0%,rgba(146,96,190,.18),transparent 44%),rgba(8,7,23,.72)}.telegram-chat-head{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:20px 24px;border-bottom:1px solid rgba(255,255,255,.1)}.telegram-chat-head h2{margin:0;font-size:20px}.telegram-chat-head p{margin:5px 0 0;color:#a99cd0;font-size:12px}.telegram-chat-actions{display:flex;gap:8px;flex-wrap:wrap}.telegram-messages{flex:1;min-height:400px;max-height:560px;overflow:auto;padding:24px;display:flex;flex-direction:column;gap:12px}.telegram-message{max-width:min(680px,85%);padding:12px 15px;border-radius:16px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);align-self:flex-start}.telegram-message.customer{background:rgba(116,93,210,.2)}.telegram-message.agent{background:rgba(218,133,190,.2);align-self:flex-end}.telegram-message.bot{background:rgba(120,222,190,.12)}.telegram-message.system{background:rgba(255,194,117,.1);color:#e8d8bd}.telegram-message-role{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#c5b7e6;margin-bottom:6px}.telegram-message-text{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.55}.telegram-message-time{margin-top:7px;color:#a99cd0;font-size:10px}.telegram-compose{padding:16px 24px;border-top:1px solid rgba(255,255,255,.1);background:rgba(10,8,28,.7)}.telegram-compose textarea{width:100%;min-height:78px;resize:vertical}.telegram-compose-row{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:10px}.telegram-compose-hint{color:#a99cd0;font-size:11px}.telegram-empty{margin:auto;text-align:center;color:#a99cd0;padding:36px}.telegram-error{margin:14px 24px 0;color:#ffd0dc;background:rgba(176,57,95,.18);border:1px solid rgba(255,143,175,.28);padding:11px 14px;border-radius:12px;font-size:12px}
+  @media(max-width:900px){.telegram-inbox{grid-template-columns:1fr}.telegram-list{max-height:270px;border-right:0;border-bottom:1px solid rgba(255,255,255,.1)}.telegram-messages{min-height:340px}.telegram-chat-head{align-items:flex-start;flex-direction:column}}
+</style>
+
 <script id="lumora-core3">
 /* ═══════════════════════════════════════════════════
    三張核心表 — 目前開啟 Mock 預覽模式；正式資料暫不載入
@@ -2467,7 +2475,8 @@ function core3OrdCard(r){
       ${_fi("是否已刪除", r.purged ? "已刪除" : "保存中", null, ["新增","new"])}
       ${_fi("TG 對話串 ID", r.thread)}
       ${_fi("通知狀態", r.notify)}
-    </div>`);
+    </div>`)
+  + _gs(7,"Telegram 對話","客服從獨立頁查看並回覆客戶",`<div style="display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap"><div class="fn">${r.tgId ? `已綁定 Telegram User ID：${_esc(r.tgId)}` : '此訂單尚未綁定 Telegram User ID'}</div><button class="btn primary" onclick="openTelegramPage('${_esc(String(r.crm || r.recordId || ''))}')">開啟 Telegram 對話</button></div>`);
 }
 
 function core3PtnCard(r){
@@ -2614,6 +2623,7 @@ document.addEventListener('keydown', e => { if(e.key === 'Escape') core3Close();
       + crmNotifySideLink(r)
       + (typeof paymentNotifySideLink === 'function' ? paymentNotifySideLink(r) : sideLink('admin-payments','付款審核',r))
       + sideLink('admin-orders','Orders 訂單',r)
+      + sideLink('admin-telegram','Telegram 對話',r)
       + sideLink('admin-crm-orders','Production 製作',r)
       + sideLink('admin-closed-records','結案紀錄',r)
       + sideLink('admin-crm-partners','Partners 經銷商',r)
@@ -2626,6 +2636,7 @@ document.addEventListener('keydown', e => { if(e.key === 'Escape') core3Close();
   adminPage = function(r){
     if(r === 'admin-crm') return crmPage();
     if(r === 'admin-orders') return crmOrdersPage();
+    if(r === 'admin-telegram') return telegramInboxPage();
     if(r === 'admin-crm-orders') return productionOverviewPage();
     if(r === 'admin-closed-records') return closedRecordsPage();
     if(r === 'admin-crm-partners') return crmPartnersPage();
@@ -2726,6 +2737,125 @@ function _airtableFieldMap(rows, kind){
     }));
   }
   return rows;
+}
+
+const telegramInboxState = {
+  records: [], activeId: '', conversation: null, loading: false, sending: false, error: '', pendingRecordId: '', loaded: false,
+};
+
+function telegramApi(path) {
+  return location.protocol === 'file:' ? `https://lumora-studiokh.vercel.app${path}` : path;
+}
+
+function telegramRoleLabel(role) {
+  return ({ customer: '客戶', agent: '客服', bot: 'Bot', system: '系統紀錄' })[role] || '訊息';
+}
+
+function telegramTime(value) {
+  if (!value) return '';
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? String(value) : date.toLocaleString('zh-TW', { hour12: false });
+}
+
+function telegramInboxPage() {
+  setTimeout(() => loadTelegramInbox(), 0);
+  return `<div class="page-title"><div><h1>Telegram 對話</h1><p class="muted">集中查看客戶訊息，直接從後台回覆，不必離開訂單流程。</p></div><button class="btn" onclick="loadTelegramInbox()">重新整理</button></div><div id="telegram-inbox-root" class="telegram-inbox"><div class="telegram-empty">正在載入 Telegram 對話…</div></div>`;
+}
+
+function telegramInboxMarkup() {
+  const active = telegramInboxState.conversation;
+  const list = telegramInboxState.records.length
+    ? telegramInboxState.records.map(record => `<button class="telegram-thread ${record.recordId === telegramInboxState.activeId ? 'active' : ''}" onclick="selectTelegramConversation('${_esc(record.recordId)}')"><span class="telegram-thread-name">${_esc(record.customerName)}<span class="telegram-thread-status">${_esc(record.status || '—')}</span></span><span class="telegram-thread-meta">${_esc(record.telegramUsername || record.telegramUserId || '尚未綁定 Telegram')}</span></button>`).join('')
+    : '<div class="telegram-empty">目前沒有可用的 Telegram 客戶案件。</div>';
+  const messages = active?.messages?.length
+    ? active.messages.map(message => `<article class="telegram-message ${_esc(message.role)}"><div class="telegram-message-role">${telegramRoleLabel(message.role)} · ${_esc(message.kind || 'text')}</div><div class="telegram-message-text">${_esc(message.text)}</div><div class="telegram-message-time">${_esc(telegramTime(message.at))}</div></article>`).join('')
+    : '<div class="telegram-empty">尚無已保存的訊息。Webhook 新訊息會從現在開始同步到這裡。</div>';
+  const canReply = Boolean(active?.canReply);
+  return `<aside class="telegram-list"><div class="telegram-list-head"><h2>客戶對話</h2><p>${telegramInboxState.records.length} 個案件 · 點選左側切換</p></div>${list}</aside><section class="telegram-chat"><header class="telegram-chat-head"><div><h2>${_esc(active?.customerName || '選擇一個對話')}</h2><p>${_esc(active?.telegramUsername || active?.telegramUserId || '尚未綁定 Telegram')}</p></div><div class="telegram-chat-actions">${active ? `<button class="btn" onclick="loadTelegramConversation('${_esc(active.recordId)}')">重新整理訊息</button>` : ''}${active?.crmId ? `<button class="btn" onclick="go('admin-crm')">查看 CRM</button>` : ''}</div></header>${telegramInboxState.error ? `<div class="telegram-error">${_esc(telegramInboxState.error)}</div>` : ''}<div class="telegram-messages">${messages}</div><form class="telegram-compose" onsubmit="sendTelegramReply(event)"><textarea id="telegram-reply-input" maxlength="4096" placeholder="輸入回覆給客戶…" ${canReply ? '' : 'disabled'}></textarea><div class="telegram-compose-row"><span class="telegram-compose-hint">${canReply ? 'Enter 可換行；按送出後會同步回 Telegram 與 CRM' : '此案件尚未綁定 Telegram User ID，暫時無法回覆'}</span><button class="btn primary" type="submit" ${canReply && !telegramInboxState.sending ? '' : 'disabled'}>${telegramInboxState.sending ? '傳送中…' : '送出回覆'}</button></div></form></section>`;
+}
+
+function renderTelegramInbox() {
+  const root = document.getElementById('telegram-inbox-root');
+  if (root) root.innerHTML = telegramInboxMarkup();
+}
+
+async function loadTelegramInbox() {
+  const root = document.getElementById('telegram-inbox-root');
+  if (!root) return;
+  telegramInboxState.loading = true;
+  telegramInboxState.loaded = true;
+  telegramInboxState.error = '';
+  try {
+    const response = await fetch(telegramApi('/api/crm/full'), { cache: 'no-store' });
+    const result = await response.json();
+    if (!response.ok || !result.ok) throw new Error(result.error || `HTTP ${response.status}`);
+    telegramInboxState.records = (result.records || []).filter(record => record.tgId || record.tgUser).map(record => ({
+      recordId: record.id,
+      crmId: record.crm_id || '',
+      customerName: record.name || '未命名客戶',
+      telegramUserId: record.tgId || '',
+      telegramUsername: record.tgUser || '',
+      status: record.status || '',
+    }));
+    const requested = telegramInboxState.pendingRecordId;
+    telegramInboxState.activeId = telegramInboxState.records.some(record => record.recordId === requested) ? requested : (telegramInboxState.activeId || telegramInboxState.records[0]?.recordId || '');
+    telegramInboxState.pendingRecordId = '';
+    if (telegramInboxState.activeId) await loadTelegramConversation(telegramInboxState.activeId, true);
+    else { telegramInboxState.conversation = null; telegramInboxState.loading = false; renderTelegramInbox(); }
+  } catch (error) {
+    telegramInboxState.loading = false;
+    telegramInboxState.error = `對話清單載入失敗：${error.message}`;
+    renderTelegramInbox();
+  }
+}
+
+async function loadTelegramConversation(recordId, keepError = false) {
+  if (!recordId) return;
+  telegramInboxState.activeId = recordId;
+  if (!keepError) telegramInboxState.error = '';
+  renderTelegramInbox();
+  try {
+    const response = await fetch(telegramApi(`/api/telegram/conversation?recordId=${encodeURIComponent(recordId)}`), { cache: 'no-store' });
+    const result = await response.json();
+    if (!response.ok || !result.ok) throw new Error(result.error || `HTTP ${response.status}`);
+    telegramInboxState.conversation = result.conversation;
+    const listRecord = telegramInboxState.records.find(record => record.recordId === recordId);
+    if (listRecord) Object.assign(listRecord, result.conversation);
+  } catch (error) {
+    telegramInboxState.error = `訊息載入失敗：${error.message}`;
+  }
+  telegramInboxState.loading = false;
+  renderTelegramInbox();
+}
+
+function selectTelegramConversation(recordId) {
+  loadTelegramConversation(recordId);
+}
+
+async function sendTelegramReply(event) {
+  event.preventDefault();
+  const input = document.getElementById('telegram-reply-input');
+  const text = String(input?.value || '').trim();
+  if (!text || !telegramInboxState.activeId || telegramInboxState.sending) return;
+  telegramInboxState.sending = true;
+  telegramInboxState.error = '';
+  renderTelegramInbox();
+  try {
+    const response = await fetch(telegramApi('/api/telegram/conversation'), { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ recordId: telegramInboxState.activeId, text }) });
+    const result = await response.json();
+    if (!response.ok || !result.ok) throw new Error(result.error || `HTTP ${response.status}`);
+    telegramInboxState.conversation = result.conversation;
+  } catch (error) {
+    telegramInboxState.error = `訊息送出失敗：${error.message}`;
+  }
+  telegramInboxState.sending = false;
+  renderTelegramInbox();
+}
+
+function openTelegramPage(recordId) {
+  telegramInboxState.pendingRecordId = recordId || '';
+  telegramInboxState.loaded = false;
+  go('admin-telegram');
 }
 
 async function syncFromAirtable(){
