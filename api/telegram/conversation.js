@@ -112,8 +112,15 @@ export default async function handler(req, res) {
   try {
     if (req.method === 'GET' && String(req.query?.list || '') === '1') {
       const records = await airtableList();
+      const views = records.map(recordView);
+      const preferredNameByUser = new Map();
+      views.filter(conversation => conversation.telegramUserId && conversation.customerName && !conversation.isFixture)
+        .sort((a, b) => String(b.inquiryDate || '').localeCompare(String(a.inquiryDate || '')))
+        .forEach(conversation => {
+          if (!preferredNameByUser.has(conversation.telegramUserId)) preferredNameByUser.set(conversation.telegramUserId, conversation.customerName);
+        });
       const groupedByUser = new Map();
-      records.map(recordView)
+      views
         .filter(conversation => conversation.telegramUserId && conversation.messages.length)
         .forEach(conversation => {
           const previous = groupedByUser.get(conversation.telegramUserId);
@@ -128,7 +135,7 @@ export default async function handler(req, res) {
           const newestRecord = String(conversation.inquiryDate || '') >= String(previous.inquiryDate || '') ? conversation : previous;
           groupedByUser.set(conversation.telegramUserId, {
             ...newestRecord,
-            customerName: currentIsBetterName ? conversation.customerName : previous.customerName,
+            customerName: preferredNameByUser.get(conversation.telegramUserId) || (currentIsBetterName ? conversation.customerName : previous.customerName),
             messages,
           });
         });
