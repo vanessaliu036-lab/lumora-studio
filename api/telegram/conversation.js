@@ -125,7 +125,11 @@ export default async function handler(req, res) {
         .forEach(conversation => {
           const previous = groupedByUser.get(conversation.telegramUserId);
           if (!previous) {
-            groupedByUser.set(conversation.telegramUserId, { ...conversation, messages: [...conversation.messages] });
+            groupedByUser.set(conversation.telegramUserId, {
+              ...conversation,
+              customerName: preferredNameByUser.get(conversation.telegramUserId) || conversation.customerName,
+              messages: [...conversation.messages],
+            });
             return;
           }
           const messages = [...previous.messages, ...conversation.messages]
