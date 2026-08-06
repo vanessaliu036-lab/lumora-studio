@@ -216,7 +216,7 @@ function loginPage(type){const admin=type==='admin-login';return `<div class="lo
 function _floatingSync(){
   return `<div id="sync-fab" style="position:fixed;right:22px;bottom:22px;z-index:99;display:flex;gap:10px;align-items:center">
     <div id="sync-banner" style="font-size:12px;color:rgba(255,255,255,.65);background:rgba(15,12,30,.6);padding:6px 12px;border-radius:99px;backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.1)">🔄 待同步</div>
-    <button class="btn primary" onclick="syncFromAirtable()" style="border-radius:99px;padding:10px 18px;font-size:13px">🔄 重新整理 Mock</button>
+    <button class="btn primary" onclick="syncFromAirtable()" style="border-radius:99px;padding:10px 18px;font-size:13px">🔄 同步 Airtable</button>
   </div>`;
 }
 
@@ -2796,7 +2796,14 @@ async function loadTelegramInbox() {
       telegramUserId: record.tgId || '',
       telegramUsername: record.tgUser || '',
       status: record.status || '',
+      updatedAt: record.updated || record.inqDate || '',
     }));
+    const latestByTelegram = new Map();
+    telegramInboxState.records.forEach(record => {
+      const previous = latestByTelegram.get(record.telegramUserId);
+      if (!previous || String(record.updatedAt).localeCompare(String(previous.updatedAt)) > 0) latestByTelegram.set(record.telegramUserId, record);
+    });
+    telegramInboxState.records = [...latestByTelegram.values()];
     const requested = telegramInboxState.pendingRecordId;
     telegramInboxState.activeId = telegramInboxState.records.some(record => record.recordId === requested) ? requested : (telegramInboxState.activeId || telegramInboxState.records[0]?.recordId || '');
     telegramInboxState.pendingRecordId = '';
