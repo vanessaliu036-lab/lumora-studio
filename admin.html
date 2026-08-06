@@ -2771,7 +2771,7 @@ function telegramInboxMarkup() {
     ? active.messages.map(message => `<article class="telegram-message ${_esc(message.role)}"><div class="telegram-message-role">${telegramRoleLabel(message.role)} · ${_esc(message.kind || 'text')}</div><div class="telegram-message-text">${_esc(message.text)}</div><div class="telegram-message-time">${_esc(telegramTime(message.at))}</div></article>`).join('')
     : '<div class="telegram-empty">尚無已保存的訊息。Webhook 新訊息會從現在開始同步到這裡。</div>';
   const canReply = Boolean(active?.canReply);
-  return `<aside class="telegram-list"><div class="telegram-list-head"><h2>客戶對話</h2><p>${telegramInboxState.records.length} 個案件 · 點選左側切換</p></div>${list}</aside><section class="telegram-chat"><header class="telegram-chat-head"><div><h2>${_esc(active?.customerName || '選擇一個對話')}</h2><p>${_esc(active?.telegramUsername || active?.telegramUserId || '尚未綁定 Telegram')}</p></div><div class="telegram-chat-actions">${active ? `<button class="btn" onclick="loadTelegramConversation('${_esc(active.recordId)}')">重新整理訊息</button>` : ''}${active?.crmId ? `<button class="btn" onclick="go('admin-crm')">查看 CRM</button>` : ''}</div></header>${telegramInboxState.error ? `<div class="telegram-error">${_esc(telegramInboxState.error)}</div>` : ''}<div class="telegram-messages">${messages}</div><form class="telegram-compose" onsubmit="sendTelegramReply(event)"><textarea id="telegram-reply-input" maxlength="4096" placeholder="輸入回覆給客戶…" ${canReply ? '' : 'disabled'}></textarea><div class="telegram-compose-row"><span class="telegram-compose-hint">${canReply ? 'Enter 可換行；按送出後會同步回 Telegram 與 CRM' : '此案件尚未綁定 Telegram User ID，暫時無法回覆'}</span><button class="btn primary" type="submit" ${canReply && !telegramInboxState.sending ? '' : 'disabled'}>${telegramInboxState.sending ? '傳送中…' : '送出回覆'}</button></div></form></section>`;
+  return `<aside class="telegram-list"><div class="telegram-list-head"><h2>客戶對話</h2><p>${telegramInboxState.records.length} 個案件 · 點選左側切換</p></div>${list}</aside><section class="telegram-chat"><header class="telegram-chat-head"><div><h2>${_esc(active?.customerName || '選擇一個對話')}</h2><p>${_esc(active?.telegramUsername || active?.telegramUserId || '尚未綁定 Telegram')}</p></div><div class="telegram-chat-actions">${active ? `<button class="btn" onclick="loadTelegramConversation('${_esc(active.recordId)}')">重新整理訊息</button>` : ''}${active?.crmId ? `<button class="btn" onclick="go('admin-crm')">查看 CRM</button>` : ''}</div></header>${telegramInboxState.error ? `<div class="telegram-error">${_esc(telegramInboxState.error)}</div>` : ''}<div class="telegram-messages">${messages}</div><form class="telegram-compose" onsubmit="sendTelegramReply(event)"><textarea id="telegram-reply-input" maxlength="4096" placeholder="輸入回覆給客戶…" onkeydown="telegramReplyKeydown(event)" ${canReply ? '' : 'disabled'}></textarea><div class="telegram-compose-row"><span class="telegram-compose-hint">${canReply ? 'Enter 送出 · Shift+Enter 換行' : '此案件尚未綁定 Telegram User ID，暫時無法回覆'}</span><button class="btn primary" type="submit" ${canReply && !telegramInboxState.sending ? '' : 'disabled'}>${telegramInboxState.sending ? '傳送中…' : '送出回覆'}</button></div></form></section>`;
 }
 
 function renderTelegramInbox() {
@@ -2837,6 +2837,12 @@ async function loadTelegramConversation(recordId, keepError = false) {
 
 function selectTelegramConversation(recordId) {
   loadTelegramConversation(recordId);
+}
+
+function telegramReplyKeydown(event) {
+  if (event.key !== 'Enter' || event.shiftKey || event.isComposing) return;
+  event.preventDefault();
+  event.currentTarget.form?.requestSubmit();
 }
 
 async function sendTelegramReply(event) {

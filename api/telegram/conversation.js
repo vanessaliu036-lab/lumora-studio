@@ -80,7 +80,7 @@ function recordView(record) {
     telegramUsername: fields['Telegram Username'] || '',
     status: fields['CRM Status'] || '',
     updatedAt: fields['Last Updated'] || '',
-    messages,
+    messages: messages.filter(message => message.role !== 'system' || message.kind !== 'history'),
     canReply: Boolean(fields['Telegram User ID']),
   };
 }
