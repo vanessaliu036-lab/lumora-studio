@@ -7,7 +7,7 @@ import {
   toArticleDetail,
   dedupeSlugs,
   escapeHtml,
-  bodyToHtmlParagraphs,
+  parseArticleBody,
   buildExcerpt,
 } from '../../lib/blog-content.mjs';
 import { renderShell, SITE_ORIGIN } from '../../lib/blog-layout.mjs';
@@ -46,6 +46,7 @@ function renderArticle(article) {
   const publishedLabel = article.publishedAt
     ? new Date(article.publishedAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
     : '';
+  const { html: bodyContentHtml, faqs, plainText } = parseArticleBody(article.body);
   const bodyHtml = `<a class="back-link" href="/blog">← All articles</a>
 <header class="head">
   <div class="kicker">${escapeHtml(article.category || 'Article')}</div>
@@ -57,11 +58,11 @@ function renderArticle(article) {
   </div>
 </header>
 <article class="prose">
-${bodyToHtmlParagraphs(article.body)}
+${bodyContentHtml}
 </article>`;
 
-  const description = buildExcerpt(article.body, 160) || article.keyword || article.title;
-  const jsonLd = JSON.stringify({
+  const description = buildExcerpt(plainText, 160) || article.keyword || article.title;
+  const articleJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Article',
     headline: article.title,
@@ -70,13 +71,22 @@ ${bodyToHtmlParagraphs(article.body)}
     datePublished: article.publishedAt || undefined,
     author: { '@type': 'Organization', name: 'Lumora Studio' },
     publisher: { '@type': 'Organization', name: 'Lumora Studio' },
-  });
+  };
+  const faqJsonLd = faqs.length ? {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map(faq => ({
+      '@type': 'Question',
+      name: faq.question,
+      acceptedAnswer: { '@type': 'Answer', text: faq.answer },
+    })),
+  } : null;
 
   return renderShell({
     title: `${article.title} — Lumora Journal`,
     description,
     canonical: `${SITE_ORIGIN}/blog/${article.slug}`,
-    jsonLd,
+    jsonLd: [articleJsonLd, faqJsonLd],
     bodyHtml,
   });
 }

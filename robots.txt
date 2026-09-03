@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://lumora-studiokh.vercel.app/sitemap.xml

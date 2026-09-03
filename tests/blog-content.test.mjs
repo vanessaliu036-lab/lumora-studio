@@ -7,7 +7,7 @@ import {
   estimateReadMinutes,
   isPublished,
   escapeHtml,
-  bodyToHtmlParagraphs,
+  parseArticleBody,
   toArticleSummary,
   toArticleDetail,
   dedupeSlugs,
@@ -54,14 +54,58 @@ test('escapeHtml escapes the five reserved characters', () => {
   assert.equal(escapeHtml(`<script>alert('x')&"y"</script>`), '&lt;script&gt;alert(&#39;x&#39;)&amp;&quot;y&quot;&lt;/script&gt;');
 });
 
-test('bodyToHtmlParagraphs splits on blank lines and escapes content', () => {
-  const html = bodyToHtmlParagraphs('First <b>paragraph</b>.\n\nSecond paragraph.');
-  assert.equal(html, '<p>First &lt;b&gt;paragraph&lt;/b&gt;.</p>\n<p>Second paragraph.</p>');
+test('parseArticleBody renders ## and ### as headings and escapes content', () => {
+  const { html } = parseArticleBody('## Section One\nFirst <b>paragraph</b>.\n\n### A subheading\nSecond paragraph.');
+  assert.equal(
+    html,
+    '<h2>Section One</h2>\n<p>First &lt;b&gt;paragraph&lt;/b&gt;.</p>\n<h3>A subheading</h3>\n<p>Second paragraph.</p>'
+  );
 });
 
-test('bodyToHtmlParagraphs falls back to single newlines when there are no blank lines', () => {
-  const html = bodyToHtmlParagraphs('Line one.\nLine two.');
-  assert.equal(html, '<p>Line one.</p>\n<p>Line two.</p>');
+test('parseArticleBody joins wrapped lines within a paragraph', () => {
+  const { html, plainText } = parseArticleBody('Line one.\nLine two.\n\nLine three.');
+  assert.equal(html, '<p>Line one. Line two.</p>\n<p>Line three.</p>');
+  assert.equal(plainText, 'Line one. Line two. Line three.');
+});
+
+test('parseArticleBody renders **bold** as <strong> and strips it from plainText', () => {
+  const { html, plainText } = parseArticleBody('This has **bold text** inside it.');
+  assert.equal(html, '<p>This has <strong>bold text</strong> inside it.</p>');
+  assert.equal(plainText, 'This has bold text inside it.');
+});
+
+test('parseArticleBody groups consecutive "- " lines into a <ul> and numbered lines into an <ol>', () => {
+  const body = '- First **item**\n- Second item\n\n1. Step one\n2. Step two';
+  const { html, plainText } = parseArticleBody(body);
+  assert.equal(
+    html,
+    '<ul><li>First <strong>item</strong></li><li>Second item</li></ul>\n<ol><li>Step one</li><li>Step two</li></ol>'
+  );
+  assert.equal(plainText, 'First item Second item Step one Step two');
+});
+
+test('parseArticleBody strips ** from FAQ questions and answers', () => {
+  const body = '## Frequently Asked Questions\n### Q: What about **pricing**?\nA: It depends on **scope**.';
+  const { faqs } = parseArticleBody(body);
+  assert.deepEqual(faqs, [{ question: 'What about pricing?', answer: 'It depends on scope.' }]);
+});
+
+test('parseArticleBody extracts Q/A pairs under a Frequently Asked Questions heading into faqs', () => {
+  const body = [
+    '## Frequently Asked Questions',
+    '### Q: What is AI advertising?',
+    'AI advertising uses generative models to produce campaign visuals.',
+    '### Q: How much does it cost?',
+    'Pricing depends on scope; request a quote.',
+    '## Related Reading',
+    '### Should not be captured',
+    'Ignored answer.',
+  ].join('\n');
+  const { faqs } = parseArticleBody(body);
+  assert.deepEqual(faqs, [
+    { question: 'What is AI advertising?', answer: 'AI advertising uses generative models to produce campaign visuals.' },
+    { question: 'How much does it cost?', answer: 'Pricing depends on scope; request a quote.' },
+  ]);
 });
 
 test('toArticleDetail merges article fields with SEO-plan fallbacks', () => {
