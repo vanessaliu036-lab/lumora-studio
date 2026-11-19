@@ -7,7 +7,7 @@ import { fetchPublishedArticles } from '../lib/blog-source.mjs';
 
 const PAT = process.env.AIRTABLE_PAT;
 
-const STATIC_PATHS = ['/', '/blog', '/white-label.html', '/lamura-os.html', '/images.html'];
+const STATIC_PATHS = ['/', '/ai-team', '/ai-twin', '/seo-web', '/blog', '/white-label.html', '/lamura-os.html', '/images.html'];
 
 function urlEntry(loc, lastmod) {
   const lastmodTag = lastmod ? `\n    <lastmod>${escapeHtml(lastmod.slice(0, 10))}</lastmod>` : '';

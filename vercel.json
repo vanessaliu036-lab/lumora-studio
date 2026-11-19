@@ -1,8 +1,32 @@
 {
   "rewrites": [
-    { "source": "/admin", "destination": "/admin.html" },
-    { "source": "/blog", "destination": "/api/blog" },
-    { "source": "/blog/:slug", "destination": "/api/blog/:slug" },
-    { "source": "/sitemap.xml", "destination": "/api/sitemap" }
+    {
+      "source": "/admin",
+      "destination": "/admin.html"
+    },
+    {
+      "source": "/blog",
+      "destination": "/api/blog"
+    },
+    {
+      "source": "/blog/:slug",
+      "destination": "/api/blog/:slug"
+    },
+    {
+      "source": "/sitemap.xml",
+      "destination": "/api/sitemap"
+    },
+    {
+      "source": "/ai-team",
+      "destination": "/ai-team/index.html"
+    },
+    {
+      "source": "/ai-twin",
+      "destination": "/ai-twin/index.html"
+    },
+    {
+      "source": "/seo-web",
+      "destination": "/seo-web/index.html"
+    }
   ]
 }

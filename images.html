@@ -124,23 +124,12 @@ button{font:inherit}
   .top-nav{top:10px}
 }
 </style>
-</head>
+<style>.lumora-mobile-menu{display:none;color:#f8f5ff;border:1px solid #c7a9ee66;background:#161025;border-radius:9px;padding:8px 12px;font:inherit;cursor:pointer}@media(max-width:1100px){.lumora-mobile-menu{display:block}.nav-links{display:none!important}.nav-links.lumora-open{display:flex!important;position:absolute;top:100%;right:0;max-height:75vh;overflow:auto;flex-direction:column;align-items:flex-start;gap:0;background:#160f2b;border:1px solid #bb9bea55;padding:9px 15px;border-radius:16px;min-width:210px;z-index:100;box-shadow:0 20px 45px #0008}.nav-links.lumora-open a{padding:10px 0;display:block;width:100%}}</style></head>
 <body>
 
 <nav class="top-nav">
-  <a href="index.html#top" class="logo" aria-label="Lumora home"><img class="logo-image" src="lumora-logo.png" alt="Lumora" /></a>
-  <div class="nav-links">
-    <a href="index.html#why">Why Lumora</a>
-    <a href="index.html#process">How It Works</a>
-    <a href="index.html#gallery">Personal</a>
-    <a href="index.html#brand-campaign">Branding</a>
-    <a href="index.html#pricing">Pricing</a>
-    <a href="index.html#faq">FAQ</a>
-    <a href="index.html#contact">Contact</a>
-    <a href="/blog">Journal</a>
-    <a href="white-label.html" target="_blank" rel="noopener">White Label</a>
-    <a href="lamura-os.html">Lumora OS</a>
-  </div>
+  <a href="/" class="logo" aria-label="Lumora home"><img class="logo-image" src="lumora-logo.png" alt="Lumora" /></a>
+  <div class="nav-links" id="lumora-menu-links"><a href="/">Home</a><a href="/#why">Why Lumora</a><a href="/ai-team">AI Team</a><a href="/ai-twin">AI Twin</a><a href="/seo-web">SEO Web</a><a href="/#faq">FAQ</a><a href="/#contact">Contact</a><a href="/blog">Journal</a><a href="/white-label.html">White Label</a><a href="/lamura-os.html">Lumora OS</a></div><button class="lumora-mobile-menu" type="button" aria-expanded="false" aria-controls="lumora-menu-links">Menu</button>
   <a href="index.html#contact" class="back">Start Your Portrait ↗</a>
 </nav>
 
@@ -230,5 +219,5 @@ button{font:inherit}
   </section>
 </div>
 
-</body>
+<script>(function(){const b=document.querySelector('.lumora-mobile-menu'),n=document.getElementById('lumora-menu-links');if(!b||!n)return;b.addEventListener('click',()=>{const o=n.classList.toggle('lumora-open');b.setAttribute('aria-expanded',String(o))});n.addEventListener('click',e=>{if(e.target.closest('a')){n.classList.remove('lumora-open');b.setAttribute('aria-expanded','false')}})})();</script></body>
 </html>
